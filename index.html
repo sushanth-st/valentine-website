@@ -2,7 +2,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Valentine Proposal</title><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><style>
+<title>Valentine Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
 :root {
   --pink: #ff5fa2;
   --gray: #aaa;
@@ -71,10 +73,10 @@ button {
 .gallery { position: relative; width: 100%; height: 60vh; }
 .gallery img { position: absolute; width: 90px; height: 90px; object-fit: cover; border-radius: 16px; animation: drift 12s linear infinite; }
 @keyframes drift { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(-120px) rotate(360deg); } }
-</style></head>
+</style>
+</head>
 <body>
-<div class="app" id="app">
-  <div class="setup" id="setup">
+<div class="app" id="app">  <div class="setup" id="setup">
     <h1>💖 Creator Setup</h1>
     <input id="nameInput" placeholder="Recipient name" />
     <textarea id="finalMsg" placeholder="Final message"></textarea>
@@ -90,6 +92,7 @@ button {
         <button id="noBtn">NO 😅</button>
       </div>
       <button id="prevBtn" class="hidden" style="margin-top:12px;">← Previous</button>
+      <button id="shareBtn" style="margin-top:12px; background:#25D366; color:#fff;">Share with ❤️</button>
     </div>
   </div>  <div id="passcodePage" class="hidden">
     <div class="button-box">
@@ -102,8 +105,7 @@ button {
   </div>  <div id="final" class="hidden">
     <h1 id="finalText"></h1>
     <div class="gallery" id="gallery"></div>
-  </div>
-</div><audio id="musicFunny" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicRomantic" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicHot" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicSpicy" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="whoosh" src="data:audio/mp3;base64,//uQx"></audio>
+  </div></div><audio id="musicFunny" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicRomantic" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicHot" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicSpicy" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="whoosh" src="data:audio/mp3;base64,//uQx"></audio>
 
 <script>
 const questions = [
@@ -114,24 +116,34 @@ const questions = [
 ];
 const emojiSets = [ ['😄','😂','💖'], ['🌹','✨','💞'], ['🔥','💋','🧡'], ['🍓','🦋','🌶️','🍑'] ];
 const musics = [musicFunny, musicRomantic, musicHot, musicSpicy];
-let stage=0,qIndex=0,config={};
 
+let stage=0,qIndex=0,config={};
 const viewer=document.getElementById('viewer');
 const yesBtn=document.getElementById('yesBtn');
 const noBtn=document.getElementById('noBtn');
 const prevBtn=document.getElementById('prevBtn');
 const questionEl=document.getElementById('question');
-
+const shareBtn=document.getElementById('shareBtn');
 const passcodePage=document.getElementById('passcodePage');
 const passSubmit=document.getElementById('passSubmit');
 const passInput=document.getElementById('passcodeInput');
 const passHint=document.getElementById('passHint');
 const passError=document.getElementById('passError');
+const final=document.getElementById('final');
+const finalText=document.getElementById('finalText');
+const gallery=document.getElementById('gallery');
+const images=document.getElementById('images');
+const setup=document.getElementById('setup');
 
+/* Creator lock */
+if(!localStorage.getItem('isCreator')) setup.remove();
+
+/* SETUP */
 document.getElementById('generate').addEventListener('click',()=>{
   config.finalMsg=document.getElementById('finalMsg').value||'Final message here ❤️';
   config.passcode=document.getElementById('passcode').value.trim().toLowerCase();
   config.hint=document.getElementById('hint').value;
+  localStorage.setItem('isCreator','true');
   setup.classList.add('hidden');
   viewer.classList.remove('hidden');
   startStage();
@@ -139,7 +151,7 @@ document.getElementById('generate').addEventListener('click',()=>{
 
 function startStage(){
   qIndex=0;
-  document.body.style.background = stage===0?"var(--bg1)":stage===1?"var(--bg2)":stage===2?"var(--bg3)":"var(--bg4)";
+  document.body.style.background=stage===0?"var(--bg1)":stage===1?"var(--bg2)":stage===2?"var(--bg3)":"var(--bg4)";
   playMusic();
   showQuestion();
   spawnEmojisLoop();
@@ -147,9 +159,7 @@ function startStage(){
   resetNoBtn();
 }
 function showQuestion(){ questionEl.textContent=questions[stage][qIndex]; prevBtn.style.display=qIndex>0?'inline-block':'none'; }
-
 prevBtn.onclick=()=>{ if(qIndex>0){ qIndex--; showQuestion(); resetNoBtn(); } };
-
 yesBtn.onclick=()=>{
   navigator.vibrate(100);
   qIndex++;
@@ -164,14 +174,12 @@ yesBtn.onclick=()=>{
   if(stage<4) startStage();
   else showFinal();
 };
-
 passSubmit.onclick=()=>{
   if(passInput.value.trim().toLowerCase()===config.passcode){
     passcodePage.classList.add('hidden');
     startStage();
   } else { passError.style.display='block'; passInput.value=''; }
 };
-
 noBtn.onclick=()=>{ whoosh.play(); navigator.vibrate(50); moveNoAroundYes(); };
 function resetNoBtn(){ noBtn.style.left='60%'; noBtn.style.top='50%'; }
 function moveNoAroundYes(){
@@ -185,7 +193,6 @@ function moveNoAroundYes(){
   noBtn.style.left=x+'px';
   noBtn.style.top=y+'px';
 }
-
 function spawnEmojisLoop(){
   setInterval(()=>{
     emojiSets[stage].forEach(e=>{
@@ -202,13 +209,11 @@ function spawnEmojisLoop(){
     });
   },900);
 }
-
 function playMusic(){ musics.forEach(m=>{m.pause(); m.currentTime=0}); musics[stage]?.play(); }
-
 function showFinal(){
   viewer.classList.add('hidden');
   final.classList.remove('hidden');
-  document.getElementById('finalText').textContent=config.finalMsg;
+  finalText.textContent=config.finalMsg;
   [...images.files].forEach(f=>{
     const img=document.createElement('img');
     img.src=URL.createObjectURL(f);
@@ -217,5 +222,10 @@ function showFinal(){
     gallery.appendChild(img);
   });
 }
+shareBtn.onclick=()=>{
+  const url=window.location.href;
+  const text=encodeURIComponent("Check this out 💖: "+url);
+  window.open(`https://wa.me/?text=${text}`,'_blank');
+};
 </script></body>
 </html>
