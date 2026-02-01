@@ -2,28 +2,28 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Valentine 💖</title>
+<title>Valentine Proposal 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"><style>
 :root{
   --pink:#ff4d88;
+  --gray:#e0e0e0;
   --bg1:linear-gradient(135deg,#ffe0ec,#fff);
   --bg2:linear-gradient(135deg,#ffe8d6,#fff);
   --bg3:linear-gradient(135deg,#ffd6e8,#ff9ecf);
   --bg4:linear-gradient(135deg,#2a0a1f,#000);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0;}
 body{
-  margin:0;
+  font-family:Poppins,sans-serif;
   height:100vh;
   overflow:hidden;
-  font-family:Poppins,sans-serif;
 }
 
 .app{
   height:100vh;
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
 }
 
 .card{
@@ -38,7 +38,7 @@ body{
 }
 
 h1{
-  font-family:Playfair Display,serif;
+  font-family:'Playfair Display',serif;
   font-size:1.75rem;
   min-height:72px;
 }
@@ -69,10 +69,11 @@ button{
 }
 
 #noBtn{
-  background:#e0e0e0;
+  background:var(--gray);
   color:#333;
   position:absolute;
   bottom:0;
+  width:140px;
 }
 
 @keyframes pulse{
@@ -83,7 +84,7 @@ button{
 
 .popup{
   position:fixed;
-  top:70px;
+  top:60px;
   left:50%;
   transform:translateX(-50%);
   background:#fff;
@@ -120,16 +121,13 @@ button{
   font-size:.9rem;
 }
 
-.pass{
-  margin-top:16px;
-}
-
 .pass input{
   width:100%;
   padding:12px;
   border-radius:14px;
   border:1px solid #ddd;
   font-size:1rem;
+  margin-top:12px;
 }
 
 .gallery{
@@ -237,12 +235,20 @@ function moveNo(){
  vibrate(80);
  popup('Oops 😆');
  const no=document.getElementById('noBtn');
- const angle=Math.random()*Math.PI*2;
- const radius=70;
- const baseX=120;
- const baseY=0;
- no.style.left=(baseX+radius*Math.cos(angle))+'px';
- no.style.bottom=(baseY+Math.abs(radius*Math.sin(angle)))+'px';
+ const yes=document.getElementById('yesBtn');
+ const rect=yes.getBoundingClientRect();
+ const appRect=app.getBoundingClientRect();
+ const radius=60;
+
+ let angle=Math.random()*Math.PI*2;
+ let newX=rect.left + rect.width/2 + radius*Math.cos(angle) - appRect.left;
+ let newY=rect.top + radius*Math.abs(Math.sin(angle)) - appRect.top;
+
+ // constrain within app card
+ newX=Math.max(0, Math.min(newX, appRect.width-140));
+ newY=Math.max(0, Math.min(newY, appRect.height-50));
+ no.style.left=newX+'px';
+ no.style.bottom=(appRect.height-newY-50)+'px';
 }
 
 function popup(text){
