@@ -5,62 +5,87 @@
 <title>Valentine 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--pink:#ff5fa2;--gray:#cfcfcf;--bg:#fff0f6}
+:root{--pink:#ff5fa2;--gray:#d6d6d6;--bg:#fff0f6}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,sans-serif;background:var(--bg);height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center}
 .app{width:100%;max-width:420px;height:100vh;display:flex;justify-content:center;align-items:center;position:relative}
-.card{background:#fff;border-radius:24px;padding:24px;width:90%;box-shadow:0 20px 40px rgba(0,0,0,.1);text-align:center}
+.card{background:#fff;border-radius:26px;padding:26px;width:90%;min-height:420px;box-shadow:0 20px 50px rgba(0,0,0,.12);text-align:center;position:relative;display:flex;flex-direction:column;justify-content:center}
 h1{font-family:'Playfair Display',serif;font-size:1.8rem;margin:0 0 16px}
-.buttons{display:flex;justify-content:center;gap:16px;margin-top:20px;position:relative;height:80px}
-button{border:none;border-radius:999px;padding:14px 26px;font-size:1rem;cursor:pointer}
-#yes{background:var(--pink);color:#fff}
-#no{background:var(--gray);color:#333;position:absolute;right:0}
+p{color:#555;font-size:1rem;line-height:1.45}
+input,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;font-size:.95rem;margin-bottom:10px}
+button{border:none;border-radius:999px;padding:14px 28px;font-size:1rem;cursor:pointer}
+.primary{background:var(--pink);color:#fff}
+.secondary{background:var(--gray);color:#333}
+.buttons{display:flex;justify-content:center;gap:16px;margin-top:26px;position:relative;height:90px}
+#no{position:absolute;right:0}
+.back{position:absolute;top:16px;left:16px;font-size:.9rem;color:#555;cursor:pointer}
 .hidden{display:none}
-.back{position:absolute;top:14px;left:14px;font-size:.9rem;color:#555;cursor:pointer}
 .float{position:absolute;bottom:-20px;animation:rise linear forwards;pointer-events:none}
 @keyframes rise{to{transform:translateY(-120vh) rotate(360deg);opacity:0}}
+.confetti{position:absolute;font-size:22px;animation:pop 1.2s ease-out forwards;pointer-events:none}
+@keyframes pop{to{transform:translateY(-120px) rotate(360deg);opacity:0}}
+.gallery{position:relative;width:100%;height:240px;margin-top:10px}
+.gallery img{position:absolute;width:90px;height:90px;object-fit:cover;border-radius:18px;animation:floatImg 10s linear infinite}
+@keyframes floatImg{to{transform:translateY(-120px) rotate(360deg)}}
 </style>
 </head>
 <body>
-<div class="app" id="app"><!-- CREATOR SETUP --><div class="card" id="setup">
+<div class="app"><!-- CREATOR SETUP --><div class="card" id="setup">
 <h1>Creator Setup 💖</h1>
-<input id="name" placeholder="Name" style="width:100%;padding:12px;margin-bottom:10px" />
-<textarea id="finalMsg" placeholder="Final message" style="width:100%;padding:12px"></textarea>
-<input id="pass" placeholder="Passcode (optional)" style="width:100%;padding:12px;margin-top:10px" />
-<input id="hint" placeholder="Passcode hint" style="width:100%;padding:12px;margin-top:10px" />
-<button onclick="generate()">Generate Link 💘</button>
-</div><!-- VIEWER --><div class="card hidden" id="viewer">
+<input id="name" placeholder="Recipient name" />
+<textarea id="finalMsg" placeholder="Final message"></textarea>
+<input id="pass" placeholder="Passcode (optional)" />
+<input id="hint" placeholder="Passcode hint" />
+<input type="file" id="images" multiple accept="image/*" />
+<button class="primary" onclick="generate()">Generate Link 💘</button>
+</div><!-- SECTION INTRO --><div class="card hidden" id="intro">
+<div class="back" onclick="goBack()">← Back</div>
+<h1 id="introTitle"></h1>
+<p id="introDesc"></p>
+<button class="primary" onclick="startQuestions()">Continue 💕</button>
+</div><!-- QUESTIONS --><div class="card hidden" id="viewer">
 <div class="back" onclick="goBack()">← Back</div>
 <h1 id="question"></h1>
 <div class="buttons">
-<button id="yes">YES 💖</button>
-<button id="no">NO 😅</button>
+<button class="primary" id="yes">YES 💖</button>
+<button class="secondary" id="no">NO 😅</button>
 </div>
+</div><!-- PASSCODE --><div class="card hidden" id="passPage">
+<div class="back" onclick="goBack()">← Back</div>
+<h1>One Last Step 🔐</h1>
+<p id="hintText"></p>
+<input id="passInput" placeholder="Enter passcode" />
+<p id="passError" style="color:red;display:none">Wrong passcode 💔</p>
+<button class="primary" onclick="checkPass()">Unlock 🔥</button>
 </div><!-- FINAL --><div class="card hidden" id="final">
 <h1 id="finalText"></h1>
+<div class="gallery" id="gallery"></div>
+<button class="primary" onclick="share()">Share with ❤️</button>
 </div></div>
 <script>
-const questions=["Question 1","Question 2","Question 3","Question 4"]
-let index=0
-let config={}
-const setup=document.getElementById('setup')
-const viewer=document.getElementById('viewer')
-const final=document.getElementById('final')
-const q=document.getElementById('question')
-const yes=document.getElementById('yes')
-const no=document.getElementById('no')function generate(){ config={name:name.value,final:finalMsg.value,pass:pass.value,hint:hint.value} localStorage.setItem('valConfig',JSON.stringify(config)) setup.classList.add('hidden') viewer.classList.remove('hidden') showQ() }
+const sections=[
+{title:'Funny 😄',desc:'Let’s start with smiles and laughs 😆',q:['Funny Q1','Funny Q2','Funny Q3','Funny Q4']},
+{title:'Romantic 🌹',desc:'Time to feel the love 💕',q:['Romantic Q1','Romantic Q2','Romantic Q3','Romantic Q4']},
+{title:'Hot 🔥',desc:'Things are heating up 😏',q:['Hot Q1','Hot Q2','Hot Q3','Hot Q4']},
+{title:'Extreme Spicy 🌶️',desc:'Only for the brave 😈',q:['Spicy Q1','Spicy Q2','Spicy Q3','Spicy Q4']}
+]
+let s=0,q=0,config={}
+const setup=document.getElementById('setup'),intro=document.getElementById('intro'),viewer=document.getElementById('viewer'),passPage=document.getElementById('passPage'),final=document.getElementById('final')
+const question=document.getElementById('question'),yes=document.getElementById('yes'),no=document.getElementById('no')function generate(){ config={name:name.value||'',final:finalMsg.value||'❤️',pass:pass.value.toLowerCase(),hint:hint.value} localStorage.setItem('valConfig',JSON.stringify(config)) if(images.files.length){const imgs=[];[...images.files].forEach(f=>{const r=new FileReader();r.onload=e=>{imgs.push(e.target.result);localStorage.setItem('valImgs',JSON.stringify(imgs))};r.readAsDataURL(f)})} setup.classList.add('hidden');showIntro() } const saved=localStorage.getItem('valConfig') if(saved){config=JSON.parse(saved);setup.classList.add('hidden');showIntro()}
 
-const saved=localStorage.getItem('valConfig') if(saved){config=JSON.parse(saved);setup.classList.add('hidden');viewer.classList.remove('hidden');showQ()}
+function showIntro(){intro.classList.remove('hidden');viewer.classList.add('hidden');passPage.classList.add('hidden');introTitle.textContent=sections[s].title;introDesc.textContent=sections[s].desc} function startQuestions(){intro.classList.add('hidden');viewer.classList.remove('hidden');q=0;question.textContent=sections[s].q[q]}
 
-function showQ(){q.textContent=questions[index]}
+yes.onclick=()=>{confetti();navigator.vibrate?.(80);q++;if(q<4){question.textContent=sections[s].q[q];return} s++;if(s===3&&config.pass){hintText.textContent='Hint: '+config.hint;viewer.classList.add('hidden');passPage.classList.remove('hidden');return} if(s<sections.length){showIntro()}else{showFinal()}}
 
-yes.onclick=()=>{index++;if(index<questions.length)showQ();else{viewer.classList.add('hidden');final.classList.remove('hidden');finalText.textContent=config.final||'❤️'}}
+no.onclick=()=>{const box=viewer.getBoundingClientRect(),y=yes.getBoundingClientRect();no.style.left=y.left-box.left+(Math.random()*120-60)+'px';no.style.top=y.top-box.top+(Math.random()*80-40)+'px';spawnEmoji()}
 
-no.onclick=()=>{ const box=viewer.getBoundingClientRect() const yesBox=yes.getBoundingClientRect() let x,y x=yesBox.left+(Math.random()*120-60) y=yesBox.top+(Math.random()*80-40) no.style.left=x-box.left+'px' no.style.top=y-box.top+'px' spawnEmoji() }
+function checkPass(){if(passInput.value.toLowerCase()===config.pass){passPage.classList.add('hidden');showIntro()}else{passError.style.display='block'}}
 
-function spawnEmoji(){ const e=document.createElement('div') e.className='float' e.textContent='💖' e.style.left=Math.random()*100+'%' e.style.fontSize=20+Math.random()*20+'px' e.style.animationDuration=4+Math.random()*4+'s' document.body.appendChild(e) setTimeout(()=>e.remove(),6000) }
+function showFinal(){viewer.classList.add('hidden');final.classList.remove('hidden');finalText.textContent=config.final;const imgs=JSON.parse(localStorage.getItem('valImgs')||'[]');imgs.forEach(src=>{const i=document.createElement('img');i.src=src;i.style.left=Math.random()*60+'%';i.style.top=Math.random()*60+'%';gallery.appendChild(i)})}
 
-function goBack(){if(index>0){index--;showQ()}} </script>
+function goBack(){if(passPage.classList.contains('hidden')===false){passPage.classList.add('hidden');showIntro();return}if(viewer.classList.contains('hidden')===false&&q>0){q--;question.textContent=sections[s].q[q];return}if(s>0){s--;showIntro()}}
+
+function spawnEmoji(){const e=document.createElement('div');e.className='float';e.textContent='💖';e.style.left=Math.random()*100+'%';e.style.fontSize=18+Math.random()*20+'px';e.style.animationDuration=4+Math.random()*4+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),6000)} function confetti(){for(let i=0;i<8;i++){const c=document.createElement('div');c.className='confetti';c.textContent='💗';c.style.left='50%';c.style.top='50%';c.style.transform=translate(-50%,-50%) rotate(${Math.random()*360}deg);document.body.appendChild(c);setTimeout(()=>c.remove(),1200)}} function share(){const url=location.href;window.open(https://wa.me/?text=${encodeURIComponent('For you ❤️ '+url)})} </script>
 
 </body>
 </html>
