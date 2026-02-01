@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valentine Proposal</title><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><style>
+:root {
+  --pink: #ff5fa2;
+  --gray: #aaa;
+  --bg1: linear-gradient(135deg, #ffd6e8, #fff1f7);
+  --bg2: linear-gradient(135deg, #ffe4f2, #ffffff);
+  --bg3: linear-gradient(135deg, #ff9ecf, #ff6aa2);
+  --bg4: linear-gradient(135deg, #ff4d6d, #ff9f1c);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg1);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.app {
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  text-align: center;
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 24px;
+}
+.button-box {
+  background: rgba(255,255,255,0.85);
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 16px;
+  position: relative;
+}
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+#yesBtn { background: var(--pink); color: #fff; position: relative; z-index:2; }
+#noBtn { background: var(--gray); color: #333; position: absolute; z-index:1; }
+.hidden { display: none; }
+.setup input, .setup textarea { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #ddd; }
+.float { position: absolute; pointer-events: none; }
+.popup { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 14px 20px; border-radius: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-size: 0.95rem; z-index: 10; }
+.gallery { position: relative; width: 100%; height: 60vh; }
+.gallery img { position: absolute; width: 90px; height: 90px; object-fit: cover; border-radius: 16px; animation: drift 12s linear infinite; }
+@keyframes drift { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(-120px) rotate(360deg); } }
+</style></head>
+<body>
+<div class="app" id="app">
+  <div class="setup" id="setup">
+    <h1>💖 Creator Setup</h1>
+    <input id="nameInput" placeholder="Recipient name" />
+    <textarea id="finalMsg" placeholder="Final message"></textarea>
+    <input id="passcode" placeholder="Optional passcode" />
+    <input id="hint" placeholder="Passcode hint" />
+    <input type="file" id="images" multiple accept="image/*" />
+    <button id="generate">Generate 💘</button>
+  </div>  <div id="viewer" class="hidden">
+    <div class="button-box">
+      <h1 id="question"></h1>
+      <div class="buttons">
+        <button id="yesBtn">YES 💖</button>
+        <button id="noBtn">NO 😅</button>
+      </div>
+      <button id="prevBtn" class="hidden" style="margin-top:12px;">← Previous</button>
+    </div>
+  </div>  <div id="passcodePage" class="hidden">
+    <div class="button-box">
+      <h1>Enter Password to Continue 🔒</h1>
+      <input type="text" id="passcodeInput" placeholder="Password" />
+      <p id="passHint" style="font-size:0.9rem;color:#555;"></p>
+      <button id="passSubmit">Submit</button>
+      <p id="passError" style="color:red;display:none; margin-top:8px;">Incorrect password!</p>
+    </div>
+  </div>  <div id="final" class="hidden">
+    <h1 id="finalText"></h1>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</div><audio id="musicFunny" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicRomantic" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicHot" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicSpicy" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="whoosh" src="data:audio/mp3;base64,//uQx"></audio>
+
+<script>
+const questions = [
+  ["Funny Q1 😄","Funny Q2 😂","Funny Q3 💖","Funny Q4 😜"],
+  ["Romantic Q1 🌹","Romantic Q2 ✨","Romantic Q3 💞","Romantic Q4 💕"],
+  ["Hot Q1 🔥","Hot Q2 💋","Hot Q3 🧡","Hot Q4 😏"],
+  ["Spicy Q1 🌶️","Spicy Q2 🍓","Spicy Q3 🍑","Spicy Q4 🦋"]
+];
+const emojiSets = [ ['😄','😂','💖'], ['🌹','✨','💞'], ['🔥','💋','🧡'], ['🍓','🦋','🌶️','🍑'] ];
+const musics = [musicFunny, musicRomantic, musicHot, musicSpicy];
+let stage=0,qIndex=0,config={};
+
+const viewer=document.getElementById('viewer');
+const yesBtn=document.getElementById('yesBtn');
+const noBtn=document.getElementById('noBtn');
+const prevBtn=document.getElementById('prevBtn');
+const questionEl=document.getElementById('question');
+
+const passcodePage=document.getElementById('passcodePage');
+const passSubmit=document.getElementById('passSubmit');
+const passInput=document.getElementById('passcodeInput');
+const passHint=document.getElementById('passHint');
+const passError=document.getElementById('passError');
+
+document.getElementById('generate').addEventListener('click',()=>{
+  config.finalMsg=document.getElementById('finalMsg').value||'Final message here ❤️';
+  config.passcode=document.getElementById('passcode').value.trim().toLowerCase();
+  config.hint=document.getElementById('hint').value;
+  setup.classList.add('hidden');
+  viewer.classList.remove('hidden');
+  startStage();
+});
+
+function startStage(){
+  qIndex=0;
+  document.body.style.background = stage===0?"var(--bg1)":stage===1?"var(--bg2)":stage===2?"var(--bg3)":"var(--bg4)";
+  playMusic();
+  showQuestion();
+  spawnEmojisLoop();
+  prevBtn.style.display='none';
+  resetNoBtn();
+}
+function showQuestion(){ questionEl.textContent=questions[stage][qIndex]; prevBtn.style.display=qIndex>0?'inline-block':'none'; }
+
+prevBtn.onclick=()=>{ if(qIndex>0){ qIndex--; showQuestion(); resetNoBtn(); } };
+
+yesBtn.onclick=()=>{
+  navigator.vibrate(100);
+  qIndex++;
+  if(qIndex<4){ showQuestion(); return; }
+  stage++;
+  if(stage===3 && config.passcode){
+    viewer.classList.add('hidden');
+    passcodePage.classList.remove('hidden');
+    passHint.textContent='Hint: '+(config.hint||'');
+    return;
+  }
+  if(stage<4) startStage();
+  else showFinal();
+};
+
+passSubmit.onclick=()=>{
+  if(passInput.value.trim().toLowerCase()===config.passcode){
+    passcodePage.classList.add('hidden');
+    startStage();
+  } else { passError.style.display='block'; passInput.value=''; }
+};
+
+noBtn.onclick=()=>{ whoosh.play(); navigator.vibrate(50); moveNoAroundYes(); };
+function resetNoBtn(){ noBtn.style.left='60%'; noBtn.style.top='50%'; }
+function moveNoAroundYes(){
+  const rect=yesBtn.getBoundingClientRect();
+  const container=viewer.getBoundingClientRect();
+  const offset=50;
+  let x=rect.left+Math.random()*100-50;
+  let y=rect.top+Math.random()*50-25;
+  x=Math.min(Math.max(container.left+10,x),container.right-60);
+  y=Math.min(Math.max(container.top+10,y),container.bottom-40);
+  noBtn.style.left=x+'px';
+  noBtn.style.top=y+'px';
+}
+
+function spawnEmojisLoop(){
+  setInterval(()=>{
+    emojiSets[stage].forEach(e=>{
+      const el=document.createElement('div');
+      el.className='float';
+      el.innerText=e;
+      el.style.left=Math.random()*100+'%';
+      el.style.bottom='-20px';
+      el.style.fontSize=14+Math.random()*20+'px';
+      el.style.transition='transform 8s linear';
+      document.body.appendChild(el);
+      requestAnimationFrame(()=>{ el.style.transform='translateY(-120vh) rotate('+Math.random()*360+'deg)'; });
+      setTimeout(()=>el.remove(),9000);
+    });
+  },900);
+}
+
+function playMusic(){ musics.forEach(m=>{m.pause(); m.currentTime=0}); musics[stage]?.play(); }
+
+function showFinal(){
+  viewer.classList.add('hidden');
+  final.classList.remove('hidden');
+  document.getElementById('finalText').textContent=config.finalMsg;
+  [...images.files].forEach(f=>{
+    const img=document.createElement('img');
+    img.src=URL.createObjectURL(f);
+    img.style.left=Math.random()*70+'%';
+    img.style.top=Math.random()*70+'%';
+    gallery.appendChild(img);
+  });
+}
+</script></body>
+</html>
