@@ -108,6 +108,34 @@ button {
   </div></div><audio id="musicFunny" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicRomantic" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicHot" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="musicSpicy" loop src="data:audio/mp3;base64,//uQx"></audio> <audio id="whoosh" src="data:audio/mp3;base64,//uQx"></audio>
 
 <script>
+// --- Element references ---
+const setup = document.getElementById('setup');
+const viewer = document.getElementById('viewer');
+const final = document.getElementById('final');
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const prevBtn = document.getElementById('prevBtn');
+const shareBtn = document.getElementById('shareBtn');
+const questionEl = document.getElementById('question');
+const passcodePage = document.getElementById('passcodePage');
+const passInput = document.getElementById('passcodeInput');
+const passHint = document.getElementById('passHint');
+const passSubmit = document.getElementById('passSubmit');
+const passError = document.getElementById('passError');
+const finalText = document.getElementById('finalText');
+const gallery = document.getElementById('gallery');
+const images = document.getElementById('images');
+
+const musicFunny = document.getElementById('musicFunny');
+const musicRomantic = document.getElementById('musicRomantic');
+const musicHot = document.getElementById('musicHot');
+const musicSpicy = document.getElementById('musicSpicy');
+const whoosh = document.getElementById('whoosh');
+
+// --- Configuration ---
+let config = {};
+let stage = 0, qIndex = 0;
+
 const questions = [
   ["Funny Q1 😄","Funny Q2 😂","Funny Q3 💖","Funny Q4 😜"],
   ["Romantic Q1 🌹","Romantic Q2 ✨","Romantic Q3 💞","Romantic Q4 💕"],
@@ -117,50 +145,37 @@ const questions = [
 const emojiSets = [ ['😄','😂','💖'], ['🌹','✨','💞'], ['🔥','💋','🧡'], ['🍓','🦋','🌶️','🍑'] ];
 const musics = [musicFunny, musicRomantic, musicHot, musicSpicy];
 
-let stage=0,qIndex=0,config={};
-const viewer=document.getElementById('viewer');
-const yesBtn=document.getElementById('yesBtn');
-const noBtn=document.getElementById('noBtn');
-const prevBtn=document.getElementById('prevBtn');
-const questionEl=document.getElementById('question');
-const shareBtn=document.getElementById('shareBtn');
-const passcodePage=document.getElementById('passcodePage');
-const passSubmit=document.getElementById('passSubmit');
-const passInput=document.getElementById('passcodeInput');
-const passHint=document.getElementById('passHint');
-const passError=document.getElementById('passError');
-const final=document.getElementById('final');
-const finalText=document.getElementById('finalText');
-const gallery=document.getElementById('gallery');
-const images=document.getElementById('images');
-const setup=document.getElementById('setup');
+// --- Creator lock ---
+if(setup && !localStorage.getItem('isCreator')) setup.style.display='block'; else if(setup){setup.style.display='none';}
 
-/* Creator lock */
-if(!localStorage.getItem('isCreator')) setup.remove();
-
-/* SETUP */
+// --- Setup ---
 document.getElementById('generate').addEventListener('click',()=>{
-  config.finalMsg=document.getElementById('finalMsg').value||'Final message here ❤️';
-  config.passcode=document.getElementById('passcode').value.trim().toLowerCase();
-  config.hint=document.getElementById('hint').value;
+  config.finalMsg = document.getElementById('finalMsg').value || 'Final message here ❤️';
+  config.passcode = document.getElementById('passcode').value.trim().toLowerCase();
+  config.hint = document.getElementById('hint').value;
   localStorage.setItem('isCreator','true');
   setup.classList.add('hidden');
   viewer.classList.remove('hidden');
   startStage();
 });
 
+// --- Functions ---
 function startStage(){
-  qIndex=0;
-  document.body.style.background=stage===0?"var(--bg1)":stage===1?"var(--bg2)":stage===2?"var(--bg3)":"var(--bg4)";
+  qIndex = 0;
+  document.body.style.background = stage===0?"var(--bg1)":stage===1?"var(--bg2)":stage===2?"var(--bg3)":"var(--bg4)";
   playMusic();
   showQuestion();
   spawnEmojisLoop();
   prevBtn.style.display='none';
   resetNoBtn();
 }
-function showQuestion(){ questionEl.textContent=questions[stage][qIndex]; prevBtn.style.display=qIndex>0?'inline-block':'none'; }
-prevBtn.onclick=()=>{ if(qIndex>0){ qIndex--; showQuestion(); resetNoBtn(); } };
-yesBtn.onclick=()=>{
+function showQuestion(){
+  questionEl.textContent = questions[stage][qIndex];
+  prevBtn.style.display = qIndex>0?'inline-block':'none';
+}
+prevBtn.onclick = ()=>{ if(qIndex>0){ qIndex--; showQuestion(); resetNoBtn(); } };
+
+yesBtn.onclick = ()=>{
   navigator.vibrate(100);
   qIndex++;
   if(qIndex<4){ showQuestion(); return; }
@@ -168,38 +183,39 @@ yesBtn.onclick=()=>{
   if(stage===3 && config.passcode){
     viewer.classList.add('hidden');
     passcodePage.classList.remove('hidden');
-    passHint.textContent='Hint: '+(config.hint||'');
+    passHint.textContent = 'Hint: '+(config.hint||'');
     return;
   }
   if(stage<4) startStage();
   else showFinal();
 };
-passSubmit.onclick=()=>{
-  if(passInput.value.trim().toLowerCase()===config.passcode){
+
+passSubmit.onclick = ()=>{
+  if(passInput.value.trim().toLowerCase() === config.passcode){
     passcodePage.classList.add('hidden');
     startStage();
   } else { passError.style.display='block'; passInput.value=''; }
 };
-noBtn.onclick=()=>{ whoosh.play(); navigator.vibrate(50); moveNoAroundYes(); };
+
+noBtn.onclick = ()=>{ whoosh.play(); navigator.vibrate(50); moveNoAroundYes(); };
 function resetNoBtn(){ noBtn.style.left='60%'; noBtn.style.top='50%'; }
 function moveNoAroundYes(){
-  const rect=yesBtn.getBoundingClientRect();
-  const container=viewer.getBoundingClientRect();
-  const offset=50;
-  let x=rect.left+Math.random()*100-50;
-  let y=rect.top+Math.random()*50-25;
-  x=Math.min(Math.max(container.left+10,x),container.right-60);
-  y=Math.min(Math.max(container.top+10,y),container.bottom-40);
-  noBtn.style.left=x+'px';
-  noBtn.style.top=y+'px';
+  const rect = yesBtn.getBoundingClientRect();
+  const container = viewer.getBoundingClientRect();
+  let x = rect.left + Math.random()*100 - 50;
+  let y = rect.top + Math.random()*50 - 25;
+  x = Math.min(Math.max(container.left+10,x),container.right-60);
+  y = Math.min(Math.max(container.top+10,y),container.bottom-40);
+  noBtn.style.left = x+'px';
+  noBtn.style.top = y+'px';
 }
 function spawnEmojisLoop(){
   setInterval(()=>{
     emojiSets[stage].forEach(e=>{
-      const el=document.createElement('div');
+      const el = document.createElement('div');
       el.className='float';
-      el.innerText=e;
-      el.style.left=Math.random()*100+'%';
+      el.innerText = e;
+      el.style.left = Math.random()*100+'%';
       el.style.bottom='-20px';
       el.style.fontSize=14+Math.random()*20+'px';
       el.style.transition='transform 8s linear';
@@ -213,18 +229,19 @@ function playMusic(){ musics.forEach(m=>{m.pause(); m.currentTime=0}); musics[st
 function showFinal(){
   viewer.classList.add('hidden');
   final.classList.remove('hidden');
-  finalText.textContent=config.finalMsg;
-  [...images.files].forEach(f=>{
-    const img=document.createElement('img');
-    img.src=URL.createObjectURL(f);
+  finalText.textContent = config.finalMsg;
+  if(images && images.files){ [...images.files].forEach(f=>{
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
     img.style.left=Math.random()*70+'%';
     img.style.top=Math.random()*70+'%';
     gallery.appendChild(img);
   });
 }
-shareBtn.onclick=()=>{
-  const url=window.location.href;
-  const text=encodeURIComponent("Check this out 💖: "+url);
+}
+shareBtn.onclick = ()=>{
+  const url = window.location.href;
+  const text = encodeURIComponent("Check this out 💖: "+url);
   window.open(`https://wa.me/?text=${text}`,'_blank');
 };
 </script></body>
