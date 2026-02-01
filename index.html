@@ -2,7 +2,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Just One Question 💖</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"><style>
+<title>Valentine 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"><style>
 :root{
   --pink:#ff4d88;
   --bg1:linear-gradient(135deg,#ffe0ec,#fff);
@@ -13,63 +14,62 @@
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Poppins,sans-serif;
   height:100vh;
   overflow:hidden;
+  font-family:Poppins,sans-serif;
 }
 
 .app{
   height:100vh;
-  width:100%;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
 }
 
 .card{
   width:90%;
-  max-width:360px;
+  max-width:380px;
   background:rgba(255,255,255,0.96);
   border-radius:24px;
-  padding:26px 22px 30px;
+  padding:28px 22px 32px;
   text-align:center;
-  box-shadow:0 18px 40px rgba(0,0,0,0.18);
+  box-shadow:0 20px 40px rgba(0,0,0,0.18);
   position:relative;
 }
 
 h1{
   font-family:Playfair Display,serif;
-  font-size:1.7rem;
+  font-size:1.75rem;
   min-height:72px;
 }
 
 .buttons{
-  margin-top:26px;
   position:relative;
-  height:110px;
+  height:120px;
+  margin-top:24px;
 }
 
 button{
+  width:140px;
+  padding:14px 0;
   border:none;
   border-radius:999px;
-  padding:14px 34px;
   font-size:1.05rem;
   cursor:pointer;
-  width:140px; /* FIXED SIZE */
 }
 
 #yesBtn{
   background:var(--pink);
   color:#fff;
+  position:absolute;
   left:50%;
   transform:translateX(-50%);
-  position:absolute;
   bottom:0;
-  animation:pulse 1.3s infinite;
+  animation:pulse 1.2s infinite;
 }
 
 #noBtn{
-  background:#e1e1e1;
+  background:#e0e0e0;
   color:#333;
   position:absolute;
   bottom:0;
@@ -77,7 +77,7 @@ button{
 
 @keyframes pulse{
   0%{transform:translateX(-50%) scale(1)}
-  50%{transform:translateX(-50%) scale(1.08)}
+  50%{transform:translateX(-50%) scale(1.07)}
   100%{transform:translateX(-50%) scale(1)}
 }
 
@@ -90,7 +90,7 @@ button{
   padding:10px 18px;
   border-radius:18px;
   box-shadow:0 8px 24px rgba(0,0,0,.18);
-  z-index:20;
+  z-index:30;
   animation:fade 3s forwards;
 }
 
@@ -115,15 +115,34 @@ button{
   padding:6px 14px;
   border-radius:18px;
   box-shadow:0 4px 14px rgba(0,0,0,.2);
-  font-size:.9rem;
   cursor:pointer;
-  z-index:30;
+  z-index:40;
+  font-size:.9rem;
+}
+
+.pass{
+  margin-top:16px;
+}
+
+.pass input{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:1rem;
+}
+
+.gallery{
+  margin-top:16px;
+}
+
+.gallery img{
+  width:100%;
+  border-radius:16px;
 }
 </style></head>
 <body><div class="back" id="backBtn" style="display:none">⬅ Back</div>
-<div class="app" id="app"></div><audio id="sndNo"></audio> <audio id="sndYes"></audio> <audio id="sndFinal"></audio>
-
-<script>
+<div class="app" id="app"></div><script>
 /* ================= EDIT CONTENT HERE ================= */
 const sections=[
 {
@@ -149,8 +168,9 @@ const sections=[
  yesEmoji:'💍',
  password:'love',
  wrong:'Wrong password 😜',
- popups:['Last step 💫'],
- questions:['Final Question 💘']
+ image:'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID',
+ finalMessage:'I knew you would say YES ❤️',
+ questions:['Before final step 💘','Almost there 💕']
 }
 ];
 /* ==================================================== */
@@ -165,14 +185,22 @@ function render(){
  document.body.style.background=sections[s].bg;
  back.style.display=(s>0||q>0)?'block':'none';
 
- app.innerHTML=`<div class='card'>
-   <h1>${sections[s].questions[q]}</h1>
-   <div class='buttons'>
-     <button id='yesBtn'>YES ${sections[s].yesEmoji}</button>
-     <button id='noBtn'>NO 🙈</button>
-   </div>
- </div>`;
+ let html=`<div class='card'><h1>${sections[s].questions[q]}</h1>`;
 
+ if(sections[s].password && q===sections[s].questions.length-1){
+  html+=`<div class='pass'>
+    <input id='passInput' placeholder='Enter password'>
+    <button id='yesBtn'>Unlock ${sections[s].yesEmoji}</button>
+  </div>`;
+ } else {
+  html+=`<div class='buttons'>
+    <button id='yesBtn'>YES ${sections[s].yesEmoji}</button>
+    <button id='noBtn'>NO 🙈</button>
+  </div>`;
+ }
+
+ html+='</div>';
+ app.innerHTML=html;
  setupButtons();
  startPopups();
 }
@@ -181,20 +209,23 @@ function setupButtons(){
  const yes=document.getElementById('yesBtn');
  const no=document.getElementById('noBtn');
 
- no.style.left='20px';
- no.style.bottom='0';
-
- no.addEventListener('touchstart',ev=>{ev.preventDefault();moveNo();});
- no.addEventListener('mouseenter',moveNo);
+ if(no){
+  no.style.left='20px';
+  no.style.bottom='0';
+  no.addEventListener('touchstart',e=>{e.preventDefault();moveNo();});
+  no.addEventListener('mouseenter',moveNo);
+ }
 
  yes.onclick=()=>{
+  if(sections[s].password && q===sections[s].questions.length-1){
+    const p=document.getElementById('passInput').value;
+    if(p!==sections[s].password){popup(sections[s].wrong);vibrate(200);return;}
+  }
+
   vibrate(s===sections.length-1?5000:120);
   q++;
+
   if(q>=sections[s].questions.length){
-    if(sections[s].password){
-      const p=prompt('Enter password');
-      if(p!==sections[s].password){popup(sections[s].wrong);q=0;render();return;}
-    }
     s++; q=0;
     if(s>=sections.length){finalExplosion();return;}
   }
@@ -207,11 +238,11 @@ function moveNo(){
  popup('Oops 😆');
  const no=document.getElementById('noBtn');
  const angle=Math.random()*Math.PI*2;
- const radius=60;
- const centerX=180; // relative safe zone
- const centerY=50;
- no.style.left=(centerX+radius*Math.cos(angle))+'px';
- no.style.bottom=(10+radius*Math.abs(Math.sin(angle)))+'px';
+ const radius=70;
+ const baseX=120;
+ const baseY=0;
+ no.style.left=(baseX+radius*Math.cos(angle))+'px';
+ no.style.bottom=(baseY+Math.abs(radius*Math.sin(angle)))+'px';
 }
 
 function popup(text){
@@ -226,12 +257,16 @@ function startPopups(){
  if(popupTimer) clearInterval(popupTimer);
  if(!sections[s].popups) return;
  popupTimer=setInterval(()=>{
-   popup(sections[s].popups[Math.floor(Math.random()*sections[s].popups.length)]);
+  popup(sections[s].popups[Math.floor(Math.random()*sections[s].popups.length)]);
  },6000);
 }
 
 function finalExplosion(){
  vibrate(5000);
+ document.body.style.background=sections[sections.length-1].bg;
+ app.innerHTML=`<div class='card'><h1>${sections[sections.length-1].finalMessage}</h1>
+ <div class='gallery'><img src='${sections[sections.length-1].image}'></div></div>`;
+
  for(let i=0;i<70;i++){
   const e=document.createElement('div');
   e.className='confetti';
@@ -241,13 +276,10 @@ function finalExplosion(){
   document.body.appendChild(e);
   setTimeout(()=>e.remove(),3200);
  }
- app.innerHTML="<div class='card'><h1>💖 YES 💖</h1></div>";
 }
 
 back.onclick=()=>{
- if(q>0){q=0;} 
- else if(s>0){s--;q=0;} 
- render();
+ if(q>0){q=0;} else if(s>0){s--;q=0;} render();
 };
 
 render();
