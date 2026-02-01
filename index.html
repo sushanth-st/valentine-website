@@ -1,23 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💖 Just One Question</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-
-<style>
+<title>💖 Just One Question</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"><style>
 *{box-sizing:border-box}
 body{
   margin:0;
   font-family:Poppins,sans-serif;
-  background:linear-gradient(135deg,#ffe4f2,#fff);
   height:100vh;
   overflow:hidden;
   display:flex;
   justify-content:center;
   align-items:center;
+  transition:background 0.6s ease;
+}
+
+body.dark{
+  background:linear-gradient(135deg,#1a001f,#2b0036) !important;
 }
 
 .app{
@@ -40,6 +39,9 @@ body{
   padding:24px 20px;
   box-shadow:0 12px 35px rgba(0,0,0,.12);
 }
+
+body.dark .card{background:#2a0033;color:#fff}
+body.dark p{color:#ddd}
 
 h1{
   font-family:'Playfair Display',serif;
@@ -81,194 +83,107 @@ button{
   font-size:.85rem;
 }
 
+.toggle{
+  position:absolute;
+  top:14px;
+  right:14px;
+  background:#eee;
+  padding:8px 14px;
+  font-size:.85rem;
+}
+
 .hidden{display:none}
 
-/* Floating Emojis */
 .float{
   position:absolute;
   bottom:-30px;
   animation:floatUp linear forwards;
   pointer-events:none;
 }
-@keyframes floatUp{
-  to{transform:translateY(-110vh);opacity:0}
-}
+@keyframes floatUp{to{transform:translateY(-110vh);opacity:0}}
 
-/* Popup */
 .popup{
   position:absolute;
-  top:50%;
+  top:18%;
   left:50%;
-  transform:translate(-50%,-50%);
+  transform:translateX(-50%);
   background:#fff;
-  padding:14px 18px;
+  padding:12px 16px;
   border-radius:16px;
   box-shadow:0 10px 25px rgba(0,0,0,.15);
   z-index:20;
   font-size:.9rem;
 }
-</style>
-</head>
 
-<body>
+.toast{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#ff5fa2;
+  color:#fff;
+  padding:10px 18px;
+  border-radius:20px;
+  font-size:.9rem;
+  z-index:30;
+}
 
-<div class="app">
+img.final-img{
+  width:100%;
+  border-radius:16px;
+  margin-top:12px;
+}
+</style></head><body><div class="app"><button class="back hidden" id="backBtn">⬅ Back</button> <button class="toggle" onclick="toggleDark()">🌙</button>
 
-<button class="back hidden" id="backBtn">⬅ Back</button>
-
-<div class="card" id="screen"></div>
-
-</div>
-
-<script>
+<div class="card" id="screen"></div></div><script>
 /***** ✏️ EDIT CONTENT HERE *****/
-const SITE = {
-  sections: [
-    {
-      title: "Funny 😄",
-      intro: "Let’s start easy… don’t overthink 😜",
-      emojis:["😂","😄","💖"],
-      questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"]
-    },
-    {
-      title: "Romantic 🌹",
-      intro: "Okay… now feel it 💕",
-      emojis:["🌹","✨","💞"],
-      questions:["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"]
-    },
-    {
-      title: "Hot 🔥",
-      intro: "Things are heating up 😏",
-      emojis:["🔥","💋","🧡"],
-      questions:["Hot Q1","Hot Q2","Hot Q3","Hot Q4"]
-    },
-    {
-      title: "Spicy 🌶️",
-      intro: "Secret zone… password needed 😈",
-      passcode:"1234",
-      hint:"Something obvious ❤️",
-      wrongMessage:"Oops 😜 That’s not it… try again ❤️",
-      emojis:["🌶️","🍓","🍑"],
-      questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"]
-    }
+const SITE={
+  sections:[
+    {title:"Funny 😄",bg:"linear-gradient(135deg,#ffe4f2,#fff)",intro:"Let’s start easy 😜",emojis:["😂","😄","💖"],questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"]},
+    {title:"Romantic 🌹",bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)",intro:"Feel the romance 💕",emojis:["🌹","✨","💞"],questions:["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"]},
+    {title:"Hot 🔥",bg:"linear-gradient(135deg,#ffd6e0,#ff9ecf)",intro:"Things heat up 😏",emojis:["🔥","💋","🧡"],questions:["Hot Q1","Hot Q2","Hot Q3","Hot Q4"]},
+    {title:"Spicy 🌶️",bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)",intro:"Secret zone 😈",passcode:"1234",hint:"Something obvious ❤️",wrongMessage:"Nope 😜 Try again",emojis:["🌶️","🍓","🍑"],questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"]}
   ],
   finalMessage:"You made it ❤️",
-  imageLink:"https://drive.google.com/"
+  imageEmbed:"https://drive.google.com/uc?export=view&id=PASTE_IMAGE_ID_HERE",
+  noClickMessages:["Oops 😜","Wrong heart 💘","Try YES 😏"]
 };
-
-const POPUPS=[
-  "Nice try 😏",
-  "That NO button is shy 🙈",
-  "Heart already said YES ❤️",
-  "Stop teasing 😜"
-];
 /***** ✏️ END EDIT SECTION *****/
 
 let section=0,question=0,history=[];
 const screen=document.getElementById("screen");
 const backBtn=document.getElementById("backBtn");
-const noBtn=document.createElement("button");
-noBtn.className="secondary";
-noBtn.textContent="NO 😅";
-const yesBtn=document.createElement("button");
-yesBtn.className="primary";
-yesBtn.textContent="YES 💖";
+const noBtn=document.createElement("button");noBtn.className="secondary";noBtn.textContent="NO 😅";
+const yesBtn=document.createElement("button");yesBtn.className="primary";yesBtn.textContent="YES 💖";
 
-function renderIntro(){
-  save();
-  backBtn.classList.toggle("hidden",history.length===0);
-  screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="renderQuestion()">Continue</button>`;
-}
+function toggleDark(){document.body.classList.toggle("dark")}
+function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section].bg}
 
-function renderQuestion(){
-  save();
-  backBtn.classList.remove("hidden");
-  screen.innerHTML=`<h1>${SITE.sections[section].questions[question]}</h1><div class="buttons"></div>`;
-  const box=screen.querySelector(".buttons");
-  box.append(yesBtn,noBtn);
-  positionNo();
-}
+function renderIntro(){history=[];backBtn.classList.add("hidden");setBG();screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="renderQuestion()">Continue</button>`}
 
-function renderPassword(){
-  save();
-  const s=SITE.sections[section];
-  screen.innerHTML=`
-  <h1>🔐 Enter Password</h1>
-  <p>${s.hint}</p>
-  <input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc">
-  <p id="err" style="color:#ff4d6d"></p>
-  <button class="primary" onclick="checkPw()">Unlock</button>`;
-}
+function renderQuestion(){save();backBtn.classList.remove("hidden");setBG();screen.innerHTML=`<h1>${SITE.sections[section].questions[question]}</h1><div class="buttons"></div>`;const box=screen.querySelector('.buttons');box.append(yesBtn,noBtn);positionNo()}
 
-function renderFinal(){
-  backBtn.classList.remove("hidden");
-  screen.innerHTML=`<h1>${SITE.finalMessage}</h1><a href="${SITE.imageLink}" target="_blank">📸 View Memories</a>`;
-}
+function renderPassword(){save();setBG();const s=SITE.sections[section];screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p><input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc"><p id="err" style="color:#ff4d6d"></p><button class="primary" onclick="checkPw()">Unlock</button>`}
 
-function checkPw(){
-  const v=document.getElementById("pw").value;
-  if(v!==SITE.sections[section].passcode){
-    document.getElementById("err").textContent=SITE.sections[section].wrongMessage;
-    return;
-  }
-  question=0;
-  renderQuestion();
-}
+function renderFinal(){backBtn.classList.remove("hidden");screen.innerHTML=`<h1>${SITE.finalMessage}</h1><img class="final-img" src="${SITE.imageEmbed}">`;navigator.vibrate([500,200,500,200,500,200,500,200,500])}
 
-yesBtn.onclick=()=>{
-  question++;
-  if(question<4){renderQuestion();return;}
-  section++;
-  question=0;
-  if(section>=SITE.sections.length){renderFinal();return;}
-  if(SITE.sections[section].passcode) renderPassword();
-  else renderIntro();
-};
+function checkPw(){const v=document.getElementById('pw').value;if(v!==SITE.sections[section].passcode){document.getElementById('err').textContent=SITE.sections[section].wrongMessage;return}question=0;renderQuestion()}
 
-noBtn.onclick=()=>positionNo();
+yesBtn.onclick=()=>{question++;if(question<4){renderQuestion();return}section++;question=0;if(section>=SITE.sections.length){renderFinal();return}SITE.sections[section].passcode?renderPassword():renderIntro()}
 
-function positionNo(){
-  const box=noBtn.parentElement;
-  if(!box)return;
-  const y=yesBtn.getBoundingClientRect();
-  let x,yPos;
-  do{
-    x=Math.random()*(box.clientWidth-100);
-    yPos=Math.random()*(box.clientHeight-40);
-  }while(Math.abs(x-y.left)<60);
-  noBtn.style.left=x+"px";
-  noBtn.style.top=yPos+"px";
-}
+noBtn.onclick=()=>{navigator.vibrate(120);toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);positionNo()}
 
-function save(){history.push({section,question,html:screen.innerHTML});}
-backBtn.onclick=()=>{
-  const last=history.pop();
-  if(!last)return;
-  section=last.section;question=last.question;
-  screen.innerHTML=last.html;
-  backBtn.classList.toggle("hidden",history.length===0);
-};
+function positionNo(){const box=noBtn.parentElement;if(!box)return;noBtn.style.left=Math.random()*(box.clientWidth-90)+"px";noBtn.style.top=Math.random()*(box.clientHeight-40)+"px"}
 
-setInterval(()=>{
-  const p=document.createElement("div");
-  p.className="popup";
-  p.textContent=POPUPS[Math.floor(Math.random()*POPUPS.length)];
-  document.body.appendChild(p);
-  setTimeout(()=>p.remove(),2000);
-},5000);
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1500)}
 
-setInterval(()=>{
-  const e=document.createElement("div");
-  e.className="float";
-  e.textContent=SITE.sections[section]?.emojis[Math.floor(Math.random()*3)]||"💖";
-  e.style.left=Math.random()*100+"%";
-  e.style.animationDuration=5+Math.random()*4+"s";
-  document.body.appendChild(e);
-  setTimeout(()=>e.remove(),9000);
-},700);
+function save(){history.push({section,question,html:screen.innerHTML})}
+backBtn.onclick=()=>{if(!history.length)return;const last=history.pop();section=last.section;question=last.question;screen.innerHTML=last.html;backBtn.classList.toggle('hidden',history.length===0)}
+
+setInterval(()=>{const p=document.createElement('div');p.className='popup';p.textContent=["Cute 😍","Still thinking? 😏","Heart says YES ❤️"][Math.floor(Math.random()*3)];document.body.appendChild(p);setTimeout(()=>p.remove(),1800)},5000)
+
+setInterval(()=>{const e=document.createElement('div');e.className='float';e.textContent=SITE.sections[section].emojis[Math.floor(Math.random()*SITE.sections[section].emojis.length)];e.style.left=Math.random()*100+'%';e.style.animationDuration=5+Math.random()*4+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),9000)},700)
 
 renderIntro();
-</script>
-
-</body>
+</script></body>
 </html>
