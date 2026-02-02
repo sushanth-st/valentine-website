@@ -134,7 +134,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
  * 🔧 EDITABLE CONTENT SECTION (SAFE TO EDIT)
  **************************************************/
 const SITE = {
-  intro: { title: "Hey You beautiful 🫰💖", message: "Before we begin, I have something fun planned for you 😉" },
+  intro: { title: "Hey You beautiful 💖", message: "Before we begin, I have something fun planned for you 😉" },
 
   sections: [
     { title:"Funny 😄", bg:"linear-gradient(135deg,#ffe4f2,#fff)", intro:"Let’s start easy 😜", questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"], yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio.mp3", noAudio:"Audio/ydaudio.mp3" },
@@ -202,7 +202,7 @@ function renderFinal(){
     <h1>${SITE.finalMessage}</h1>
     <div class="final-scroll" id="scrollBox">${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}</div>
     <p style="margin-top:16px">Liked the surprise so far? 💖</p>
-    <button class="primary" onclick="openSecret()">View Secret Message 💌</button>
+    <button class="primary" onclick="startCountdown()">View Secret Message 💌</button>
   `;
   playEffect(SITE.finalYesImage,SITE.finalYesAudio);
 
@@ -220,9 +220,21 @@ function renderFinal(){
   },40);
 }
 
-function openSecret(){
-  save();mode="secret";render();
+// 🔥 NEW: Countdown before secret
+function startCountdown(){
+  let count=3;
+  screen.innerHTML=`<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
+  const countdownInterval=setInterval(()=>{
+    count--;
+    if(count>0) screen.querySelector('p').textContent=count;
+    else{
+      clearInterval(countdownInterval);
+      openSecret();
+    }
+  },1000);
 }
+
+function openSecret(){save();mode="secret";render()}
 
 function renderSecret(){screen.innerHTML=`<h1>💖 Secret</h1><p>Just for you 😘</p>`}
 
