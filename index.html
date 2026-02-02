@@ -80,7 +80,32 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
 
 .toast{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#ff5fa2;color:#fff;padding:10px 18px;border-radius:20px;font-size:.9rem;z-index:30}
 
-img.final-img{width:100%;border-radius:16px;margin-top:14px}
+/* rolling gallery */
+.rolling-gallery{
+  margin-top:18px;
+  overflow:hidden;
+  width:100%;
+}
+
+.rolling-track{
+  display:flex;
+  gap:14px;
+  animation:scrollGallery 20s linear infinite;
+}
+
+.rolling-track img{
+  width:140px;
+  height:180px;
+  object-fit:cover;
+  border-radius:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  flex-shrink:0;
+}
+
+@keyframes scrollGallery{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
 </style>
 </head>
 
@@ -102,14 +127,19 @@ const SITE={
     {title:"Spicy 🌶️",bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)",intro:"Secret zone 😈",passcode:"1234",hint:"Something obvious ❤️",wrongMessage:"Nope 😜 Try again",emojis:["🌶️","🍓","🍑"],questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"]}
   ],
   finalMessage:"You made it ❤️",
-  imageEmbed:"https://drive.google.com/uc?export=view&id=1GFZ1f9WJdEm9TiRmduNXSS6ExytU3BrP",
+  finalImages:[
+    "images/img1.jpg",
+    "images/img2.jpg",
+    "images/img3.jpg",
+    "images/img4.jpg",
+    "images/img5.jpg"
+  ],
   noClickMessages:["Oops 😜","Wrong heart 💘","Try YES 😏"]
 };
 /***** ✏️ END EDIT SECTION *****/
 
 let section=0, question=0, mode="intro";
 const history=[];
-
 const screen=document.getElementById('screen');
 const backBtn=document.getElementById('backBtn');
 
@@ -144,7 +174,6 @@ function goBack(){
   render();
   if(!history.length) backBtn.classList.add('hidden');
 }
-
 backBtn.onclick = goBack;
 
 /* ---------- RENDER ---------- */
@@ -201,9 +230,14 @@ function renderPassword(saveState=true){
 
 function renderFinal(){
   mode="final";
+  const imgs = SITE.finalImages.concat(SITE.finalImages);
   screen.innerHTML=`
     <h1>${SITE.finalMessage}</h1>
-    <img class="final-img" src="${SITE.imageEmbed}">
+    <div class="rolling-gallery">
+      <div class="rolling-track">
+        ${imgs.map(i=>`<img src="${i}">`).join("")}
+      </div>
+    </div>
   `;
   navigator.vibrate([300,200,300,200,300]);
 }
@@ -214,20 +248,11 @@ function bindButtons(){
     navigator.vibrate(80);
     save();
     question++;
-    if(question < 4){
-      renderQuestion(false);
-      return;
-    }
+    if(question < 4){ renderQuestion(false); return; }
     section++;
     question=0;
-    if(section >= SITE.sections.length){
-      mode="final";
-      renderFinal();
-      return;
-    }
-    SITE.sections[section].passcode
-      ? renderPassword(false)
-      : renderIntro(false);
+    if(section >= SITE.sections.length){ renderFinal(); return; }
+    SITE.sections[section].passcode ? renderPassword(false) : renderIntro(false);
   };
 
   noBtn.onclick=()=>{
