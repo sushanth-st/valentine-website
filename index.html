@@ -1,3 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<!-- ✅ CACHE BUSTING -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>💖 Just One Question</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+
+body{
+  margin:0;
+  font-family:Poppins,sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition:background 0.6s ease;
+}
+
+body.dark{background:linear-gradient(135deg,#16001a,#2b0036)!important}
+
+.app{
+  width:100%;
+  max-width:420px;
+  height:100%;
+  padding:16px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+}
+
+.card{
+  width:100%;
+  background:#fff;
+  border-radius:22px;
+  padding:26px 22px;
+  box-shadow:0 14px 40px rgba(0,0,0,.15);
+  text-align:center;
+}
+
+body.dark .card{background:#2a0033;color:#fff}
+body.dark p{color:#ddd}
+
+h1{font-family:'Playfair Display',serif;font-size:1.9rem;margin:0 0 14px}
+p{margin:0 0 14px;color:#555}
+
+button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;cursor:pointer}
+.primary{background:#ff5fa2;color:#fff}
+.secondary{background:#ddd}
+
+.buttons{margin-top:18px;height:140px;position:relative}
+
+#yesBtn{position:absolute;left:50%;top:50%;transform:translate(-120%,-50%)}
+#noBtn{position:absolute;left:50%;top:50%;transform:translate(20%,-50%)}
+
+.back,.toggle{
+  position:absolute;
+  top:12px;
+  padding:8px 14px;
+  font-size:.85rem;
+  background:#eee;
+}
+.back{left:12px}
+.toggle{right:12px}
+.hidden{display:none}
+
+.toast{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  background:#ff5fa2;color:#fff;padding:10px 18px;border-radius:20px;
+  font-size:.9rem;z-index:30
+}
+
+/* IMAGE POPUP */
+.popup-img{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  max-width:80%;
+  border-radius:18px;
+  box-shadow:0 18px 40px rgba(0,0,0,.3);
+  opacity:0;
+  animation:fadeImg 3s forwards;
+  z-index:50;
+}
+
+@keyframes fadeImg{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.9)}
+  15%{opacity:1}
+  85%{opacity:1}
+  100%{opacity:0}
+}
+
+/* FINAL IMAGE SCROLL */
+.final-scroll{
+  max-height:55vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.final-scroll img{
+  width:100%;
+  border-radius:16px;
+  margin-top:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+  <button class="back hidden" id="backBtn">⬅ Back</button>
+  <button class="toggle" onclick="toggleDark()">🌙</button>
+  <div class="card" id="screen"></div>
+</div>
+
 <script>
 const SITE={
   intro:{
@@ -54,10 +180,11 @@ const SITE={
     "Images/image5.jpg"
   ],
   finalYesImage:"Images/final-yes.jpg",
-  finalYesAudio:"Audio/final-yes.mp3"
+  finalYesAudio:"Audio/final-yes.mp3",
+  noClickMessages:["Oops 😜","Wrong heart 💘","Try YES 😏"]
 };
 
-let section=0,question=0,mode="start";
+let section=0,question=0,mode="start",autoScrollTimer=null;
 const history=[];
 const screen=document.getElementById('screen');
 const backBtn=document.getElementById('backBtn');
@@ -69,14 +196,10 @@ const noBtn=document.createElement('button');
 noBtn.id='noBtn'; noBtn.className='secondary'; noBtn.textContent='NO 😅';
 
 function toggleDark(){document.body.classList.toggle('dark')}
-function setBG(){
-  if(!document.body.classList.contains('dark')){
-    document.body.style.background=SITE.sections[section]?.bg||"#fff";
-  }
-}
+function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section]?.bg||"#fff"}
 
 function playEffect(img,audio){
-  if(audio) new Audio(audio).play().catch(()=>{});
+  if(audio)new Audio(audio).play().catch(()=>{});
   if(img){
     const i=document.createElement('img');
     i.src=img;i.className='popup-img';
@@ -85,27 +208,23 @@ function playEffect(img,audio){
   }
 }
 
-function save(){
-  history.push({section,question,mode});
-  backBtn.classList.remove('hidden');
-}
-
+function save(){history.push({section,question,mode});backBtn.classList.remove('hidden')}
 backBtn.onclick=()=>{
-  if(!history.length) return;
+  if(!history.length)return;
   const h=history.pop();
   section=h.section;question=h.question;mode=h.mode;
   render();
-  if(!history.length) backBtn.classList.add('hidden');
+  if(!history.length)backBtn.classList.add('hidden');
 };
 
 function render(){
   setBG();
-  if(mode==="start") renderStart();
-  else if(mode==="intro") renderIntro();
-  else if(mode==="question") renderQuestion();
-  else if(mode==="password") renderPassword();
-  else if(mode==="finalGallery") renderFinalGallery();
-  else if(mode==="secret") renderSecret();
+  if(mode==="start")renderStart();
+  else if(mode==="intro")renderIntro();
+  else if(mode==="question")renderQuestion();
+  else if(mode==="password")renderPassword();
+  else if(mode==="final")renderFinal();
+  else if(mode==="secret")renderSecret();
 }
 
 function renderStart(){
@@ -119,63 +238,56 @@ function renderStart(){
 function begin(){save();mode="intro";render()}
 
 function renderIntro(){
-  screen.innerHTML=`
-    <h1>${SITE.sections[section].title}</h1>
-    <p>${SITE.sections[section].intro}</p>
-    <button class="primary" onclick="startQuestions()">Continue</button>
-  `;
+  screen.innerHTML=`<h1>${SITE.sections[section].title}</h1>
+  <p>${SITE.sections[section].intro}</p>
+  <button class="primary" onclick="startQuestions()">Continue</button>`;
 }
 
-function startQuestions(){
-  save();
-  question=0;
-  mode="question";
-  render();
-}
+function startQuestions(){save();question=0;mode="question";render()}
 
 function renderQuestion(){
-  screen.innerHTML=`
-    <h1>${SITE.sections[section].questions[question]}</h1>
-    <div class="buttons"></div>
-  `;
+  screen.innerHTML=`<h1>${SITE.sections[section].questions[question]}</h1>
+  <div class="buttons"></div>`;
   const box=screen.querySelector('.buttons');
   box.append(yesBtn,noBtn);
-  resetButtons();
   bindButtons();
 }
 
 function renderPassword(){
   const s=SITE.sections[section];
-  screen.innerHTML=`
-    <h1>🔐 Enter Password</h1>
-    <p>${s.hint}</p>
-    <input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc">
-    <p id="err" style="color:#ff4d6d"></p>
-    <button class="primary" onclick="checkPw()">Unlock</button>
-  `;
+  screen.innerHTML=`<h1>🔐 Enter Password</h1>
+  <p>${s.hint}</p>
+  <input id="pw" style="width:100%;padding:12px;border-radius:10px">
+  <p id="err" style="color:#ff4d6d"></p>
+  <button class="primary" onclick="checkPw()">Unlock</button>`;
 }
 
-function renderFinalGallery(){
+function renderFinal(){
+  mode="final";
   screen.innerHTML=`
     <h1>${SITE.finalMessage}</h1>
+
     <div class="final-scroll" id="scrollBox">
       ${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}
     </div>
-    <button class="primary" style="margin-top:20px" onclick="openSecret()">
-      View Secret Message 💌
-    </button>
+
+    <p style="margin-top:16px">Liked the surprise so far? 💖</p>
+    <button class="primary" onclick="openSecret()">View Secret Message 💌</button>
   `;
+
   playEffect(SITE.finalYesImage,SITE.finalYesAudio);
 
   const box=document.getElementById('scrollBox');
   let pause=false;
+
   box.addEventListener('touchstart',()=>pause=true);
   box.addEventListener('touchend',()=>pause=false);
 
-  setInterval(()=>{
+  clearInterval(autoScrollTimer);
+  autoScrollTimer=setInterval(()=>{
     if(!pause){
       box.scrollTop+=1;
-      if(box.scrollTop+box.clientHeight>=box.scrollHeight) box.scrollTop=0;
+      if(box.scrollTop+box.clientHeight>=box.scrollHeight)box.scrollTop=0;
     }
   },40);
 }
@@ -187,19 +299,21 @@ function openSecret(){
 }
 
 function renderSecret(){
-  let time=10;
+  let t=10;
   screen.innerHTML=`
-    <h1>💣 Secret Unlocking...</h1>
-    <p id="count">${time}</p>
+    <h1>⏳ Unlocking…</h1>
+    <p style="font-size:2rem" id="timer">${t}</p>
   `;
-  const t=setInterval(()=>{
-    time--;
-    document.getElementById('count').textContent=time;
-    if(time===0){
-      clearInterval(t);
+
+  const timer=setInterval(()=>{
+    t--;
+    document.getElementById("timer").textContent=t;
+    if(t<=0){
+      clearInterval(timer);
       screen.innerHTML=`
         <h1>💥 BOOM 💥</h1>
-        <p>I knew you’d love this 😘</p>
+        <p>You trusted me till the end 😘</p>
+        <p>This secret was just for you ❤️</p>
       `;
     }
   },1000);
@@ -209,49 +323,37 @@ function bindButtons(){
   yesBtn.onclick=()=>{
     const s=SITE.sections[section];
     playEffect(s.yesImage,s.yesAudio);
-    save();
-    question++;
-    if(question < s.questions.length){
-      render(); return;
-    }
-    section++;
-    question=0;
-    if(section >= SITE.sections.length){
-      mode="finalGallery";
-      render(); return;
-    }
-    SITE.sections[section].passcode ? mode="password" : mode="intro";
-    render();
+    save();question++;
+    if(question<4){render();return;}
+    section++;question=0;
+    if(section>=SITE.sections.length){mode="final";render();return;}
+    SITE.sections[section].passcode?renderPassword():renderIntro();
   };
 
   noBtn.onclick=()=>{
     const s=SITE.sections[section];
-    if(s.noAudio) new Audio(s.noAudio).play().catch(()=>{});
-    moveNo();
+    if(s.noAudio)new Audio(s.noAudio).play().catch(()=>{});
+    toast(SITE.noClickMessages[Math.random()*SITE.noClickMessages.length|0]);
   };
 }
 
 function checkPw(){
-  if(document.getElementById('pw').value !== SITE.sections[section].passcode){
+  if(document.getElementById('pw').value!==SITE.sections[section].passcode){
     document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
     return;
   }
-  save();
-  mode="question";
-  render();
+  save();question=0;render();
 }
 
-function resetButtons(){
-  yesBtn.style.transform='translate(-120%,-50%)';
-  noBtn.style.transform='translate(20%,-50%)';
-}
-
-function moveNo(){
-  const b=noBtn.parentElement;
-  const r=60+Math.random()*40,a=Math.random()*Math.PI*2;
-  noBtn.style.left=(b.clientWidth/2+r*Math.cos(a))+'px';
-  noBtn.style.top=(b.clientHeight/2+r*Math.sin(a))+'px';
+function toast(m){
+  const t=document.createElement('div');
+  t.className='toast';t.textContent=m;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
 }
 
 render();
 </script>
+
+</body>
+</html>
