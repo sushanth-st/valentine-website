@@ -107,7 +107,9 @@ const SITE={
 };
 /***** ✏️ END EDIT SECTION *****/
 
-let section=0,question=0,history=[];
+let section=0, question=0, mode="intro";
+const history=[];
+
 const screen=document.getElementById('screen');
 const backBtn=document.getElementById('backBtn');
 
@@ -122,25 +124,58 @@ noBtn.className='secondary';
 noBtn.textContent='NO 😅';
 
 function toggleDark(){document.body.classList.toggle('dark')}
-function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section].bg}
+function setBG(){
+  if(!document.body.classList.contains('dark'))
+    document.body.style.background=SITE.sections[section]?.bg || "#fff";
+}
 
-/* 🔹 SECTION INTRO (reset history here) */
-function renderIntro(){
-  history=[];                 // ✅ stop back beyond section
-  backBtn.classList.add('hidden');
+/* ---------- HISTORY ---------- */
+function save(){
+  history.push({ section, question, mode });
+  backBtn.classList.remove('hidden');
+}
+
+function goBack(){
+  if(!history.length) return;
+  const last = history.pop();
+  section = last.section;
+  question = last.question;
+  mode = last.mode;
+  render();
+  if(!history.length) backBtn.classList.add('hidden');
+}
+
+backBtn.onclick = goBack;
+
+/* ---------- RENDER ---------- */
+function render(){
   setBG();
+  if(mode==="intro") renderIntro(false);
+  else if(mode==="question") renderQuestion(false);
+  else if(mode==="password") renderPassword(false);
+  else if(mode==="final") renderFinal();
+}
+
+function renderIntro(saveState=true){
+  if(saveState) save();
+  mode="intro";
   screen.innerHTML=`
     <h1>${SITE.sections[section].title}</h1>
     <p>${SITE.sections[section].intro}</p>
-    <button class="primary" onclick="renderQuestion()">Continue</button>
+    <button class="primary" onclick="startQuestions()">Continue</button>
   `;
 }
 
-/* 🔹 QUESTION */
-function renderQuestion(){
+function startQuestions(){
   save();
-  backBtn.classList.remove('hidden');
-  setBG();
+  question=0;
+  mode="question";
+  renderQuestion(false);
+}
+
+function renderQuestion(saveState=true){
+  if(saveState) save();
+  mode="question";
   screen.innerHTML=`
     <h1>${SITE.sections[section].questions[question]}</h1>
     <div class="buttons"></div>
@@ -148,13 +183,12 @@ function renderQuestion(){
   const box=screen.querySelector('.buttons');
   box.append(yesBtn,noBtn);
   resetButtons();
-  bindButtons();   // ✅ rebind every time
+  bindButtons();
 }
 
-/* 🔹 PASSWORD */
-function renderPassword(){
-  save();
-  setBG();
+function renderPassword(saveState=true){
+  if(saveState) save();
+  mode="password";
   const s=SITE.sections[section];
   screen.innerHTML=`
     <h1>🔐 Enter Password</h1>
@@ -165,37 +199,35 @@ function renderPassword(){
   `;
 }
 
-/* 🔹 FINAL */
 function renderFinal(){
-  backBtn.classList.remove('hidden');
+  mode="final";
   screen.innerHTML=`
     <h1>${SITE.finalMessage}</h1>
     <img class="final-img" src="${SITE.imageEmbed}">
   `;
-  navigator.vibrate([300,200,300,200,300,200]);
+  navigator.vibrate([300,200,300,200,300]);
 }
 
-function checkPw(){
-  const v=document.getElementById('pw').value;
-  if(v!==SITE.sections[section].passcode){
-    document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
-    navigator.vibrate(200);
-    return;
-  }
-  question=0;
-  renderQuestion();
-}
-
-/* 🔹 BUTTON LOGIC (centralized) */
+/* ---------- LOGIC ---------- */
 function bindButtons(){
   yesBtn.onclick=()=>{
     navigator.vibrate(80);
+    save();
     question++;
-    if(question<4){ renderQuestion(); return; }
+    if(question < 4){
+      renderQuestion(false);
+      return;
+    }
     section++;
     question=0;
-    if(section>=SITE.sections.length){ renderFinal(); return; }
-    SITE.sections[section].passcode ? renderPassword() : renderIntro();
+    if(section >= SITE.sections.length){
+      mode="final";
+      renderFinal();
+      return;
+    }
+    SITE.sections[section].passcode
+      ? renderPassword(false)
+      : renderIntro(false);
   };
 
   noBtn.onclick=()=>{
@@ -205,7 +237,19 @@ function bindButtons(){
   };
 }
 
-/* 🔹 HELPERS */
+function checkPw(){
+  const v=document.getElementById('pw').value;
+  if(v!==SITE.sections[section].passcode){
+    document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
+    navigator.vibrate(200);
+    return;
+  }
+  save();
+  question=0;
+  renderQuestion(false);
+}
+
+/* ---------- UI HELPERS ---------- */
 function resetButtons(){
   yesBtn.style.left='50%';
   yesBtn.style.top='50%';
@@ -218,12 +262,10 @@ function resetButtons(){
 function moveNo(){
   const box=noBtn.parentElement;
   if(!box) return;
-  const radius=60+Math.random()*40;
-  const angle=Math.random()*Math.PI*2;
-  const cx=box.clientWidth/2;
-  const cy=box.clientHeight/2;
-  noBtn.style.left=(cx+radius*Math.cos(angle))+'px';
-  noBtn.style.top=(cy+radius*Math.sin(angle))+'px';
+  const r=60+Math.random()*40;
+  const a=Math.random()*Math.PI*2;
+  noBtn.style.left=(box.clientWidth/2+r*Math.cos(a))+'px';
+  noBtn.style.top=(box.clientHeight/2+r*Math.sin(a))+'px';
   noBtn.style.transform='translate(-50%,-50%)';
 }
 
@@ -235,25 +277,9 @@ function toast(msg){
   setTimeout(()=>t.remove(),2000);
 }
 
-function save(){
-  history.push({section,question});
-}
-
-/* 🔹 BACK (section-scoped) */
-backBtn.onclick=()=>{
-  if(!history.length){
-    renderIntro();
-    return;
-  }
-  const last=history.pop();
-  section=last.section;
-  question=last.question;
-  renderQuestion();
-};
-
-/* POPUPS */
+/* ---------- POPUPS & EMOJIS ---------- */
 let popupBusy=false;
-function popupLoop(){
+setInterval(()=>{
   if(popupBusy) return;
   popupBusy=true;
   const p=document.createElement('div');
@@ -261,10 +287,8 @@ function popupLoop(){
   p.textContent=["Cute 😍","Still thinking? 😏","Heart says YES ❤️"][Math.floor(Math.random()*3)];
   document.body.appendChild(p);
   setTimeout(()=>{p.remove();popupBusy=false},3000);
-}
-setInterval(popupLoop,6000);
+},6000);
 
-/* FLOATING EMOJIS */
 setInterval(()=>{
   const e=document.createElement('div');
   e.className='float';
@@ -275,7 +299,8 @@ setInterval(()=>{
   setTimeout(()=>e.remove(),9000);
 },800);
 
-renderIntro();
+/* ---------- START ---------- */
+renderIntro(false);
 </script>
 
 </body>
