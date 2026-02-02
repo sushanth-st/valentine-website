@@ -74,19 +74,31 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
 .toggle{right:12px}
 .hidden{display:none}
 
-.float{position:absolute;bottom:-40px;animation:floatUp linear forwards;pointer-events:none}
-@keyframes floatUp{to{transform:translateY(-120vh);opacity:0}}
-
-.popup{
-  position:absolute;top:20%;left:50%;transform:translateX(-50%);
-  background:#fff;padding:12px 18px;border-radius:16px;
-  box-shadow:0 10px 25px rgba(0,0,0,.15);z-index:20;font-size:.9rem
-}
-
 .toast{
   position:absolute;top:12px;left:50%;transform:translateX(-50%);
   background:#ff5fa2;color:#fff;padding:10px 18px;border-radius:20px;
   font-size:.9rem;z-index:30
+}
+
+/* IMAGE POPUP */
+.popup-img{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  max-width:80%;
+  border-radius:18px;
+  box-shadow:0 18px 40px rgba(0,0,0,.3);
+  opacity:0;
+  animation:fadeImg 3s forwards;
+  z-index:50;
+}
+
+@keyframes fadeImg{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.9)}
+  15%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  85%{opacity:1}
+  100%{opacity:0}
 }
 
 /* FINAL IMAGE SCROLL */
@@ -115,10 +127,49 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
 <script>
 const SITE={
   sections:[
-    {title:"Funny 😄",bg:"linear-gradient(135deg,#ffe4f2,#fff)",intro:"Let’s start easy 😜",emojis:["😂","😄","💖"],questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"]},
-    {title:"Romantic 🌹",bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)",intro:"Feel the romance 💕",emojis:["🌹","✨","💞"],questions:["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"]},
-    {title:"Hot 🔥",bg:"linear-gradient(135deg,#ffd6e0,#ff9ecf)",intro:"Things heat up 😏",emojis:["🔥","💋","🧡"],questions:["Hot Q1","Hot Q2","Hot Q3","Hot Q4"]},
-    {title:"Spicy 🌶️",bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)",intro:"Secret zone 😈",passcode:"1234",hint:"Something obvious ❤️",wrongMessage:"Nope 😜 Try again",emojis:["🌶️","🍓","🍑"],questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"]}
+    {
+      title:"Funny 😄",
+      bg:"linear-gradient(135deg,#ffe4f2,#fff)",
+      intro:"Let’s start easy 😜",
+      questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"],
+      yesImage:"Images/funny-yes.jpg",
+      yesAudio:"Audio/funny-yes.mp3",
+      noImage:"Images/funny-no.jpg",
+      noAudio:"Audio/funny-no.mp3"
+    },
+    {
+      title:"Romantic 🌹",
+      bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)",
+      intro:"Feel the romance 💕",
+      questions:["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"],
+      yesImage:"Images/romantic-yes.jpg",
+      yesAudio:"Audio/romantic-yes.mp3",
+      noImage:"Images/romantic-no.jpg",
+      noAudio:"Audio/romantic-no.mp3"
+    },
+    {
+      title:"Hot 🔥",
+      bg:"linear-gradient(135deg,#ffd6e0,#ff9ecf)",
+      intro:"Things heat up 😏",
+      questions:["Hot Q1","Hot Q2","Hot Q3","Hot Q4"],
+      yesImage:"Images/hot-yes.jpg",
+      yesAudio:"Audio/hot-yes.mp3",
+      noImage:"Images/hot-no.jpg",
+      noAudio:"Audio/hot-no.mp3"
+    },
+    {
+      title:"Spicy 🌶️",
+      bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)",
+      intro:"Secret zone 😈",
+      passcode:"1234",
+      hint:"Something obvious ❤️",
+      wrongMessage:"Nope 😜 Try again",
+      questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"],
+      yesImage:"Images/spicy-yes.jpg",
+      yesAudio:"Audio/spicy-yes.mp3",
+      noImage:"Images/spicy-no.jpg",
+      noAudio:"Audio/spicy-no.mp3"
+    }
   ],
   finalMessage:"You made it ❤️",
   finalImages:[
@@ -128,51 +179,50 @@ const SITE={
     "Images/image4.jpg",
     "Images/image5.jpg"
   ],
+  finalYesImage:"Images/final-yes.jpg",
+  finalYesAudio:"Audio/final-yes.mp3",
   noClickMessages:["Oops 😜","Wrong heart 💘","Try YES 😏"]
 };
 
-let section=0, question=0, mode="intro", autoScrollTimer=null;
+let section=0,question=0,mode="intro",autoScrollTimer=null;
 const history=[];
 const screen=document.getElementById('screen');
 const backBtn=document.getElementById('backBtn');
 
 const yesBtn=document.createElement('button');
-yesBtn.id='yesBtn';
-yesBtn.className='primary';
-yesBtn.textContent='YES 💖';
+yesBtn.id='yesBtn'; yesBtn.className='primary'; yesBtn.textContent='YES 💖';
 
 const noBtn=document.createElement('button');
-noBtn.id='noBtn';
-noBtn.className='secondary';
-noBtn.textContent='NO 😅';
+noBtn.id='noBtn'; noBtn.className='secondary'; noBtn.textContent='NO 😅';
 
 function toggleDark(){document.body.classList.toggle('dark')}
+function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section]?.bg||"#fff"}
 
-function setBG(){
-  if(!document.body.classList.contains('dark')){
-    document.body.style.background = SITE.sections[section]?.bg || "#fff";
+function playEffect(img, audio){
+  if(audio){ new Audio(audio).play().catch(()=>{}); }
+  if(img){
+    const i=document.createElement('img');
+    i.src=img;
+    i.className='popup-img';
+    document.body.appendChild(i);
+    setTimeout(()=>i.remove(),3000);
   }
 }
 
-/* HISTORY */
-function save(){
-  history.push({section,question,mode});
-  backBtn.classList.remove('hidden');
-}
+function save(){history.push({section,question,mode});backBtn.classList.remove('hidden')}
 backBtn.onclick=()=>{
-  if(!history.length) return;
+  if(!history.length)return;
   const h=history.pop();
   section=h.section;question=h.question;mode=h.mode;
   render();
-  if(!history.length) backBtn.classList.add('hidden');
+  if(!history.length)backBtn.classList.add('hidden');
 };
 
-/* RENDER */
 function render(){
   setBG();
-  if(mode==="intro") renderIntro(false);
-  else if(mode==="question") renderQuestion(false);
-  else if(mode==="password") renderPassword(false);
+  if(mode==="intro")renderIntro();
+  else if(mode==="question")renderQuestion();
+  else if(mode==="password")renderPassword();
   else renderFinal();
 }
 
@@ -180,9 +230,7 @@ function renderIntro(){
   screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="startQuestions()">Continue</button>`;
 }
 
-function startQuestions(){
-  save(); question=0; mode="question"; render();
-}
+function startQuestions(){save();question=0;mode="question";render()}
 
 function renderQuestion(){
   screen.innerHTML=`<h1>${SITE.sections[section].questions[question]}</h1><div class="buttons"></div>`;
@@ -194,47 +242,49 @@ function renderQuestion(){
 
 function renderPassword(){
   const s=SITE.sections[section];
-  screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p><input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc"><p id="err" style="color:#ff4d6d"></p><button class="primary" onclick="checkPw()">Unlock</button>`;
+  screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p>
+  <input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc">
+  <p id="err" style="color:#ff4d6d"></p>
+  <button class="primary" onclick="checkPw()">Unlock</button>`;
 }
 
 function renderFinal(){
   mode="final";
-  screen.innerHTML=`<h1>${SITE.finalMessage}</h1><div class="final-scroll" id="scrollBox">${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}</div>`;
+  screen.innerHTML=`<h1>${SITE.finalMessage}</h1>
+  <div class="final-scroll" id="scrollBox">
+    ${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}
+  </div>`;
+
+  playEffect(SITE.finalYesImage, SITE.finalYesAudio);
 
   const box=document.getElementById('scrollBox');
   let pause=false;
-
   box.addEventListener('touchstart',()=>pause=true);
   box.addEventListener('touchend',()=>pause=false);
 
   autoScrollTimer=setInterval(()=>{
     if(!pause){
-      box.scrollTop += 1;
-      if(box.scrollTop + box.clientHeight >= box.scrollHeight){
-        box.scrollTop = 0;
-      }
+      box.scrollTop+=1;
+      if(box.scrollTop+box.clientHeight>=box.scrollHeight)box.scrollTop=0;
     }
   },40);
+}
 
-  // Final YES button vibration (user interaction required)
+function bindButtons(){
   yesBtn.onclick=()=>{
-    navigator.vibrate(5000); // ✅ 5 seconds vibration
-    save();
-    question++;
+    const s=SITE.sections[section];
+    playEffect(s.yesImage,s.yesAudio);
+    save(); question++;
     if(question<4){render();return;}
     section++;question=0;
     if(section>=SITE.sections.length){renderFinal();return;}
     SITE.sections[section].passcode?renderPassword():renderIntro();
-    setBG();
   };
-}
 
-/* LOGIC */
-function bindButtons(){
-  // No button vibration
   noBtn.onclick=()=>{
-    if(navigator.vibrate) navigator.vibrate([300,150,300]);
-    toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);
+    const s=SITE.sections[section];
+    playEffect(s.noImage,s.noAudio);
+    toast(SITE.noClickMessages[Math.random()*SITE.noClickMessages.length|0]);
     moveNo();
   };
 }
@@ -242,15 +292,14 @@ function bindButtons(){
 function checkPw(){
   if(document.getElementById('pw').value!==SITE.sections[section].passcode){
     document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
-    if(navigator.vibrate) navigator.vibrate(300);
     return;
   }
   save();question=0;render();
 }
 
 function resetButtons(){
-  yesBtn.style.left='50%';yesBtn.style.top='50%';yesBtn.style.transform='translate(-120%,-50%)';
-  noBtn.style.left='50%';noBtn.style.top='50%';noBtn.style.transform='translate(20%,-50%)';
+  yesBtn.style.transform='translate(-120%,-50%)';
+  noBtn.style.transform='translate(20%,-50%)';
 }
 
 function moveNo(){
@@ -267,7 +316,6 @@ function toast(m){
   setTimeout(()=>t.remove(),2000);
 }
 
-/* START */
 renderIntro();
 </script>
 
