@@ -85,12 +85,14 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
   margin-top:18px;
   overflow:hidden;
   width:100%;
+  position:relative;
 }
 
 .rolling-track{
   display:flex;
   gap:14px;
   animation:scrollGallery 20s linear infinite;
+  will-change:transform;
 }
 
 .rolling-track img{
@@ -106,6 +108,19 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
   0%{transform:translateX(0)}
   100%{transform:translateX(-50%)}
 }
+
+/* manual controls */
+.gallery-controls{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+}
+
+.gallery-controls button{
+  padding:8px 16px;
+  font-size:.9rem;
+  background:#eee;
+}
 </style>
 </head>
 
@@ -118,10 +133,9 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
 </div>
 
 <script>
-/***** ✏️ EDIT CONTENT HERE *****/
 const SITE={
   sections:[
-    {title:"Funnyd 😄",bg:"linear-gradient(135deg,#ffe4f2,#fff)",intro:"Let’s start easy 😜",emojis:["😂","😄","💖"],questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"]},
+    {title:"Funny 😄",bg:"linear-gradient(135deg,#ffe4f2,#fff)",intro:"Let’s start easy 😜",emojis:["😂","😄","💖"],questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"]},
     {title:"Romantic 🌹",bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)",intro:"Feel the romance 💕",emojis:["🌹","✨","💞"],questions:["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"]},
     {title:"Hot 🔥",bg:"linear-gradient(135deg,#ffd6e0,#ff9ecf)",intro:"Things heat up 😏",emojis:["🔥","💋","🧡"],questions:["Hot Q1","Hot Q2","Hot Q3","Hot Q4"]},
     {title:"Spicy 🌶️",bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)",intro:"Secret zone 😈",passcode:"1234",hint:"Something obvious ❤️",wrongMessage:"Nope 😜 Try again",emojis:["🌶️","🍓","🍑"],questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"]}
@@ -136,97 +150,11 @@ const SITE={
   ],
   noClickMessages:["Oops 😜","Wrong heart 💘","Try YES 😏"]
 };
-/***** ✏️ END EDIT SECTION *****/
 
 let section=0, question=0, mode="intro";
 const history=[];
 const screen=document.getElementById('screen');
 const backBtn=document.getElementById('backBtn');
-
-const yesBtn=document.createElement('button');
-yesBtn.id='yesBtn';
-yesBtn.className='primary';
-yesBtn.textContent='YES 💖';
-
-const noBtn=document.createElement('button');
-noBtn.id='noBtn';
-noBtn.className='secondary';
-noBtn.textContent='NO 😅';
-
-function toggleDark(){document.body.classList.toggle('dark')}
-function setBG(){
-  if(!document.body.classList.contains('dark'))
-    document.body.style.background=SITE.sections[section]?.bg || "#fff";
-}
-
-/* ---------- HISTORY ---------- */
-function save(){
-  history.push({ section, question, mode });
-  backBtn.classList.remove('hidden');
-}
-
-function goBack(){
-  if(!history.length) return;
-  const last = history.pop();
-  section = last.section;
-  question = last.question;
-  mode = last.mode;
-  render();
-  if(!history.length) backBtn.classList.add('hidden');
-}
-backBtn.onclick = goBack;
-
-/* ---------- RENDER ---------- */
-function render(){
-  setBG();
-  if(mode==="intro") renderIntro(false);
-  else if(mode==="question") renderQuestion(false);
-  else if(mode==="password") renderPassword(false);
-  else if(mode==="final") renderFinal();
-}
-
-function renderIntro(saveState=true){
-  if(saveState) save();
-  mode="intro";
-  screen.innerHTML=`
-    <h1>${SITE.sections[section].title}</h1>
-    <p>${SITE.sections[section].intro}</p>
-    <button class="primary" onclick="startQuestions()">Continue</button>
-  `;
-}
-
-function startQuestions(){
-  save();
-  question=0;
-  mode="question";
-  renderQuestion(false);
-}
-
-function renderQuestion(saveState=true){
-  if(saveState) save();
-  mode="question";
-  screen.innerHTML=`
-    <h1>${SITE.sections[section].questions[question]}</h1>
-    <div class="buttons"></div>
-  `;
-  const box=screen.querySelector('.buttons');
-  box.append(yesBtn,noBtn);
-  resetButtons();
-  bindButtons();
-}
-
-function renderPassword(saveState=true){
-  if(saveState) save();
-  mode="password";
-  const s=SITE.sections[section];
-  screen.innerHTML=`
-    <h1>🔐 Enter Password</h1>
-    <p>${s.hint}</p>
-    <input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc">
-    <p id="err" style="color:#ff4d6d"></p>
-    <button class="primary" onclick="checkPw()">Unlock</button>
-  `;
-}
 
 function renderFinal(){
   mode="final";
@@ -234,98 +162,33 @@ function renderFinal(){
   screen.innerHTML=`
     <h1>${SITE.finalMessage}</h1>
     <div class="rolling-gallery">
-      <div class="rolling-track">
+      <div class="rolling-track" id="track">
         ${imgs.map(i=>`<img src="${i}">`).join("")}
       </div>
     </div>
+    <div class="gallery-controls">
+      <button onclick="scrollGallery(-160)">◀ Back</button>
+      <button onclick="scrollGallery(160)">Next ▶</button>
+    </div>
   `;
-  navigator.vibrate([300,200,300,200,300]);
 }
 
-/* ---------- LOGIC ---------- */
-function bindButtons(){
-  yesBtn.onclick=()=>{
-    navigator.vibrate(80);
-    save();
-    question++;
-    if(question < 4){ renderQuestion(false); return; }
-    section++;
-    question=0;
-    if(section >= SITE.sections.length){ renderFinal(); return; }
-    SITE.sections[section].passcode ? renderPassword(false) : renderIntro(false);
-  };
+let scrollOffset = 0;
+let resumeTimer = null;
 
-  noBtn.onclick=()=>{
-    navigator.vibrate(150);
-    toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);
-    moveNo();
-  };
+function scrollGallery(amount){
+  const track = document.getElementById('track');
+  track.style.animation = 'none';
+  scrollOffset += amount;
+  track.style.transform = `translateX(${scrollOffset}px)`;
+
+  clearTimeout(resumeTimer);
+  resumeTimer = setTimeout(()=>{
+    scrollOffset = 0;
+    track.style.transform = '';
+    track.style.animation = 'scrollGallery 20s linear infinite';
+  },3000);
 }
-
-function checkPw(){
-  const v=document.getElementById('pw').value;
-  if(v!==SITE.sections[section].passcode){
-    document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
-    navigator.vibrate(200);
-    return;
-  }
-  save();
-  question=0;
-  renderQuestion(false);
-}
-
-/* ---------- UI HELPERS ---------- */
-function resetButtons(){
-  yesBtn.style.left='50%';
-  yesBtn.style.top='50%';
-  yesBtn.style.transform='translate(-120%,-50%)';
-  noBtn.style.left='50%';
-  noBtn.style.top='50%';
-  noBtn.style.transform='translate(20%,-50%)';
-}
-
-function moveNo(){
-  const box=noBtn.parentElement;
-  if(!box) return;
-  const r=60+Math.random()*40;
-  const a=Math.random()*Math.PI*2;
-  noBtn.style.left=(box.clientWidth/2+r*Math.cos(a))+'px';
-  noBtn.style.top=(box.clientHeight/2+r*Math.sin(a))+'px';
-  noBtn.style.transform='translate(-50%,-50%)';
-}
-
-function toast(msg){
-  const t=document.createElement('div');
-  t.className='toast';
-  t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),2000);
-}
-
-/* ---------- POPUPS & EMOJIS ---------- */
-let popupBusy=false;
-setInterval(()=>{
-  if(popupBusy) return;
-  popupBusy=true;
-  const p=document.createElement('div');
-  p.className='popup';
-  p.textContent=["Cute 😍","Still thinking? 😏","Heart says YES ❤️"][Math.floor(Math.random()*3)];
-  document.body.appendChild(p);
-  setTimeout(()=>{p.remove();popupBusy=false},3000);
-},6000);
-
-setInterval(()=>{
-  const e=document.createElement('div');
-  e.className='float';
-  e.textContent=SITE.sections[section].emojis[Math.floor(Math.random()*SITE.sections[section].emojis.length)];
-  e.style.left=Math.random()*100+'%';
-  e.style.animationDuration=5+Math.random()*4+'s';
-  document.body.appendChild(e);
-  setTimeout(()=>e.remove(),9000);
-},800);
-
-/* ---------- START ---------- */
-renderIntro(false);
 </script>
 
 </body>
