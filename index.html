@@ -134,106 +134,40 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
  * 🔧 EDITABLE CONTENT SECTION (SAFE TO EDIT)
  **************************************************/
 const SITE = {
-  intro: {
-    title: "Hey You beautiful 💖",
-    message: "Before we begin, I have something fun planned for you 😉"
-  },
+  intro: { title: "Hey You beautiful 🫰💖", message: "Before we begin, I have something fun planned for you 😉" },
 
   sections: [
-    {
-      title: "Funny 😄",
-      bg: "linear-gradient(135deg,#ffe4f2,#fff)",
-      intro: "Let’s start easy 😜",
-      questions: ["Funny Q1","Funny Q2","Funny Q3","Funny Q4"],
-      yesImage: "Images/image1.jpg",
-      yesAudio: "Audio/ydaudio.mp3",
-      noAudio: "Audio/ydaudio.mp3"
-    },
-    {
-      title: "Romantic 🌹",
-      bg: "linear-gradient(135deg,#fff0f6,#ffe6f0)",
-      intro: "Feel the romance 💕",
-      questions: ["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"],
-      yesImage: "Images/image1.jpg",
-      yesAudio: "Audio/ydaudio.mp3",
-      noAudio: "Audio/ydaudio.mp3"
-    },
-    {
-      title: "Hot 🔥",
-      bg: "linear-gradient(135deg,#ffd6e0,#ff9ecf)",
-      intro: "Things heat up 😏",
-      questions: ["Hot Q1","Hot Q2","Hot Q3","Hot Q4"],
-      yesImage: "Images/image1.jpg",
-      yesAudio: "Audio/ydaudio.mp3",
-      noAudio: "Audio/ydaudio.mp3"
-    },
-    {
-      title: "Spicy 🌶️",
-      bg: "linear-gradient(135deg,#ffb3c6,#ff4d6d)",
-      intro: "Secret zone 😈",
-      passcode: "1234",
-      hint: "Something obvious ❤️",
-      wrongMessage: "Nope 😜 Try again",
-      questions: ["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"],
-      yesImage: "Images/image1.jpg",
-      yesAudio: "Audio/ydaudio.mp3",
-      noAudio: "Audio/ydaudio.mp3"
-    }
+    { title:"Funny 😄", bg:"linear-gradient(135deg,#ffe4f2,#fff)", intro:"Let’s start easy 😜", questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"], yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio.mp3", noAudio:"Audio/ydaudio.mp3" },
+    { title:"Romantic 🌹", bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)", intro:"Feel the romance 💕", questions:["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"], yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio.mp3", noAudio:"Audio/ydaudio.mp3" },
+    { title:"Hot 🔥", bg:"linear-gradient(135deg,#ffd6e0,#ff9ecf)", intro:"Things heat up 😏", questions:["Hot Q1","Hot Q2","Hot Q3","Hot Q4"], yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio.mp3", noAudio:"Audio/ydaudio.mp3" },
+    { title:"Spicy 🌶️", bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)", intro:"Secret zone 😈", passcode:"1234", hint:"Something obvious ❤️", wrongMessage:"Nope 😜 Try again", questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"], yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio.mp3", noAudio:"Audio/ydaudio.mp3" }
   ],
 
-  finalMessage: "You made it ❤️",
-  finalImages: [
-    "Images/image1.jpg",
-    "Images/image1.jpg",
-    "Images/image1.jpg",
-    "Images/image1.jpg",
-    "Images/image1.jpg"
-  ],
-  finalYesImage: "Images/image1.jpg",
-  finalYesAudio: "Audio/ydaudio.mp3",
-  noClickMessages: ["Oops 😜","Wrong heart 💘","Try YES 😏"]
+  finalMessage:"You made it ❤️",
+  finalImages:["Images/image1.jpg","Images/image1.jpg","Images/image1.jpg","Images/image1.jpg","Images/image1.jpg"],
+  finalYesImage:"Images/image1.jpg",
+  finalYesAudio:"Audio/ydaudio.mp3",
+  noClickMessages:["Oops 😜","Wrong heart 💘","Try YES 😏"]
 };
 
 /**************************************************
  * 🚫 LOGIC SECTION (DO NOT EDIT)
  **************************************************/
-
 let section=0,question=0,mode="start",autoScrollTimer=null;
-const history=[];
-const screen=document.getElementById('screen');
-const backBtn=document.getElementById('backBtn');
+const history=[],screen=document.getElementById('screen'),backBtn=document.getElementById('backBtn');
 
-const yesBtn=document.createElement('button');
-yesBtn.id='yesBtn'; yesBtn.className='primary'; yesBtn.textContent='YES 💖';
-
-const noBtn=document.createElement('button');
-noBtn.id='noBtn'; noBtn.className='secondary'; noBtn.textContent='NO 😅';
+const yesBtn=document.createElement('button'); yesBtn.id='yesBtn'; yesBtn.className='primary'; yesBtn.textContent='YES 💖';
+const noBtn=document.createElement('button'); noBtn.id='noBtn'; noBtn.className='secondary'; noBtn.textContent='NO 😅';
 
 function toggleDark(){document.body.classList.toggle('dark')}
 function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section]?.bg||"#fff"}
 
-function playEffect(img,audio){
-  if(audio)new Audio(audio).play().catch(()=>{});
-  if(img){
-    const i=document.createElement('img');
-    i.src=img;i.className='popup-img';
-    document.body.appendChild(i);
-    setTimeout(()=>i.remove(),3000);
-  }
-}
+function playEffect(img,audio){ if(audio)new Audio(audio).play().catch(()=>{}); if(img){const i=document.createElement('img');i.src=img;i.className='popup-img';document.body.appendChild(i);setTimeout(()=>i.remove(),3000);}}
 
-function moveNoButton(){
-  const box=noBtn.parentElement;
-  if(!box)return;
-  const maxX=box.clientWidth-noBtn.offsetWidth;
-  const maxY=box.clientHeight-noBtn.offsetHeight;
-  noBtn.style.left=Math.random()*maxX+"px";
-  noBtn.style.top=Math.random()*maxY+"px";
-  noBtn.style.transform="none";
-}
+function moveNoButton(){const box=noBtn.parentElement;if(!box)return; const maxX=box.clientWidth-noBtn.offsetWidth; const maxY=box.clientHeight-noBtn.offsetHeight; noBtn.style.left=Math.random()*maxX+"px"; noBtn.style.top=Math.random()*maxY+"px"; noBtn.style.transform="none";}
 
 function save(){history.push({section,question,mode});backBtn.classList.remove('hidden')}
-backBtn.onclick=()=>{if(!history.length)return;const h=history.pop();section=h.section;question=h.question;mode=h.mode;render();if(!history.length)backBtn.classList.add('hidden')};
+backBtn.onclick=()=>{if(!history.length)return; const h=history.pop(); section=h.section;question=h.question;mode=h.mode;render();if(!history.length)backBtn.classList.add('hidden')};
 
 function render(){
   setBG();
@@ -245,14 +179,10 @@ function render(){
   else if(mode==="secret")renderSecret();
 }
 
-function renderStart(){
-  screen.innerHTML=`<h1>${SITE.intro.title}</h1><p>${SITE.intro.message}</p><button class="primary" onclick="begin()">Start 💖</button>`;
-}
+function renderStart(){screen.innerHTML=`<h1>${SITE.intro.title}</h1><p>${SITE.intro.message}</p><button class="primary" onclick="begin()">Start 💖</button>`}
 function begin(){save();mode="intro";render()}
 
-function renderIntro(){
-  screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="startQuestions()">Continue</button>`;
-}
+function renderIntro(){screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="startQuestions()">Continue</button>`}
 function startQuestions(){save();question=0;mode="question";render()}
 
 function renderQuestion(){
@@ -268,17 +198,37 @@ function renderPassword(){
 }
 
 function renderFinal(){
-  screen.innerHTML=`<h1>${SITE.finalMessage}</h1><div class="final-scroll">${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}</div>`;
+  screen.innerHTML=`
+    <h1>${SITE.finalMessage}</h1>
+    <div class="final-scroll" id="scrollBox">${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}</div>
+    <p style="margin-top:16px">Liked the surprise so far? 💖</p>
+    <button class="primary" onclick="openSecret()">View Secret Message 💌</button>
+  `;
   playEffect(SITE.finalYesImage,SITE.finalYesAudio);
+
+  const box=document.getElementById('scrollBox');
+  let pause=false;
+  box.addEventListener('touchstart',()=>pause=true);
+  box.addEventListener('touchend',()=>pause=false);
+
+  clearInterval(autoScrollTimer);
+  autoScrollTimer=setInterval(()=>{
+    if(!pause){
+      box.scrollTop+=1;
+      if(box.scrollTop+box.clientHeight>=box.scrollHeight)box.scrollTop=0;
+    }
+  },40);
+}
+
+function openSecret(){
+  save();mode="secret";render();
 }
 
 function renderSecret(){screen.innerHTML=`<h1>💖 Secret</h1><p>Just for you 😘</p>`}
 
 function bindButtons(){
   yesBtn.onclick=()=>{
-    const s=SITE.sections[section];
-    playEffect(s.yesImage,s.yesAudio);
-    save();question++;
+    const s=SITE.sections[section]; playEffect(s.yesImage,s.yesAudio); save();question++;
     if(question<4){render();return;}
     section++;question=0;
     if(section>=SITE.sections.length){mode="final";render();return;}
@@ -301,12 +251,7 @@ function checkPw(){
   save();question=0;mode="question";render();
 }
 
-function toast(m){
-  const t=document.createElement('div');
-  t.className='toast';t.textContent=m;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),2000);
-}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2000);}
 
 render();
 </script>
