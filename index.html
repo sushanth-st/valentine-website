@@ -200,7 +200,6 @@ function renderPassword(){
 function renderFinal(){
   mode="final";
   screen.innerHTML=`<h1>${SITE.finalMessage}</h1><div class="final-scroll" id="scrollBox">${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}</div>`;
-  navigator.vibrate(5000);
 
   const box=document.getElementById('scrollBox');
   let pause=false;
@@ -221,15 +220,27 @@ function renderFinal(){
 /* LOGIC */
 function bindButtons(){
   yesBtn.onclick=()=>{
-    navigator.vibrate(80);
-    save();
-    question++;
-    if(question<4){render();return;}
-    section++;question=0;
-    if(section>=SITE.sections.length){renderFinal();return;}
-    SITE.sections[section].passcode?renderPassword():renderIntro();
-    setBG();
-  };
+  save();
+
+  // ✅ FINAL YES vibration (must be inside click)
+  if(section === SITE.sections.length - 1 && question === 3){
+    vibrateSafe([300,200,300,200,300,200,300,200,300]);
+  } else {
+    vibrateSafe(80);
+  }
+
+  question++;
+  if(question < 4){ render(); return; }
+
+  section++; question = 0;
+  if(section >= SITE.sections.length){
+    renderFinal();
+    return;
+  }
+
+  SITE.sections[section].passcode ? renderPassword() : renderIntro();
+  setBG();
+};
 
   noBtn.onclick=()=>{
     navigator.vibrate([300,150,300]);
