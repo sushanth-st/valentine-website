@@ -124,7 +124,13 @@ const SITE={
     {title:"Spicy 🌶️",bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)",intro:"Secret zone 😈",passcode:"1234",hint:"Something obvious ❤️",wrongMessage:"Nope 😜 Try again",emojis:["🌶️","🍓","🍑"],questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"]}
   ],
   finalMessage:"You made it ❤️",
-  imageEmbed:"images/final.jpg",
+  finalImages:[
+    "images/final1.jpg",
+    "images/final2.jpg",
+    "images/final3.jpg",
+    "images/final4.jpg",
+    "images/final5.jpg"
+  ],
   noClickMessages:["Oops 😜","Wrong heart 💘","Try YES 😏"]
 };
 /***** ✏️ END EDIT SECTION *****/
@@ -225,7 +231,7 @@ function renderFinal(){
   screen.innerHTML=`
     <h1>${SITE.finalMessage}</h1>
     <div class="final-scroll">
-      <img src="${SITE.imageEmbed}">
+      ${SITE.finalImages.map(img=>`<img src="${img}">`).join("")}
     </div>
   `;
   navigator.vibrate([300,200,300,200,300]);
@@ -244,7 +250,7 @@ function bindButtons(){
   };
 
   noBtn.onclick=()=>{
-    navigator.vibrate(150);
+    navigator.vibrate([200,100,200]); // ✅ guaranteed vibration
     toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);
     moveNo();
   };
