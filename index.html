@@ -110,40 +110,170 @@ const SITE={
 let section=0,question=0,history=[];
 const screen=document.getElementById('screen');
 const backBtn=document.getElementById('backBtn');
-const yesBtn=document.createElement('button');yesBtn.id='yesBtn';yesBtn.className='primary';yesBtn.textContent='YES 💖';
-const noBtn=document.createElement('button');noBtn.id='noBtn';noBtn.className='secondary';noBtn.textContent='NO 😅';
+
+const yesBtn=document.createElement('button');
+yesBtn.id='yesBtn';
+yesBtn.className='primary';
+yesBtn.textContent='YES 💖';
+
+const noBtn=document.createElement('button');
+noBtn.id='noBtn';
+noBtn.className='secondary';
+noBtn.textContent='NO 😅';
 
 function toggleDark(){document.body.classList.toggle('dark')}
 function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section].bg}
 
-function renderIntro(){history=[];backBtn.classList.add('hidden');setBG();screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="renderQuestion()">Continue</button>`}
+/* 🔹 SECTION INTRO (reset history here) */
+function renderIntro(){
+  history=[];                 // ✅ stop back beyond section
+  backBtn.classList.add('hidden');
+  setBG();
+  screen.innerHTML=`
+    <h1>${SITE.sections[section].title}</h1>
+    <p>${SITE.sections[section].intro}</p>
+    <button class="primary" onclick="renderQuestion()">Continue</button>
+  `;
+}
 
-function renderQuestion(){save();backBtn.classList.remove('hidden');setBG();screen.innerHTML=`<h1>${SITE.sections[section].questions[question]}</h1><div class="buttons"></div>`;const box=screen.querySelector('.buttons');box.append(yesBtn,noBtn);resetButtons()}
+/* 🔹 QUESTION */
+function renderQuestion(){
+  save();
+  backBtn.classList.remove('hidden');
+  setBG();
+  screen.innerHTML=`
+    <h1>${SITE.sections[section].questions[question]}</h1>
+    <div class="buttons"></div>
+  `;
+  const box=screen.querySelector('.buttons');
+  box.append(yesBtn,noBtn);
+  resetButtons();
+  bindButtons();   // ✅ rebind every time
+}
 
-function renderPassword(){save();setBG();const s=SITE.sections[section];screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p><input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc"><p id="err" style="color:#ff4d6d"></p><button class="primary" onclick="checkPw()">Unlock</button>`}
+/* 🔹 PASSWORD */
+function renderPassword(){
+  save();
+  setBG();
+  const s=SITE.sections[section];
+  screen.innerHTML=`
+    <h1>🔐 Enter Password</h1>
+    <p>${s.hint}</p>
+    <input id="pw" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ccc">
+    <p id="err" style="color:#ff4d6d"></p>
+    <button class="primary" onclick="checkPw()">Unlock</button>
+  `;
+}
 
-function renderFinal(){backBtn.classList.remove('hidden');screen.innerHTML=`<h1>${SITE.finalMessage}</h1><img class="final-img" src="${SITE.imageEmbed}">`;navigator.vibrate([300,200,300,200,300,200,300,200,300,200])}
+/* 🔹 FINAL */
+function renderFinal(){
+  backBtn.classList.remove('hidden');
+  screen.innerHTML=`
+    <h1>${SITE.finalMessage}</h1>
+    <img class="final-img" src="${SITE.imageEmbed}">
+  `;
+  navigator.vibrate([300,200,300,200,300,200]);
+}
 
-function checkPw(){const v=document.getElementById('pw').value;if(v!==SITE.sections[section].passcode){document.getElementById('err').textContent=SITE.sections[section].wrongMessage;navigator.vibrate(200);return}question=0;renderQuestion()}
+function checkPw(){
+  const v=document.getElementById('pw').value;
+  if(v!==SITE.sections[section].passcode){
+    document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
+    navigator.vibrate(200);
+    return;
+  }
+  question=0;
+  renderQuestion();
+}
 
-yesBtn.onclick=()=>{navigator.vibrate(80);question++;if(question<4){renderQuestion();return}section++;question=0;if(section>=SITE.sections.length){renderFinal();return}SITE.sections[section].passcode?renderPassword():renderIntro()}
+/* 🔹 BUTTON LOGIC (centralized) */
+function bindButtons(){
+  yesBtn.onclick=()=>{
+    navigator.vibrate(80);
+    question++;
+    if(question<4){ renderQuestion(); return; }
+    section++;
+    question=0;
+    if(section>=SITE.sections.length){ renderFinal(); return; }
+    SITE.sections[section].passcode ? renderPassword() : renderIntro();
+  };
 
-noBtn.onclick=()=>{navigator.vibrate(150);toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);moveNo()}
+  noBtn.onclick=()=>{
+    navigator.vibrate(150);
+    toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);
+    moveNo();
+  };
+}
 
-function resetButtons(){yesBtn.style.left='50%';yesBtn.style.top='50%';yesBtn.style.transform='translate(-120%,-50%)';noBtn.style.left='50%';noBtn.style.top='50%';noBtn.style.transform='translate(20%,-50%)'}
+/* 🔹 HELPERS */
+function resetButtons(){
+  yesBtn.style.left='50%';
+  yesBtn.style.top='50%';
+  yesBtn.style.transform='translate(-120%,-50%)';
+  noBtn.style.left='50%';
+  noBtn.style.top='50%';
+  noBtn.style.transform='translate(20%,-50%)';
+}
 
-function moveNo(){const box=noBtn.parentElement;if(!box)return;const radius=60+Math.random()*40;const angle=Math.random()*Math.PI*2;const cx=box.clientWidth/2;const cy=box.clientHeight/2;noBtn.style.left=(cx+radius*Math.cos(angle))+'px';noBtn.style.top=(cy+radius*Math.sin(angle))+'px';noBtn.style.transform='translate(-50%,-50%)'}
+function moveNo(){
+  const box=noBtn.parentElement;
+  if(!box) return;
+  const radius=60+Math.random()*40;
+  const angle=Math.random()*Math.PI*2;
+  const cx=box.clientWidth/2;
+  const cy=box.clientHeight/2;
+  noBtn.style.left=(cx+radius*Math.cos(angle))+'px';
+  noBtn.style.top=(cy+radius*Math.sin(angle))+'px';
+  noBtn.style.transform='translate(-50%,-50%)';
+}
 
-function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+function toast(msg){
+  const t=document.createElement('div');
+  t.className='toast';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
+}
 
-function save(){history.push({section,question,html:screen.innerHTML})}
-backBtn.onclick=()=>{if(!history.length)return;const last=history.pop();section=last.section;question=last.question;screen.innerHTML=last.html;backBtn.classList.toggle('hidden',history.length===0)}
+function save(){
+  history.push({section,question});
+}
 
+/* 🔹 BACK (section-scoped) */
+backBtn.onclick=()=>{
+  if(!history.length){
+    renderIntro();
+    return;
+  }
+  const last=history.pop();
+  section=last.section;
+  question=last.question;
+  renderQuestion();
+};
+
+/* POPUPS */
 let popupBusy=false;
-function popupLoop(){if(popupBusy)return;popupBusy=true;const p=document.createElement('div');p.className='popup';p.textContent=["Cute 😍","Still thinking? 😏","Heart says YES ❤️"][Math.floor(Math.random()*3)];document.body.appendChild(p);setTimeout(()=>{p.remove();popupBusy=false},3000)}
+function popupLoop(){
+  if(popupBusy) return;
+  popupBusy=true;
+  const p=document.createElement('div');
+  p.className='popup';
+  p.textContent=["Cute 😍","Still thinking? 😏","Heart says YES ❤️"][Math.floor(Math.random()*3)];
+  document.body.appendChild(p);
+  setTimeout(()=>{p.remove();popupBusy=false},3000);
+}
 setInterval(popupLoop,6000);
 
-setInterval(()=>{const e=document.createElement('div');e.className='float';e.textContent=SITE.sections[section].emojis[Math.floor(Math.random()*SITE.sections[section].emojis.length)];e.style.left=Math.random()*100+'%';e.style.animationDuration=5+Math.random()*4+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),9000)},800);
+/* FLOATING EMOJIS */
+setInterval(()=>{
+  const e=document.createElement('div');
+  e.className='float';
+  e.textContent=SITE.sections[section].emojis[Math.floor(Math.random()*SITE.sections[section].emojis.length)];
+  e.style.left=Math.random()*100+'%';
+  e.style.animationDuration=5+Math.random()*4+'s';
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),9000);
+},800);
 
 renderIntro();
 </script>
