@@ -115,7 +115,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
 <script>
 const SITE={
   sections:[
-    {title:"Funnyf 😄",bg:"linear-gradient(135deg,#ffe4f2,#fff)",intro:"Let’s start easy 😜",emojis:["😂","😄","💖"],questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"]},
+    {title:"Funny 😄",bg:"linear-gradient(135deg,#ffe4f2,#fff)",intro:"Let’s start easy 😜",emojis:["😂","😄","💖"],questions:["Funny Q1","Funny Q2","Funny Q3","Funny Q4"]},
     {title:"Romantic 🌹",bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)",intro:"Feel the romance 💕",emojis:["🌹","✨","💞"],questions:["Romantic Q1","Romantic Q2","Romantic Q3","Romantic Q4"]},
     {title:"Hot 🔥",bg:"linear-gradient(135deg,#ffd6e0,#ff9ecf)",intro:"Things heat up 😏",emojis:["🔥","💋","🧡"],questions:["Hot Q1","Hot Q2","Hot Q3","Hot Q4"]},
     {title:"Spicy 🌶️",bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)",intro:"Secret zone 😈",passcode:"1234",hint:"Something obvious ❤️",wrongMessage:"Nope 😜 Try again",emojis:["🌶️","🍓","🍑"],questions:["Spicy Q1","Spicy Q2","Spicy Q3","Spicy Q4"]}
@@ -215,35 +215,25 @@ function renderFinal(){
       }
     }
   },40);
+
+  // Final YES button vibration (user interaction required)
+  yesBtn.onclick=()=>{
+    navigator.vibrate(5000); // ✅ 5 seconds vibration
+    save();
+    question++;
+    if(question<4){render();return;}
+    section++;question=0;
+    if(section>=SITE.sections.length){renderFinal();return;}
+    SITE.sections[section].passcode?renderPassword():renderIntro();
+    setBG();
+  };
 }
 
 /* LOGIC */
 function bindButtons(){
-  yesBtn.onclick=()=>{
-  save();
-
-  // ✅ FINAL YES vibration (must be inside click)
-  if(section === SITE.sections.length - 1 && question === 3){
-    vibrateSafe([300,200,300,200,300,200,300,200,300]);
-  } else {
-    vibrateSafe(80);
-  }
-
-  question++;
-  if(question < 4){ render(); return; }
-
-  section++; question = 0;
-  if(section >= SITE.sections.length){
-    renderFinal();
-    return;
-  }
-
-  SITE.sections[section].passcode ? renderPassword() : renderIntro();
-  setBG();
-};
-
+  // No button vibration
   noBtn.onclick=()=>{
-    navigator.vibrate([300,150,300]);
+    if(navigator.vibrate) navigator.vibrate([300,150,300]);
     toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);
     moveNo();
   };
@@ -252,7 +242,7 @@ function bindButtons(){
 function checkPw(){
   if(document.getElementById('pw').value!==SITE.sections[section].passcode){
     document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
-    navigator.vibrate(300);
+    if(navigator.vibrate) navigator.vibrate(300);
     return;
   }
   save();question=0;render();
