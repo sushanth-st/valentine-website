@@ -149,14 +149,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
   font-size:1.3rem;
   z-index:90;
   pointer-events:none;
-  animation-name:fall;
-  animation-timing-function:linear;
-  animation-fill-mode:forwards;
-}
-
-@keyframes fall{
-  0%{transform:translateY(-20px) rotate(0deg); opacity:1;}
-  100%{transform:translateY(100vh) rotate(360deg); opacity:0;}
+  animation:fall linear forwards;
 }
 </style>
 </head>
@@ -171,28 +164,51 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
 
 <script>
 const SITE = {
-  intro: { title: "Okay Listen to my my Appukutty🫰💋 😌", message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜" },
+  intro: { title: "Okay Listen to my my Appukutty 😌", message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜" },
   sections: [
-    { title:"Funny 😄", bg:"linear-gradient(135deg,#ffe4f2,#fff)", intro:"Let’s start easy 😜", 
-      questions:[
-        {text:"Be honest…\nYou’re hating this already, right? 😏", yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio1.mp3"},
-        {text:"Okay, serious question…\nDo you agree I’m the worst boyfriend in the world? 😌💖", yesImage:"Images/image2.jpg", yesAudio:"Audio/ydaudio2.mp3"},
-        {text:"Do you agree I make you cry more than I make you laugh? 🥺💖", yesImage:"Images/image3.jpg", yesAudio:"Audio/ydaudio3.mp3"},
-        {text:"Tell me the truth…\nYou hate every gift I’ve ever given you, right? 🥺🎁\nNone of them were good 😌", yesImage:"Images/image4.jpg", yesAudio:"Audio/ydaudio4.mp3"}
-      ],
-      noAudio:"Audio/ydaudio_no.mp3"
-    },
-    // Other sections similar structure...
+    { title:"Funny 😄", bg:"linear-gradient(135deg,#ffe4f2,#fff)", intro:"Let’s start easy 😜", questions:[
+      {q:"Be honest…\nYou’re hating this already, right? 😏", img:"Images/image1.jpg", audio:"Audio/ydaudio.mp3"},
+      {q:"Okay, serious question…\nDo you agree I’m the worst boyfriend in the world? 😌💖", img:"Images/image2.jpg", audio:"Audio/ydaudio2.mp3"},
+      {q:"Do you agree I make you cry more than I make you laugh? 🥺💖", img:"Images/image3.jpg", audio:"Audio/ydaudio3.mp3"},
+      {q:"Tell me the truth…\nYou hate every gift I’ve ever given you, right? 🥺🎁\nNone of them were good 😌", img:"Images/image4.jpg", audio:"Audio/ydaudio4.mp3"}
+    ], noAudio:"Audio/ydaudio.mp3"},
+    { title:"Romantic 🌹", bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)", intro:"Feel the romance 💕", questions:[
+      {q:"Do you ever feel like I don’t love you enough? 🥺❤️", img:"Images/image5.jpg", audio:"Audio/ydaudio5.mp3"},
+      {q:"Do you think I’m not romantic enough with you? 🌹😌", img:"Images/image6.jpg", audio:"Audio/ydaudio6.mp3"},
+      {q:"Do you secretly think I’m a baaad kisser? 😘😜", img:"Images/image7.jpg", audio:"Audio/ydaudio7.mp3"},
+      {q:"Do you think I should start behaving more decently when I’m with you? 🙈😇", img:"Images/image8.jpg", audio:"Audio/ydaudio8.mp3"}
+    ], noAudio:"Audio/ydaudio.mp3"},
+    { title:"Hot 🔥", bg:"linear-gradient(135deg,#ffd6e0,#ff9ecf)", intro:"Things heat up 😏", questions:[
+      {q:"Be very honest…\nYou don’t like it when I grab you and pull you close to me, right? 😏", img:"Images/image9.jpg", audio:"Audio/ydaudio9.mp3"},
+      {q:"Tell me the truth…\nMy touch doesn’t make your heart beat faster at all…\nYou don’t feel anything when I touch you, right? 🥺🔥", img:"Images/image10.jpg", audio:"Audio/ydaudio10.mp3"},
+      {q:"This is the truth…\nYou hate it when I grab you, bite you, play with you, and leave little marks on the strawberry🍓😌", img:"Images/image11.jpg", audio:"Audio/ydaudio11.mp3"},
+      {q:"One last honest answer…\nYou don’t like it when I look at you naked, right? 😏🔥", img:"Images/image12.jpg", audio:"Audio/ydaudio12.mp3"}
+    ], noAudio:"Audio/ydaudio.mp3"},
+    { title:"Spicy 🌶️", bg:"linear-gradient(135deg,#ffb3c6,#ff4d6d)", intro:"Secret zone 😈", passcode:"daddy", hint:"Who am I to you in your wild thoughts?", wrongMessage:"Whatt..You don't know😭 i love to hear you call me that name", questions:[
+      {q:"You don’t like eating chilli, and that’s why you end up crying when you eat it, right? 🌶️😌", img:"Images/image13.jpg", audio:"Audio/ydaudio13.mp3"},
+      {q:"You don’t want to send me a dancing nude video because you hate me looking at you like that, right? 😏🔥", img:"Images/image14.jpg", audio:"Audio/ydaudio14.mp3"},
+      {q:"You don’t enjoy playing naughty truth or dare games with me at all, do you? 😏😏😏", img:"Images/image15.jpg", audio:"Audio/ydaudio15.mp3"},
+      {q:"You don’t like sending me nude snaps every day — that’s why you even uninstalled Snapchat, right? 😌📵", img:"Images/image16.jpg", audio:"Audio/ydaudio16.mp3"}
+    ], noAudio:"Audio/ydaudio.mp3"}
   ],
-  finalMessage:`Hope you liked this small journey Baby...`,
-  finalImages:["Images/image1.jpg","Images/image1.jpg","Images/image1.jpg","Images/image1.jpg","Images/image1.jpg"],
+  finalMessage:`Hope you liked this small journey Baby,  but really all I wanted to say was
+
+Every beat of my heart
+Keeps saying… I choose you 😌❤️
+You make my world brighter,
+my smile wider,
+and every day worth loving 💕
+Today, on Valentine’s Day, I just want to remind you…
+You’re my favorite everything,
+my heart, my smile, my forever 😘💖
+Happy Valentine’s Day, my love! 🌹💌`,
+  finalImages:["Images/image1.jpg","Images/image2.jpg","Images/image3.jpg","Images/image4.jpg","Images/image5.jpg"],
   finalYesImage:"Images/image1.jpg",
-  finalYesAudio:"Audio/ydaudio.mp3",
-  noClickMessages:["Nice try 😌 but NO isn’t an option today","Lying doesn’t suit you 😌💔","Your heart says YES… your finger is confused 💖"]
+  finalYesAudio:"Audio/ydaudio.mp3"
 };
 
-let section=0,question=0,mode="start",autoScrollTimer=null,scrollDirection=1;
-const history=[],screen=document.getElementById('screen'),backBtn=document.getElementById('backBtn');
+let section=0, question=0, mode="start", autoScrollTimer=null, scrollDirection=1;
+const history=[], screen=document.getElementById('screen'), backBtn=document.getElementById('backBtn');
 const yesBtn=document.createElement('button'); yesBtn.id='yesBtn'; yesBtn.className='primary'; yesBtn.textContent='YES 💖';
 const noBtn=document.createElement('button'); noBtn.id='noBtn'; noBtn.className='secondary'; noBtn.textContent='NO 😅';
 
@@ -200,37 +216,56 @@ function toggleDark(){document.body.classList.toggle('dark')}
 function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section]?.bg||"#fff"}
 
 function playEffect(img,audio){ 
-  if(audio)new Audio(audio).play().catch(()=>{});
-  if(img){const i=document.createElement('img');i.src=img;i.className='popup-img';document.body.appendChild(i);setTimeout(()=>i.remove(),3000);}
+  if(audio) new Audio(audio).play().catch(()=>{}); 
+  if(img){
+    const i=document.createElement('img');
+    i.src=img;
+    i.className='popup-img';
+    document.body.appendChild(i);
+    setTimeout(()=>i.remove(),3000);
+  }
 }
 
-function moveNoButton(){const box=noBtn.parentElement;if(!box)return; const maxX=box.clientWidth-noBtn.offsetWidth; const maxY=box.clientHeight-noBtn.offsetHeight; noBtn.style.left=Math.random()*maxX+"px"; noBtn.style.top=Math.random()*maxY+"px"; noBtn.style.transform="none";}
+function moveNoButton(){
+  const box=noBtn.parentElement;
+  if(!box) return;
+  const maxX=box.clientWidth-noBtn.offsetWidth;
+  const maxY=box.clientHeight-noBtn.offsetHeight;
+  noBtn.style.left=Math.random()*maxX+"px";
+  noBtn.style.top=Math.random()*maxY+"px";
+  noBtn.style.transform="none";
+}
 
-function save(){history.push({section,question,mode});backBtn.classList.remove('hidden')}
-backBtn.onclick=()=>{if(!history.length)return; const h=history.pop(); section=h.section;question=h.question;mode=h.mode;render();if(!history.length)backBtn.classList.add('hidden')};
+function save(){history.push({section,question,mode}); backBtn.classList.remove('hidden')}
+backBtn.onclick=()=>{if(!history.length) return; const h=history.pop(); section=h.section; question=h.question; mode=h.mode; render(); if(!history.length) backBtn.classList.add('hidden')};
 
 function render(){
   setBG();
-  if(mode==="start")renderStart();
-  else if(mode==="intro")renderIntro();
-  else if(mode==="question")renderQuestion();
-  else if(mode==="password")renderPassword();
-  else if(mode==="final")renderFinal();
-  else if(mode==="secret")renderSecret();
+  if(mode==="start") renderStart();
+  else if(mode==="intro") renderIntro();
+  else if(mode==="question") renderQuestion();
+  else if(mode==="password") renderPassword();
+  else if(mode==="final") renderFinal();
+  else if(mode==="secret") renderSecret();
 }
 
 function renderStart(){screen.innerHTML=`<h1>${SITE.intro.title}</h1><p>${SITE.intro.message}</p><button class="primary" onclick="begin()">Start 💖</button>`}
-function begin(){save();mode="intro";render()}
+function begin(){save(); mode="intro"; render()}
 function renderIntro(){screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="startQuestions()">Continue</button>`}
-function startQuestions(){save();question=0;mode="question";render()}
+function startQuestions(){save(); question=0; mode="question"; render()}
 
 function renderQuestion(){
-  const q=SITE.sections[section].questions[question];
-  screen.innerHTML=`<h1>${q.text}</h1><div class="buttons"></div>`;
-  const box=screen.querySelector('.buttons'); box.append(yesBtn,noBtn); bindButtons();
+  const s=SITE.sections[section].questions[question];
+  screen.innerHTML=`<h1>${s.q}</h1><div class="buttons"></div>`;
+  const box=screen.querySelector('.buttons');
+  box.append(yesBtn,noBtn);
+  bindButtons();
 }
 
-function renderPassword(){const s=SITE.sections[section];screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p><input id="pw" style="width:100%;padding:12px;border-radius:10px"><p id="err" style="color:#ff4d6d"></p><button class="primary" onclick="checkPw()">Unlock</button>`}
+function renderPassword(){
+  const s=SITE.sections[section];
+  screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p><input id="pw" style="width:100%;padding:12px;border-radius:10px"><p id="err" style="color:#ff4d6d"></p><button class="primary" onclick="checkPw()">Unlock</button>`;
+}
 
 function renderFinal(){
   screen.innerHTML=`
@@ -269,26 +304,31 @@ function startCountdown(){
 }
 
 function showAmazingBurst(){
+  // Flash
   const flash=document.createElement('div'); flash.style.position='fixed'; flash.style.top=0; flash.style.left=0;
   flash.style.width='100%'; flash.style.height='100%'; flash.style.background='white'; flash.style.opacity='0.8'; flash.style.zIndex='200';
   document.body.appendChild(flash); setTimeout(()=>flash.remove(),150);
 
+  // Particles spread further
   const emojis=['💖','✨','🔥','🌟'];
-  for(let i=0;i<50;i++){
+  for(let i=0;i<40;i++){
     const p=document.createElement('div'); p.className='particle';
     p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
     p.style.left='50%'; p.style.top='50%';
     document.body.appendChild(p);
-    const angle=Math.random()*2*Math.PI; const dist=50+Math.random()*300;
-    const x=dist*Math.cos(angle); const y=dist*Math.sin(angle); const rot=Math.random()*720;
+    const angle=Math.random()*2*Math.PI;
+    const dist=50+Math.random()*300;
+    const x=dist*Math.cos(angle); const y=dist*Math.sin(angle);
+    const rot=Math.random()*720;
     setTimeout(()=>{p.style.transform=`translate(${x}px,${y}px) rotate(${rot}deg) scale(1.5)`; p.style.opacity=0;},50);
     setTimeout(()=>p.remove(),1500);
   }
 
+  // Continuous falling confetti spread
   const confEmojis=['💖','✨','🎉','🌹'];
   let confCount=0;
   const confInterval=setInterval(()=>{
-    if(confCount>=100){clearInterval(confInterval); return;}
+    if(confCount>=80){clearInterval(confInterval); return;}
     const c=document.createElement('div'); c.className='confetti';
     c.textContent=confEmojis[Math.floor(Math.random()*confEmojis.length)];
     c.style.left=Math.random()*100+'%'; c.style.top='-20px';
@@ -298,9 +338,9 @@ function showAmazingBurst(){
     document.body.appendChild(c);
     setTimeout(()=>c.remove(),dur*1000);
     confCount++;
-  },60);
+  },80);
 
-  setTimeout(openSecret,1200);
+  setTimeout(openSecret,1000);
 }
 
 function openSecret(){save();mode="secret";render()}
@@ -308,30 +348,59 @@ function renderSecret(){screen.innerHTML=`<h1>💖 Secret</h1><p>Just for you �
 
 function bindButtons(){
   yesBtn.onclick=()=>{
-    const q=SITE.sections[section].questions[question]; playEffect(q.yesImage,q.yesAudio);
-    save();question++;
-    if(question<SITE.sections[section].questions.length){render();return;}
-    section++;question=0;
-    if(section>=SITE.sections.length){mode="final";render();return;}
-    SITE.sections[section].passcode?renderPassword():renderIntro();
+    const s=SITE.sections[section].questions[question];
+    playEffect(s.img,s.audio);
+    save();
+    question++;
+    if(question < SITE.sections[section].questions.length){
+      renderQuestion();
+      return;
+    }
+    section++;
+    question=0;
+    if(section >= SITE.sections.length){
+      mode="final";
+      render();
+      return;
+    }
+    SITE.sections[section].passcode ? renderPassword() : renderIntro();
   };
-  noBtn.onclick=()=>{
+
+  noBtn.onclick = () => {
     moveNoButton();
-    const s=SITE.sections[section];
-    if(s.noAudio)new Audio(s.noAudio).play().catch(()=>{});
-    toast(SITE.noClickMessages[Math.floor(Math.random()*SITE.noClickMessages.length)]);
-  };
-}
+    const s = SITE.sections[section];
+    if(s.noAudio) new Audio(s.noAudio).play().catch(()=>{});
+    if(s.noClickMessages){
+        const msg = s.noClickMessages
+const msg = s.noClickMessages[Math.floor(Math.random() * s.noClickMessages.length)];
+        toast(msg || "Nice try 😌 but NO isn’t an option today");
+    } else {
+        toast("Nice try 😌 but NO isn’t an option today");
+    }
+};
 
 function checkPw(){
   const input=document.getElementById('pw').value.trim().toLowerCase();
-  const pass=SITE.sections[section].passcode?.toLowerCase();
-  if(input!==pass){document.getElementById('err').textContent=SITE.sections[section].wrongMessage; return;}
-  save();question=0;mode="question";render();
+  const pass=SITE.sections[section].passcode.toLowerCase();
+  if(input!==pass){
+    document.getElementById('err').textContent=SITE.sections[section].wrongMessage; 
+    return;
+  }
+  save();
+  question=0;
+  mode="question";
+  render();
 }
 
-function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2000);}
+function toast(m){
+  const t=document.createElement('div');
+  t.className='toast';
+  t.textContent=m;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
+}
 
+// Start the app
 render();
 </script>
 
