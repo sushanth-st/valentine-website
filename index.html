@@ -153,7 +153,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
  **************************************************/
 const SITE = {
   intro: { 
-    title: "Okay Listen to my my Appukutty 😌", 
+    title: "Okay Listen to my my Appukutty 🫰😌", 
     message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜" 
   },
 
@@ -354,8 +354,11 @@ function bindButtons(){
   };
 }
 
+// ✅ PASSWORD FIX: NOT CASE-SENSITIVE
 function checkPw(){
-  if(document.getElementById('pw').value!==SITE.sections[section].passcode){
+  const input=document.getElementById('pw').value.trim().toLowerCase();
+  const pass=SITE.sections[section].passcode.toLowerCase();
+  if(input!==pass){
     document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
     return;
   }
