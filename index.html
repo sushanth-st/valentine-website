@@ -107,10 +107,12 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
   100%{opacity:0}
 }
 
-.final-scroll{
-  max-height:55vh;
+/* Final scroll container for full content */
+.final-scroll-container{
+  max-height:80vh;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
+  padding-right:8px;
 }
 
 .final-scroll img{
@@ -153,7 +155,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
  **************************************************/
 const SITE = {
   intro: { 
-    title: "Okay Listen to my my Appukutty 🫰😌", 
+    title: "Okay Listen to my my Appukutty 😌", 
     message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜" 
   },
 
@@ -290,10 +292,14 @@ function renderPassword(){
 
 function renderFinal(){
   screen.innerHTML=`
-    <h1>${SITE.finalMessage}</h1>
-    <div class="final-scroll" id="scrollBox">${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}</div>
-    <p style="margin-top:16px">Liked the surprise so far? 💖</p>
-    <button class="primary" onclick="startCountdown()">View Secret Message 💌</button>
+    <div class="final-scroll-container" id="scrollBox">
+      <h1>${SITE.finalMessage}</h1>
+      <div class="final-scroll">
+        ${SITE.finalImages.map(i=>`<img src="${i}">`).join("")}
+      </div>
+      <p style="margin-top:16px">Liked the surprise so far? 💖</p>
+      <button class="primary" onclick="startCountdown()">View Secret Message 💌</button>
+    </div>
   `;
   playEffect(SITE.finalYesImage,SITE.finalYesAudio);
 
