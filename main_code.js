@@ -193,7 +193,7 @@ function showAmazingBurst() {
                     e.style.transform =
                         `translate(${x}px,${y}px) rotate(${rot}deg) scale(1.8)`;
                     e.style.opacity = 0;
-                }, 20);
+                }, 30);
 
                 setTimeout(() => e.remove(), 1800);
             }
