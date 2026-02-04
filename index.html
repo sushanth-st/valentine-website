@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- CACHE BUSTING -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -150,12 +149,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
   font-size:1.3rem;
   z-index:90;
   pointer-events:none;
-  animation:fall 3s linear forwards;
-}
-
-@keyframes fall{
-  0%{transform:translateY(-20px) rotate(0deg);}
-  100%{transform:translateY(100vh) rotate(360deg); opacity:0;}
+  animation:fall linear forwards;
 }
 </style>
 </head>
@@ -170,7 +164,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
 
 <script>
 const SITE = {
-  intro: { title: "Okay Listen to my my Appukutty 😌", message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜" },
+  intro: { title: "Okay Listen to my my Appukutty🫰🫰 😌", message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜" },
   sections: [
     { title:"Funny 😄", bg:"linear-gradient(135deg,#ffe4f2,#fff)", intro:"Let’s start easy 😜", questions:["Be honest…\nYou’re hating this already, right? 😏","Okay, serious question…\nDo you agree I’m the worst boyfriend in the world? 😌💖","Do you agree I make you cry more than I make you laugh? 🥺💖","Tell me the truth…\nYou hate every gift I’ve ever given you, right? 🥺🎁\nNone of them were good 😌"], yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio.mp3", noAudio:"Audio/ydaudio.mp3" },
     { title:"Romantic 🌹", bg:"linear-gradient(135deg,#fff0f6,#ffe6f0)", intro:"Feel the romance 💕", questions:["Do you ever feel like I don’t love you enough? 🥺❤️","Do you think I’m not romantic enough with you? 🌹😌","Do you secretly think I’m a baaad kisser? 😘😜","Do you think I should start behaving more decently when I’m with you? 🙈😇"], yesImage:"Images/image1.jpg", yesAudio:"Audio/ydaudio.mp3", noAudio:"Audio/ydaudio.mp3" },
@@ -194,18 +188,15 @@ Happy Valentine’s Day, my love! 🌹💌`,
   noClickMessages:["Nice try 😌 but NO isn’t an option today","Lying doesn’t suit you 😌💔","Your heart says YES… your finger is confused 💖"]
 };
 
-let section=0,question=0,mode="start",autoScrollTimer=null;
+let section=0,question=0,mode="start",autoScrollTimer=null,scrollDirection=1;
 const history=[],screen=document.getElementById('screen'),backBtn=document.getElementById('backBtn');
 const yesBtn=document.createElement('button'); yesBtn.id='yesBtn'; yesBtn.className='primary'; yesBtn.textContent='YES 💖';
 const noBtn=document.createElement('button'); noBtn.id='noBtn'; noBtn.className='secondary'; noBtn.textContent='NO 😅';
 
 function toggleDark(){document.body.classList.toggle('dark')}
 function setBG(){if(!document.body.classList.contains('dark'))document.body.style.background=SITE.sections[section]?.bg||"#fff"}
-
 function playEffect(img,audio){ if(audio)new Audio(audio).play().catch(()=>{}); if(img){const i=document.createElement('img');i.src=img;i.className='popup-img';document.body.appendChild(i);setTimeout(()=>i.remove(),3000);}}
-
 function moveNoButton(){const box=noBtn.parentElement;if(!box)return; const maxX=box.clientWidth-noBtn.offsetWidth; const maxY=box.clientHeight-noBtn.offsetHeight; noBtn.style.left=Math.random()*maxX+"px"; noBtn.style.top=Math.random()*maxY+"px"; noBtn.style.transform="none";}
-
 function save(){history.push({section,question,mode});backBtn.classList.remove('hidden')}
 backBtn.onclick=()=>{if(!history.length)return; const h=history.pop(); section=h.section;question=h.question;mode=h.mode;render();if(!history.length)backBtn.classList.add('hidden')};
 
@@ -223,16 +214,9 @@ function renderStart(){screen.innerHTML=`<h1>${SITE.intro.title}</h1><p>${SITE.i
 function begin(){save();mode="intro";render()}
 function renderIntro(){screen.innerHTML=`<h1>${SITE.sections[section].title}</h1><p>${SITE.sections[section].intro}</p><button class="primary" onclick="startQuestions()">Continue</button>`}
 function startQuestions(){save();question=0;mode="question";render()}
-function renderQuestion(){
-  screen.innerHTML=`<h1>${SITE.sections[section].questions[question]}</h1><div class="buttons"></div>`;
-  const box=screen.querySelector('.buttons');
-  box.append(yesBtn,noBtn);
-  bindButtons();
-}
-function renderPassword(){
-  const s=SITE.sections[section];
-  screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p><input id="pw" style="width:100%;padding:12px;border-radius:10px"><p id="err" style="color:#ff4d6d"></p><button class="primary" onclick="checkPw()">Unlock</button>`;
-}
+function renderQuestion(){screen.innerHTML=`<h1>${SITE.sections[section].questions[question]}</h1><div class="buttons"></div>`;const box=screen.querySelector('.buttons');box.append(yesBtn,noBtn);bindButtons();}
+function renderPassword(){const s=SITE.sections[section];screen.innerHTML=`<h1>🔐 Enter Password</h1><p>${s.hint}</p><input id="pw" style="width:100%;padding:12px;border-radius:10px"><p id="err" style="color:#ff4d6d"></p><button class="primary" onclick="checkPw()">Unlock</button>`}
+
 function renderFinal(){
   screen.innerHTML=`
     <div class="final-scroll-container" id="scrollBox">
@@ -249,11 +233,12 @@ function renderFinal(){
   let pause=false;
   box.addEventListener('touchstart',()=>pause=true);
   box.addEventListener('touchend',()=>pause=false);
+  box.addEventListener('scroll',()=>{ if(box.scrollTop===0) scrollDirection=1; });
   clearInterval(autoScrollTimer);
   autoScrollTimer=setInterval(()=>{
     if(!pause){
-      box.scrollTop+=1;
-      if(box.scrollTop+box.clientHeight>=box.scrollHeight)box.scrollTop=0;
+      if(scrollDirection===1 && box.scrollTop + box.clientHeight < box.scrollHeight) box.scrollTop+=1;
+      if(box.scrollTop + box.clientHeight >= box.scrollHeight) scrollDirection=0;
     }
   },40);
 }
@@ -264,49 +249,48 @@ function startCountdown(){
   const countdownInterval=setInterval(()=>{
     count--;
     if(count>0) screen.querySelector('p').textContent=count;
-    else{
-      clearInterval(countdownInterval);
-      showAmazingBurst();
-    }
+    else{ clearInterval(countdownInterval); showAmazingBurst(); }
   },1000);
 }
 
 function showAmazingBurst(){
   // Flash
-  const flash=document.createElement('div');
-  flash.style.position='fixed'; flash.style.top=0; flash.style.left=0;
-  flash.style.width='100%'; flash.style.height='100%';
-  flash.style.background='white'; flash.style.opacity='0.8'; flash.style.zIndex='200';
-  document.body.appendChild(flash);
-  setTimeout(()=>flash.remove(),150);
+  const flash=document.createElement('div'); flash.style.position='fixed'; flash.style.top=0; flash.style.left=0;
+  flash.style.width='100%'; flash.style.height='100%'; flash.style.background='white'; flash.style.opacity='0.8'; flash.style.zIndex='200';
+  document.body.appendChild(flash); setTimeout(()=>flash.remove(),150);
 
-  // Particles
+  // Particles spread further
   const emojis=['💖','✨','🔥','🌟'];
-  for(let i=0;i<20;i++){
+  for(let i=0;i<40;i++){
     const p=document.createElement('div'); p.className='particle';
     p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
     p.style.left='50%'; p.style.top='50%';
     document.body.appendChild(p);
     const angle=Math.random()*2*Math.PI;
-    const dist=50+Math.random()*120;
+    const dist=50+Math.random()*300;
     const x=dist*Math.cos(angle); const y=dist*Math.sin(angle);
-    const rot=Math.random()*360;
+    const rot=Math.random()*720;
     setTimeout(()=>{p.style.transform=`translate(${x}px,${y}px) rotate(${rot}deg) scale(1.5)`; p.style.opacity=0;},50);
-    setTimeout(()=>p.remove(),1000);
+    setTimeout(()=>p.remove(),1500);
   }
 
-  // Confetti
+  // Continuous falling confetti spread
   const confEmojis=['💖','✨','🎉','🌹'];
-  for(let i=0;i<30;i++){
+  let confCount=0;
+  const confInterval=setInterval(()=>{
+    if(confCount>=80){clearInterval(confInterval); return;}
     const c=document.createElement('div'); c.className='confetti';
     c.textContent=confEmojis[Math.floor(Math.random()*confEmojis.length)];
     c.style.left=Math.random()*100+'%'; c.style.top='-20px';
-    c.style.fontSize=(14+Math.random()*18)+'px';
+    c.style.fontSize=(12+Math.random()*22)+'px';
+    const dur=2+Math.random()*2;
+    c.style.animationDuration=dur+'s';
     document.body.appendChild(c);
-    setTimeout(()=>c.remove(),3000);
-  }
+    setTimeout(()=>c.remove(),dur*1000);
+    confCount++;
+  },80);
 
-  setTimeout(openSecret,800);
+  setTimeout(openSecret,1000);
 }
 
 function openSecret(){save();mode="secret";render()}
