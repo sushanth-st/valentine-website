@@ -138,6 +138,16 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
   animation: explode 0.6s ease forwards;
   z-index:100;
 }
+
+/* Particle styles */
+.particle {
+  position:absolute;
+  font-size:1.2rem;
+  z-index:200;
+  pointer-events:none;
+  user-select:none;
+  will-change: transform, opacity;
+}
 </style>
 </head>
 
@@ -155,7 +165,7 @@ button{border:none;border-radius:999px;padding:14px 28px;font-size:1.05rem;curso
  **************************************************/
 const SITE = {
   intro: { 
-    title: "Okay Listen to my my Appukutty 😌", 
+    title: "Okay Listen to my my Appukutty 🫰😌", 
     message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜" 
   },
 
@@ -221,12 +231,7 @@ const SITE = {
     }
   ],
 
-  finalMessage:`❣️❣️❣️❣️❣️
-🫰🫰🫰🫰🫰
-💋💋💋💋💋
-🤗🤗🤗🤗🤗
-😘😘😘😘😘
-Hope you liked this small journey Baby,  but really all I wanted to say was
+  finalMessage:`Hope you liked this small journey Baby,  but really all I wanted to say was
 
 Every beat of my heart
 Keeps saying… I choose you 😌❤️
@@ -322,7 +327,7 @@ function renderFinal(){
   },40);
 }
 
-// 🔥 Countdown 5 sec + explosion
+// 🔥 Countdown 5 sec + amazing burst
 function startCountdown(){
   let count=5;
   screen.innerHTML=`<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
@@ -337,11 +342,65 @@ function startCountdown(){
 }
 
 function showExplosionSecret(){
-  const exp=document.createElement('div');
-  exp.className='explosion'; exp.textContent='💥';
-  document.body.appendChild(exp);
-  setTimeout(()=>exp.remove(),600);
-  setTimeout(openSecret,600);
+  const emojis = ["💖","✨","🔥","💫","🎉"];
+  const numParticles = 25;
+
+  // Flash background
+  const flash = document.createElement('div');
+  flash.style.position='fixed';
+  flash.style.top='0'; flash.style.left='0'; flash.style.width='100%'; flash.style.height='100%';
+  flash.style.background='white';
+  flash.style.opacity='0.6';
+  flash.style.zIndex='150';
+  document.body.appendChild(flash);
+  setTimeout(()=>flash.remove(),120);
+
+  // Particle explosion
+  for(let i=0;i<numParticles;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    document.body.appendChild(p);
+    const angle=Math.random()*2*Math.PI;
+    const dist=50+Math.random()*100;
+    const size=12+Math.random()*18;
+    p.style.fontSize=size+'px';
+    p.style.left='50%';
+    p.style.top='50%';
+    p.style.opacity=1;
+    const animDuration=1000+Math.random()*500;
+
+    const start = Date.now();
+    const anim = setInterval(()=>{
+      const t = (Date.now()-start)/animDuration;
+      if(t>=1){p.remove(); clearInterval(anim); return;}
+      p.style.left = `calc(50% + ${Math.cos(angle)*dist*t}px)`;
+      p.style.top = `calc(50% + ${Math.sin(angle)*dist*t}px)`;
+      p.style.opacity = 1-t;
+      p.style.transform = `rotate(${360*t}deg) scale(${1-t*0.5})`;
+    },16);
+  }
+
+  // Confetti fall
+  for(let i=0;i<30;i++){
+    const c = document.createElement('div');
+    c.className='particle';
+    c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    document.body.appendChild(c);
+    c.style.left=Math.random()*window.innerWidth+'px';
+    c.style.top='-20px';
+    const animDuration=2000+Math.random()*1000;
+    const start = Date.now();
+    const anim = setInterval(()=>{
+      const t = (Date.now()-start)/animDuration;
+      if(t>=1){c.remove(); clearInterval(anim); return;}
+      c.style.top = -20 + t* (window.innerHeight+40)+'px';
+      c.style.transform = `rotate(${t*720}deg)`;
+      c.style.opacity = 1-t;
+    },16);
+  }
+
+  setTimeout(openSecret,1200);
 }
 
 function openSecret(){save();mode="secret";render()}
@@ -369,17 +428,4 @@ function bindButtons(){
 function checkPw(){
   const input=document.getElementById('pw').value.trim().toLowerCase();
   const pass=SITE.sections[section].passcode.toLowerCase();
-  if(input!==pass){
-    document.getElementById('err').textContent=SITE.sections[section].wrongMessage;
-    return;
-  }
-  save();question=0;mode="question";render();
-}
-
-function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2000);}
-
-render();
-</script>
-
-</body>
-</html>
+  if(input!==pass
