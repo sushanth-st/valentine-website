@@ -1,6 +1,8 @@
 // main_code.js
 
-let section = 0, question = 0, mode = "start", autoScrollTimer = null, scrollDirection = 1;
+let section = 0, question = 0, mode = "start",
+    autoScrollTimer = null, scrollDirection = 1;
+
 const history = [],
     screen = document.getElementById('screen'),
     backBtn = document.getElementById('backBtn');
@@ -138,18 +140,12 @@ function renderFinal() {
 
     box.addEventListener('touchstart', () => pause = true);
     box.addEventListener('touchend', () => pause = false);
-    box.addEventListener('scroll', () => {
-        if (box.scrollTop === 0) scrollDirection = 1;
-    });
 
     clearInterval(autoScrollTimer);
 
-    // ⏳ WAIT 3 SECONDS — then FORCE scroll start
+    // ⏳ wait 3 sec → force auto scroll
     setTimeout(() => {
-
-        // 🔧 KEY FIX: wake up scroll engine
-        box.scrollTop = 1;
-
+        box.scrollTop = 1; // force activation
         autoScrollTimer = setInterval(() => {
             if (!pause) {
                 if (
@@ -158,23 +154,30 @@ function renderFinal() {
                 ) {
                     box.scrollTop += 1;
                 }
-                if (box.scrollTop + box.clientHeight >= box.scrollHeight) {
-                    scrollDirection = 0;
-                }
             }
         }, 40);
-
     }, 3000);
 }
 
+/* ✅ FIXED COUNTDOWN FLOW */
 function startCountdown() {
     let count = 5;
     screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
+
+    const p = screen.querySelector('p');
+
     const countdownInterval = setInterval(() => {
         count--;
-        if (count > 0) screen.querySelector('p').textContent = count;
-        else {
+
+        if (count >= 0) {
+            p.textContent = count;
+        }
+
+        if (count === 0) {
             clearInterval(countdownInterval);
+
+            // 🔥 IMMEDIATE transition
+            openSecret();
             showAmazingBurst();
         }
     }, 1000);
@@ -194,7 +197,7 @@ function showAmazingBurst() {
     setTimeout(() => flash.remove(), 150);
 
     const emojis = ['💖', '✨', '🔥', '🌟'];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 60; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
         p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
@@ -203,40 +206,19 @@ function showAmazingBurst() {
         document.body.appendChild(p);
 
         const angle = Math.random() * 2 * Math.PI;
-        const dist = 50 + Math.random() * 300;
+        const dist = 80 + Math.random() * 320;
         const x = dist * Math.cos(angle);
         const y = dist * Math.sin(angle);
         const rot = Math.random() * 720;
 
         setTimeout(() => {
-            p.style.transform = `translate(${x}px,${y}px) rotate(${rot}deg) scale(1.5)`;
+            p.style.transform =
+                `translate(${x}px,${y}px) rotate(${rot}deg) scale(1.6)`;
             p.style.opacity = 0;
-        }, 50);
+        }, 30);
 
         setTimeout(() => p.remove(), 1500);
     }
-
-    const confEmojis = ['💖', '✨', '🎉', '🌹'];
-    let confCount = 0;
-    const confInterval = setInterval(() => {
-        if (confCount >= 100) {
-            clearInterval(confInterval);
-            return;
-        }
-        const c = document.createElement('div');
-        c.className = 'confetti';
-        c.textContent = confEmojis[Math.floor(Math.random() * confEmojis.length)];
-        c.style.left = Math.random() * 100 + '%';
-        c.style.top = '-20px';
-        c.style.fontSize = (12 + Math.random() * 22) + 'px';
-        const dur = 2 + Math.random() * 2;
-        c.style.animationDuration = dur + 's';
-        document.body.appendChild(c);
-        setTimeout(() => c.remove(), dur * 1000);
-        confCount++;
-    }, 60);
-
-    setTimeout(openSecret, 1200);
 }
 
 function openSecret() {
@@ -277,7 +259,11 @@ function bindButtons() {
         moveNoButton();
         const s = SITE.sections[section];
         if (s.noAudio) new Audio(s.noAudio).play().catch(() => {});
-        toast(SITE.noClickMessages[Math.floor(Math.random() * SITE.noClickMessages.length)]);
+        toast(
+            SITE.noClickMessages[
+                Math.floor(Math.random() * SITE.noClickMessages.length)
+            ]
+        );
     };
 }
 
@@ -285,7 +271,8 @@ function checkPw() {
     const input = document.getElementById('pw').value.trim().toLowerCase();
     const pass = SITE.sections[section].passcode?.toLowerCase();
     if (input !== pass) {
-        document.getElementById('err').textContent = SITE.sections[section].wrongMessage;
+        document.getElementById('err').textContent =
+            SITE.sections[section].wrongMessage;
         return;
     }
     save();
