@@ -144,11 +144,18 @@ function renderFinal() {
 
     clearInterval(autoScrollTimer);
 
-    // ⏳ Delay auto-scroll by 3 seconds
+    // ⏳ WAIT 3 SECONDS — then FORCE scroll start
     setTimeout(() => {
+
+        // 🔧 KEY FIX: wake up scroll engine
+        box.scrollTop = 1;
+
         autoScrollTimer = setInterval(() => {
             if (!pause) {
-                if (scrollDirection === 1 && box.scrollTop + box.clientHeight < box.scrollHeight) {
+                if (
+                    scrollDirection === 1 &&
+                    box.scrollTop + box.clientHeight < box.scrollHeight
+                ) {
                     box.scrollTop += 1;
                 }
                 if (box.scrollTop + box.clientHeight >= box.scrollHeight) {
@@ -156,6 +163,7 @@ function renderFinal() {
                 }
             }
         }, 40);
+
     }, 3000);
 }
 
