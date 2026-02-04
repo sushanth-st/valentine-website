@@ -145,10 +145,8 @@ function renderFinal() {
     setTimeout(() => {
         box.scrollTop = 1;
         autoScrollTimer = setInterval(() => {
-            if (!pause) {
-                if (box.scrollTop + box.clientHeight < box.scrollHeight) {
-                    box.scrollTop += 1;
-                }
+            if (!pause && box.scrollTop + box.clientHeight < box.scrollHeight) {
+                box.scrollTop += 1;
             }
         }, 40);
     }, 3000);
@@ -237,24 +235,35 @@ function renderSecret() {
 
 function bindButtons() {
     yesBtn.onclick = () => {
+        const q = SITE.sections[section].questions[question];
+
+        // ✅ RESTORED YES IMAGE + AUDIO
+        playEffect(q.yesImage, q.yesAudio);
+
         save();
         question++;
+
         if (question < SITE.sections[section].questions.length) {
             render();
             return;
         }
+
         section++;
         question = 0;
+
         if (section >= SITE.sections.length) {
             mode = "final";
             render();
             return;
         }
+
         SITE.sections[section].passcode ? renderPassword() : renderIntro();
     };
 
     noBtn.onclick = () => {
         moveNoButton();
+        const s = SITE.sections[section];
+        if (s.noAudio) new Audio(s.noAudio).play().catch(() => {});
         toast(
             SITE.noClickMessages[
                 Math.floor(Math.random() * SITE.noClickMessages.length)
