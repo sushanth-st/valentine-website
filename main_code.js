@@ -1,7 +1,8 @@
 // main_code.js
 
 let section = 0, question = 0, mode = "start",
-    autoScrollTimer = null, scrollDirection = 1;
+    autoScrollTimer = null, scrollDirection = 1,
+    fallingInterval = null;
 
 const history = [],
     screen = document.getElementById('screen'),
@@ -133,8 +134,6 @@ function renderFinal() {
         </div>
     `;
 
-    playEffect(SITE.finalYesImage, SITE.finalYesAudio);
-
     const box = document.getElementById('scrollBox');
     let pause = false;
 
@@ -143,15 +142,11 @@ function renderFinal() {
 
     clearInterval(autoScrollTimer);
 
-    // ⏳ wait 3 sec → force auto scroll
     setTimeout(() => {
-        box.scrollTop = 1; // force activation
+        box.scrollTop = 1;
         autoScrollTimer = setInterval(() => {
             if (!pause) {
-                if (
-                    scrollDirection === 1 &&
-                    box.scrollTop + box.clientHeight < box.scrollHeight
-                ) {
+                if (box.scrollTop + box.clientHeight < box.scrollHeight) {
                     box.scrollTop += 1;
                 }
             }
@@ -159,66 +154,74 @@ function renderFinal() {
     }, 3000);
 }
 
-/* ✅ FIXED COUNTDOWN FLOW */
+/* COUNTDOWN */
 function startCountdown() {
     let count = 5;
     screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
-
     const p = screen.querySelector('p');
 
     const countdownInterval = setInterval(() => {
         count--;
-
-        if (count >= 0) {
-            p.textContent = count;
-        }
+        p.textContent = count;
 
         if (count === 0) {
             clearInterval(countdownInterval);
-
-            // 🔥 IMMEDIATE transition
             openSecret();
             showAmazingBurst();
+            startFallingEmojis();
         }
     }, 1000);
 }
 
+/* 💥 BIG CINEMATIC BURST */
 function showAmazingBurst() {
-    const flash = document.createElement('div');
-    flash.style.position = 'fixed';
-    flash.style.top = 0;
-    flash.style.left = 0;
-    flash.style.width = '100%';
-    flash.style.height = '100%';
-    flash.style.background = 'white';
-    flash.style.opacity = '0.8';
-    flash.style.zIndex = '200';
-    document.body.appendChild(flash);
-    setTimeout(() => flash.remove(), 150);
-
-    const emojis = ['💖', '✨', '🔥', '🌟'];
-    for (let i = 0; i < 60; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        p.style.left = '50%';
-        p.style.top = '50%';
-        document.body.appendChild(p);
-
-        const angle = Math.random() * 2 * Math.PI;
-        const dist = 80 + Math.random() * 320;
-        const x = dist * Math.cos(angle);
-        const y = dist * Math.sin(angle);
-        const rot = Math.random() * 720;
-
+    for (let wave = 0; wave < 3; wave++) {
         setTimeout(() => {
-            p.style.transform =
-                `translate(${x}px,${y}px) rotate(${rot}deg) scale(1.6)`;
-            p.style.opacity = 0;
-        }, 30);
+            for (let i = 0; i < 150; i++) {
+                const e = document.createElement('div');
+                e.className = 'particle';
+                e.textContent = ['💖','🔥','✨','🌹','💋'][Math.floor(Math.random()*5)];
+                e.style.left = '50%';
+                e.style.top = '50%';
+                document.body.appendChild(e);
 
-        setTimeout(() => p.remove(), 1500);
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 150 + Math.random() * 400;
+                const x = Math.cos(angle) * dist;
+                const y = Math.sin(angle) * dist;
+                const rot = Math.random() * 720;
+
+                setTimeout(() => {
+                    e.style.transform =
+                        `translate(${x}px,${y}px) rotate(${rot}deg) scale(1.8)`;
+                    e.style.opacity = 0;
+                }, 20);
+
+                setTimeout(() => e.remove(), 1800);
+            }
+        }, wave * 180);
     }
+}
+
+/* 🌧️ FALLING EMOJIS */
+function startFallingEmojis() {
+    clearInterval(fallingInterval);
+
+    const emojis = ['💖','🔥','💋','🌹','✨','😍','😘'];
+
+    fallingInterval = setInterval(() => {
+        const f = document.createElement('div');
+        f.className = 'confetti';
+        f.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        f.style.left = Math.random() * 100 + '%';
+        f.style.top = '-30px';
+        f.style.fontSize = (16 + Math.random() * 26) + 'px';
+        const dur = 3 + Math.random() * 3;
+        f.style.animationDuration = dur + 's';
+        document.body.appendChild(f);
+
+        setTimeout(() => f.remove(), dur * 1000);
+    }, 120);
 }
 
 function openSecret() {
@@ -228,37 +231,30 @@ function openSecret() {
 }
 
 function renderSecret() {
+    clearInterval(fallingInterval);
     screen.innerHTML = `<h1>💖 Secret</h1><p>Just for you 😘</p>`;
 }
 
 function bindButtons() {
     yesBtn.onclick = () => {
-        const q = SITE.sections[section].questions[question];
-        playEffect(q.yesImage, q.yesAudio);
         save();
         question++;
-
         if (question < SITE.sections[section].questions.length) {
             render();
             return;
         }
-
         section++;
         question = 0;
-
         if (section >= SITE.sections.length) {
             mode = "final";
             render();
             return;
         }
-
         SITE.sections[section].passcode ? renderPassword() : renderIntro();
     };
 
     noBtn.onclick = () => {
         moveNoButton();
-        const s = SITE.sections[section];
-        if (s.noAudio) new Audio(s.noAudio).play().catch(() => {});
         toast(
             SITE.noClickMessages[
                 Math.floor(Math.random() * SITE.noClickMessages.length)
