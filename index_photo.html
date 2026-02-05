@@ -26,7 +26,7 @@ body{
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    z-index:100;
+    z-index:1000;
 }
 .lock input,.lock button{
     padding:12px 18px;
@@ -129,14 +129,13 @@ header{ padding:40px 20px; }
 .end-note h2{ font-size:36px; }
 .end-note p{ font-size:20px; opacity:0.9; }
 
-/* ---------- VALENTINE SECTION ---------- */
+/* ---------- VALENTINE ---------- */
 .valentine-section{
     margin:60px auto 120px;
 }
 .valentine-section h1{
     font-family:'Playfair Display', serif;
     font-size:34px;
-    margin-bottom:20px;
 }
 .valentine-section button{
     padding:14px 28px;
@@ -149,7 +148,7 @@ header{ padding:40px 20px; }
 .yes{ background:#ff5fa2; color:white; }
 .no{ background:#333; color:#aaa; }
 
-/* ---------- YES OVERLAY ---------- */
+/* ---------- YES SCREEN ---------- */
 .yes-screen{
     position:fixed;
     inset:0;
@@ -158,17 +157,26 @@ header{ padding:40px 20px; }
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    z-index:200;
+    z-index:500;
+}
+.yes-screen img{
+    width:220px;
+    margin-bottom:20px;
 }
 .yes-screen h1{
     font-size:42px;
-    margin-bottom:20px;
 }
 
-/* ---------- EMOJI RAIN ---------- */
+/* emoji rain INSIDE yes screen */
+.emoji-layer{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:510;
+}
 .emoji{
-    position:fixed;
-    top:-50px;
+    position:absolute;
+    top:-40px;
     font-size:28px;
     animation:rain 3s linear forwards;
 }
@@ -185,10 +193,15 @@ header{ padding:40px 20px; }
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    z-index:300;
+    z-index:600;
 }
-.no-screen h1{ font-size:60px; }
-.no-screen p{ opacity:0.7; margin-top:10px; }
+.no-screen img{
+    width:180px;
+    margin-bottom:20px;
+}
+.no-screen p{
+    opacity:0.7;
+}
 
 /* ---------- VIEWER ---------- */
 .viewer{
@@ -198,7 +211,7 @@ header{ padding:40px 20px; }
     display:none;
     justify-content:center;
     align-items:center;
-    z-index:10;
+    z-index:200;
 }
 .viewer img{
     max-width:90%;
@@ -214,7 +227,7 @@ header{ padding:40px 20px; }
 
 <body>
 
-<!-- 🔐 LOCK -->
+<!-- LOCK -->
 <div class="lock" id="lock">
     <h1 id="lockTitle"></h1>
     <p id="lockSub"></p>
@@ -240,7 +253,6 @@ header{ padding:40px 20px; }
     <p>Every memory here is a piece of my heart,<br>and every smile of yours is my favorite place.</p>
 </div>
 
-<!-- 💘 VALENTINE -->
 <div class="valentine-section">
     <h1>Will you be my Valentine? ❤️</h1>
     <button class="yes" onclick="sayYes()">Yes 💖</button>
@@ -249,12 +261,14 @@ header{ padding:40px 20px; }
 
 <!-- YES -->
 <div class="yes-screen" id="yesScreen">
+    <div class="emoji-layer" id="emojiLayer"></div>
+    <img src="images/yes.png">
     <h1>She said YES ❤️</h1>
 </div>
 
 <!-- NO -->
 <div class="no-screen" id="noScreen">
-    <h1>😔</h1>
+    <img src="images/no.png">
     <p>Some love stories hurt quietly.</p>
 </div>
 
@@ -263,10 +277,10 @@ header{ padding:40px 20px; }
 </div>
 
 <script>
-/* ================= CONFIG ================= */
+/* CONFIG */
 const CONFIG={
     password:"forever",
-    lockTitle:"💌 Private Memories",
+    lockTitle:"💌💋💋 Private Memories",
     lockSubtitle:"Only for you & me",
     title:"Our Lovely Moments ❤️",
     subtitle:"Every picture here holds a memory I never want to forget",
@@ -278,7 +292,7 @@ const CONFIG={
     stickers:["stickers/1.png","stickers/2.png","stickers/3.png","stickers/4.png"]
 };
 
-/* ================= INIT ================= */
+/* INIT */
 lockTitle.innerText=CONFIG.lockTitle;
 lockSub.innerText=CONFIG.lockSubtitle;
 title.innerText=CONFIG.title;
@@ -302,7 +316,6 @@ CONFIG.polaroids.forEach(p=>{
         s.style.width=(Math.random()*30+80)+'px';
         s.style.top=top+'px';
         Math.random()>0.5?s.style.left='-60px':s.style.right='-60px';
-        s.style.animationDelay=Math.random()*2+'s';
         const img=document.createElement('img');
         img.src=CONFIG.stickers[Math.floor(Math.random()*CONFIG.stickers.length)];
         s.appendChild(img);
@@ -350,9 +363,9 @@ function sayYes(){
         e.className='emoji';
         e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
         e.style.left=Math.random()*100+'%';
-        document.body.appendChild(e);
+        emojiLayer.appendChild(e);
         setTimeout(()=>e.remove(),3000);
-    },100);
+    },120);
 
     setTimeout(()=>{
         clearInterval(rain);
@@ -362,8 +375,6 @@ function sayYes(){
 
 /* NO */
 function sayNo(){
-    document.body.innerHTML='';
-    document.body.appendChild(noScreen);
     noScreen.style.display='flex';
 }
 </script>
