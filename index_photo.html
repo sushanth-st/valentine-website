@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Memories ❤️</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&family=Playfair+Display&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&family=Playfair+Display&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
 
 <style>
 body{
@@ -110,41 +110,60 @@ header{ padding:40px 20px; }
 .sticker{
     position:absolute;
     pointer-events:none;
+    animation:floatSticker 4s ease-in-out infinite;
     filter:drop-shadow(0 8px 12px rgba(0,0,0,0.5));
 }
 .sticker img{ width:100%; }
 
+@keyframes floatSticker{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+}
+
 /* ---------- END NOTE ---------- */
 .end-note{
-    margin:80px 0 120px;
-    position:relative;
+    margin:90px auto 120px;
+    max-width:600px;
+    font-family:'Dancing Script', cursive;
+}
+.end-note h2{
+    font-size:36px;
+    margin-bottom:10px;
+}
+.end-note p{
+    font-size:20px;
+    opacity:0.9;
+}
+
+/* ---------- VALENTINE SCREEN ---------- */
+.valentine{
+    position:fixed;
+    inset:0;
+    background:#111;
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:200;
+    animation:fadeIn 1s ease forwards;
+}
+.valentine h1{
     font-family:'Playfair Display', serif;
+    font-size:36px;
+    margin-bottom:30px;
 }
-.end-note span{
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%);
-    opacity:0.85;
+.valentine button{
+    background:#ff5fa2;
+    border:none;
+    color:white;
+    padding:16px 32px;
+    font-size:20px;
+    border-radius:40px;
+    cursor:pointer;
 }
-.end-main{
-    font-size:28px;
-    position:relative;
-    z-index:2;
-}
-.thought1{
-    font-size:18px;
-    top:-35px;
-    transform:translateX(-50%) rotate(-6deg);
-}
-.thought2{
-    font-size:16px;
-    top:40px;
-    transform:translateX(-50%) rotate(5deg);
-}
-.thought3{
-    font-size:14px;
-    top:75px;
-    transform:translateX(-50%) rotate(-3deg);
+@keyframes fadeIn{
+    from{ opacity:0 }
+    to{ opacity:1 }
 }
 
 /* ---------- VIEWER ---------- */
@@ -192,12 +211,16 @@ header{ padding:40px 20px; }
 
 <section class="wall" id="wall"></section>
 
-<!-- 💌 ENDING -->
+<!-- 💌 END NOTE -->
 <div class="end-note">
-    <span class="thought1">still thinking about you…</span>
-    <span class="end-main">Made with mad love ❤️</span>
-    <span class="thought2">every moment, every smile</span>
-    <span class="thought3">and a little bit of forever</span>
+    <h2>Made with mad love ❤️</h2>
+    <p>Every memory here is a piece of my heart,<br>and every smile of yours is my favorite place.</p>
+</div>
+
+<!-- 💘 VALENTINE -->
+<div class="valentine" id="valentine">
+    <h1>Will you be my Valentine? ❤️</h1>
+    <button onclick="closeValentine()">Yes, always 💖</button>
 </div>
 
 <div class="viewer" id="viewer" onclick="closeViewer()">
@@ -210,7 +233,7 @@ header{ padding:40px 20px; }
 const CONFIG = {
     password: "forever",
 
-    lockTitle: "💌 Private Memories",
+    lockTitle: "💌 🤗Private Memories",
     lockSubtitle: "Only for you & me",
 
     title: "Our Lovely Moments ❤️",
@@ -257,19 +280,15 @@ CONFIG.polaroids.forEach(p=>{
         </div>`;
     wall.appendChild(wrap);
 
-    const zones = [
-        { top:-50, height:50 },
-        { top:120, height:60 }
-    ];
-
-    zones.forEach(zone=>{
+    [ -40, 130 ].forEach((top,i)=>{
         const s=document.createElement('div');
         s.className='sticker';
+        s.style.animationDelay=(Math.random()*2)+'s';
         const img=document.createElement('img');
         img.src=CONFIG.stickers[Math.floor(Math.random()*CONFIG.stickers.length)];
         const size=Math.random()*30+80;
         s.style.width=size+'px';
-        s.style.top=(zone.top + Math.random()*zone.height)+'px';
+        s.style.top=top+'px';
         Math.random()>0.5 ? s.style.left=(-size/1.3)+'px' : s.style.right=(-size/1.3)+'px';
         s.appendChild(img);
         wrap.appendChild(s);
@@ -305,6 +324,16 @@ let playing=false;
 function toggleMusic(){
     playing ? bgMusic.pause() : bgMusic.play();
     playing=!playing;
+}
+
+/* VALENTINE TRIGGER */
+window.addEventListener('scroll',()=>{
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 50){
+        document.getElementById('valentine').style.display='flex';
+    }
+});
+function closeValentine(){
+    document.getElementById('valentine').innerHTML="<h1>❤️ She said YES ❤️</h1>";
 }
 </script>
 
