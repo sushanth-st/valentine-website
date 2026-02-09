@@ -11,10 +11,10 @@ const SITE = {
       bg: "linear-gradient(135deg,#ffe4f2,#fff)",
       intro: "Let’s start easy 😜",
       questions: [
-        { text: "Be honest…\nYou’re hating this already, right? 😏", yesImage: "Images/image1.jpg", yesAudio: "Audio/ydaudio1.mp3" },
-        { text: "Okay, serious question…\nDo you agree I’m the worst boyfriend in the world? 😌💖", yesImage: "Images/image2.jpg", yesAudio: "Audio/ydaudio2.mp3" },
-        { text: "Do you agree I make you cry more than I make you laugh? 🥺💖", yesImage: "Images/image3.jpg", yesAudio: "Audio/ydaudio3.mp3" },
-        { text: "Tell me the truth…\nYou hate every gift I’ve ever given you, right? 🥺🎁\nNone of them were good 😌", yesImage: "Images/image4.jpg", yesAudio: "Audio/ydaudio4.mp3" }
+        { text: "Be honest…\nYou’re hating this already, right? 😏", yesImage: "Images/image1.gif", yesAudio: "Audio/ydaudio1.mp3" },
+        { text: "Okay, serious question…\nDo you agree I’m the worst boyfriend in the world? 😌💖", yesImage: "Images/image2.gif", yesAudio: "Audio/ydaudio2.mp3" },
+        { text: "Do you agree I make you cry more than I make you laugh? 🥺💖", yesImage: "Images/image3.gif", yesAudio: "Audio/ydaudio3.mp3" },
+        { text: "Tell me the truth…\nYou hate every gift I’ve ever given you, right? 🥺🎁\nNone of them were good 😌", yesImage: "Images/image4.gif", yesAudio: "Audio/ydaudio4.mp3" }
       ],
       noAudio: "Audio/ydaudio_no.mp3"
     },
