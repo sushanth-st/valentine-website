@@ -26,20 +26,22 @@ function setBG() {
     }
 }
 
-/* ✅ FIXED: instant popup, 6s duration, NON-BLOCKING */
-function playEffect(img, audio) {
+/* 🔥 UPDATED: effect supports callback + 6s delay */
+function playEffect(img, audio, callback) {
     if (audio) new Audio(audio).play().catch(() => {});
-    if (!img) return;
+    if (img) {
+        const i = document.createElement('img');
+        i.src = img;
+        i.className = 'popup-img';
+        document.body.appendChild(i);
 
-    const i = document.createElement('img');
-    i.src = img;
-    i.className = 'popup-img';
-    i.style.opacity = '1';
-    i.style.zIndex = '9999';
-
-    document.body.appendChild(i);
-
-    setTimeout(() => i.remove(), 6000);
+        setTimeout(() => {
+            i.remove();
+            if (callback) callback();
+        }, 6000);
+    } else {
+        if (callback) callback();
+    }
 }
 
 function moveNoButton() {
@@ -108,10 +110,7 @@ function startQuestions() {
 
 function renderQuestion() {
     const q = SITE.sections[section].questions[question];
-    screen.innerHTML = `
-        <h1 style="white-space:pre-line">${q.text}</h1>
-        <div class="buttons"></div>
-    `;
+    screen.innerHTML = `<h1 style="white-space:pre-line">${q.text}</h1><div class="buttons"></div>`;
     const box = screen.querySelector('.buttons');
     box.append(yesBtn, noBtn);
     bindButtons();
@@ -158,6 +157,7 @@ function renderFinal() {
     }, 3000);
 }
 
+/* COUNTDOWN */
 function startCountdown() {
     let count = 5;
     screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
@@ -207,6 +207,7 @@ function showAmazingBurst() {
 
 function startFallingEmojis() {
     clearInterval(fallingInterval);
+
     const emojis = ['💖','🔥','💋','🌹','✨','😍','😘'];
 
     fallingInterval = setInterval(() => {
@@ -230,6 +231,7 @@ function openSecret() {
     render();
 }
 
+/* 🔥 UPDATED SECRET PAGE */
 function renderSecret() {
     clearInterval(fallingInterval);
     const s = SITE.secretPage;
@@ -247,27 +249,27 @@ function renderSecret() {
 function bindButtons() {
     yesBtn.onclick = () => {
         const q = SITE.sections[section].questions[question];
-
-        playEffect(q.yesImage, q.yesAudio);
-
         save();
-        question++;
 
-        if (question < SITE.sections[section].questions.length) {
-            render();
-            return;
-        }
+        playEffect(q.yesImage, q.yesAudio, () => {
+            question++;
 
-        section++;
-        question = 0;
+            if (question < SITE.sections[section].questions.length) {
+                render();
+                return;
+            }
 
-        if (section >= SITE.sections.length) {
-            mode = "final";
-            render();
-            return;
-        }
+            section++;
+            question = 0;
 
-        SITE.sections[section].passcode ? renderPassword() : renderIntro();
+            if (section >= SITE.sections.length) {
+                mode = "final";
+                render();
+                return;
+            }
+
+            SITE.sections[section].passcode ? renderPassword() : renderIntro();
+        });
     };
 
     noBtn.onclick = () => {
@@ -304,6 +306,7 @@ function toast(m) {
     setTimeout(() => t.remove(), 2000);
 }
 
+/* ⚠️ CAUTION POPUP */
 function showCaution() {
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
