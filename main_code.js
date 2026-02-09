@@ -1,5 +1,3 @@
-// main_code.js
-
 let section = 0, question = 0, mode = "start",
     autoScrollTimer = null, scrollDirection = 1,
     fallingInterval = null;
@@ -28,14 +26,21 @@ function setBG() {
     }
 }
 
-function playEffect(img, audio) {
+/* 🔥 UPDATED: effect supports callback + 6s delay */
+function playEffect(img, audio, callback) {
     if (audio) new Audio(audio).play().catch(() => {});
     if (img) {
         const i = document.createElement('img');
         i.src = img;
         i.className = 'popup-img';
         document.body.appendChild(i);
-        setTimeout(() => i.remove(), 5000);
+
+        setTimeout(() => {
+            i.remove();
+            if (callback) callback();
+        }, 6000);
+    } else {
+        if (callback) callback();
     }
 }
 
@@ -77,7 +82,7 @@ function render() {
 function renderStart() {
     screen.innerHTML = `
         <h1>${SITE.intro.title}</h1>
-        <p>${SITE.intro.message}</p>
+        <p style="white-space:pre-line">${SITE.intro.message}</p>
         <button class="primary" onclick="begin()">Start 💖</button>
     `;
 }
@@ -105,7 +110,7 @@ function startQuestions() {
 
 function renderQuestion() {
     const q = SITE.sections[section].questions[question];
-    screen.innerHTML = `<h1>${q.text}</h1><div class="buttons"></div>`;
+    screen.innerHTML = `<h1 style="white-space:pre-line">${q.text}</h1><div class="buttons"></div>`;
     const box = screen.querySelector('.buttons');
     box.append(yesBtn, noBtn);
     bindButtons();
@@ -171,7 +176,6 @@ function startCountdown() {
     }, 1000);
 }
 
-/* 💥 BIG CINEMATIC BURST */
 function showAmazingBurst() {
     for (let wave = 0; wave < 3; wave++) {
         setTimeout(() => {
@@ -201,7 +205,6 @@ function showAmazingBurst() {
     }
 }
 
-/* 🌧️ FALLING EMOJIS */
 function startFallingEmojis() {
     clearInterval(fallingInterval);
 
@@ -228,36 +231,45 @@ function openSecret() {
     render();
 }
 
+/* 🔥 UPDATED SECRET PAGE */
 function renderSecret() {
     clearInterval(fallingInterval);
-    screen.innerHTML = `<h1>💖 Secret</h1><p>Just for you 😘</p>`;
+    const s = SITE.secretPage;
+
+    screen.innerHTML = `
+        <h1>💖 Secret</h1>
+        <img src="${s.image}" style="width:100%;border-radius:16px;margin:16px 0">
+        <p>Just for you 😘</p>
+        <button class="primary" onclick="window.location.href='${s.redirectUrl}'">
+            ${s.buttonText}
+        </button>
+    `;
 }
 
 function bindButtons() {
     yesBtn.onclick = () => {
         const q = SITE.sections[section].questions[question];
-
-        // ✅ RESTORED YES IMAGE + AUDIO
-        playEffect(q.yesImage, q.yesAudio);
-
         save();
-        question++;
 
-        if (question < SITE.sections[section].questions.length) {
-            render();
-            return;
-        }
+        playEffect(q.yesImage, q.yesAudio, () => {
+            question++;
 
-        section++;
-        question = 0;
+            if (question < SITE.sections[section].questions.length) {
+                render();
+                return;
+            }
 
-        if (section >= SITE.sections.length) {
-            mode = "final";
-            render();
-            return;
-        }
+            section++;
+            question = 0;
 
-        SITE.sections[section].passcode ? renderPassword() : renderIntro();
+            if (section >= SITE.sections.length) {
+                mode = "final";
+                render();
+                return;
+            }
+
+            SITE.sections[section].passcode ? renderPassword() : renderIntro();
+        });
     };
 
     noBtn.onclick = () => {
@@ -294,4 +306,28 @@ function toast(m) {
     setTimeout(() => t.remove(), 2000);
 }
 
+/* ⚠️ CAUTION POPUP */
+function showCaution() {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0,0,0,0.8)';
+    overlay.style.zIndex = '200';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+
+    overlay.innerHTML = `
+        <div class="card">
+            <h1>⚠️ Please Read</h1>
+            <p style="white-space:pre-line">${SITE.caution.message}</p>
+            <button class="primary">I Understand 💖</button>
+        </div>
+    `;
+
+    overlay.querySelector('button').onclick = () => overlay.remove();
+    document.body.appendChild(overlay);
+}
+
+showCaution();
 render();
