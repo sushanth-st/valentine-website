@@ -35,7 +35,7 @@ function playEffect(img, audio) {
         i.src = img;
         i.className = 'popup-img';
         document.body.appendChild(i);
-        setTimeout(() => i.remove(), 3000);
+        setTimeout(() => i.remove(), 5000);
     }
 }
 
