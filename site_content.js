@@ -3,7 +3,7 @@
 const SITE = {
   intro: {
     title: "Okay Listen to my my Appukutty 😌",
-    message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜"
+    message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜\nIf\nIf\nIfWEAR EARPHONES BEFORE YOU PROCEED FOR YOUR OWN GOOD😂😂"
   },
   sections: [
     {
@@ -23,10 +23,10 @@ const SITE = {
       bg: "linear-gradient(135deg,#fff0f6,#ffe6f0)",
       intro: "Feel the romance 💕",
       questions: [
-        { text: "Do you ever feel like I don’t love you enough? 🥺❤️", yesImage: "Images/image5.jpg", yesAudio: "Audio/ydaudio5.mp3" },
-        { text: "Do you think I’m not romantic enough with you? 🌹😌", yesImage: "Images/image6.jpg", yesAudio: "Audio/ydaudio6.mp3" },
-        { text: "Do you secretly think I’m a baaad kisser? 😘😜", yesImage: "Images/image7.jpg", yesAudio: "Audio/ydaudio7.mp3" },
-        { text: "Do you think I should start behaving more decently when I’m with you? 🙈😇", yesImage: "Images/image8.jpg", yesAudio: "Audio/ydaudio8.mp3" }
+        { text: "Do you ever feel like I don’t love you enough? 🥺❤️", yesImage: "Images/image5.gif", yesAudio: "Audio/ydaudio5.mp3" },
+        { text: "Do you think I’m not romantic enough with you? 🌹😌", yesImage: "Images/image6.gif", yesAudio: "Audio/ydaudio6.mp3" },
+        { text: "Do you secretly think I’m a baaad kisser? 😘😜", yesImage: "Images/image7.gif", yesAudio: "Audio/ydaudio7.mp3" },
+        { text: "Do you think I should start behaving more decently when I’m with you? 🙈😇", yesImage: "Images/image8.gif", yesAudio: "Audio/ydaudio8.mp3" }
       ],
       noAudio: "Audio/ydaudio_no.mp3"
     },
@@ -35,10 +35,10 @@ const SITE = {
       bg: "linear-gradient(135deg,#ffd6e0,#ff9ecf)",
       intro: "Things heat up 😏",
       questions: [
-        { text: "Be very honest…\nYou don’t like it when I grab you and pull you close to me, right? 😏", yesImage: "Images/image9.jpg", yesAudio: "Audio/ydaudio9.mp3" },
-        { text: "Tell me the truth…\nMy touch doesn’t make your heart beat faster at all…\nYou don’t feel anything when I touch you, right? 🥺🔥", yesImage: "Images/image10.jpg", yesAudio: "Audio/ydaudio10.mp3" },
-        { text: "This is the truth…\nYou hate it when I grab you, bite you, play with you, and leave little marks on the strawberry🍓😌", yesImage: "Images/image11.jpg", yesAudio: "Audio/ydaudio11.mp3" },
-        { text: "One last honest answer…\nYou don’t like it when I look at you naked, right? 😏🔥", yesImage: "Images/image12.jpg", yesAudio: "Audio/ydaudio12.mp3" }
+        { text: "Be very honest…\nYou don’t like it when I grab you and pull you close to me, right? 😏", yesImage: "Images/image9.gif", yesAudio: "Audio/ydaudio9.mp3" },
+        { text: "Tell me the truth…\nMy touch doesn’t make your heart beat faster at all…\nYou don’t feel anything when I touch you, right? 🥺🔥", yesImage: "Images/image10.gif", yesAudio: "Audio/ydaudio10.mp3" },
+        { text: "This is the truth…\nYou hate it when I grab you, bite you, play with you, and leave little marks on the strawberry🍓😌", yesImage: "Images/image11.gif", yesAudio: "Audio/ydaudio11.mp3" },
+        { text: "One last honest answer…\nYou don’t like it when I look at you naked, right? 😏🔥", yesImage: "Images/image12.gif", yesAudio: "Audio/ydaudio12.mp3" }
       ],
       noAudio: "Audio/ydaudio_no.mp3"
     },
@@ -50,9 +50,9 @@ const SITE = {
       hint: "Who am I to you in your wild thoughts?",
       wrongMessage: "Whatt..You don't know😭 i love to hear you call me that name",
       questions: [
-        { text: "You don’t like eating chilli, and that’s why you end up crying when you eat it, right? 🌶️😌", yesImage: "Images/image13.jpg", yesAudio: "Audio/ydaudio13.mp3" },
-        { text: "You don’t want to send me a dancing nude video because you hate me looking at you like that, right? 😏🔥", yesImage: "Images/image14.jpg", yesAudio: "Audio/ydaudio14.mp3" },
-        { text: "You don’t enjoy playing naughty truth or dare games with me at all, do you? 😏😏😏", yesImage: "Images/image15.jpg", yesAudio: "Audio/ydaudio15.mp3" },
+        { text: "You don’t like eating chilli, and that’s why you end up crying when you eat it, right? 🌶️😌", yesImage: "Images/image13.gif", yesAudio: "Audio/ydaudio13.mp3" },
+        { text: "You don’t want to send me a dancing nude video because you hate me looking at you like that, right? 😏🔥", yesImage: "Images/image14.gif", yesAudio: "Audio/ydaudio14.mp3" },
+        { text: "You don’t enjoy playing naughty truth or dare games with me at all, do you? 😏😏😏", yesImage: "Images/image15.gif", yesAudio: "Audio/ydaudio15.mp3" },
         { text: "You don’t like sending me nude snaps every day — that’s why you even uninstalled Snapchat, right? 😌📵", yesImage: "Images/image16.jpg", yesAudio: "Audio/ydaudio16.mp3" }
       ],
       noAudio: "Audio/ydaudio_no.mp3"
