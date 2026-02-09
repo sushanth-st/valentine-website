@@ -1,5 +1,7 @@
+// main_code.js
+
 let section = 0, question = 0, mode = "start",
-    autoScrollTimer = null, scrollDirection = 1,
+    autoScrollTimer = null,
     fallingInterval = null;
 
 const history = [],
@@ -26,22 +28,25 @@ function setBG() {
     }
 }
 
-/* 🔥 UPDATED: effect supports callback + 6s delay */
-function playEffect(img, audio, callback) {
+/* ✅ POPUP IMAGE: instant show, 6s duration, non-blocking */
+function playEffect(img, audio) {
     if (audio) new Audio(audio).play().catch(() => {});
-    if (img) {
-        const i = document.createElement('img');
-        i.src = img;
-        i.className = 'popup-img';
-        document.body.appendChild(i);
+    if (!img) return;
 
-        setTimeout(() => {
-            i.remove();
-            if (callback) callback();
-        }, 6000);
-    } else {
-        if (callback) callback();
-    }
+    const i = document.createElement('img');
+    i.src = img;
+    i.className = 'popup-img';
+
+    // ensure immediate visibility
+    i.style.opacity = '1';
+    i.style.zIndex = '9999';
+
+    document.body.appendChild(i);
+
+    // remove after 6 seconds
+    setTimeout(() => {
+        i.remove();
+    }, 6000);
 }
 
 function moveNoButton() {
@@ -110,7 +115,10 @@ function startQuestions() {
 
 function renderQuestion() {
     const q = SITE.sections[section].questions[question];
-    screen.innerHTML = `<h1 style="white-space:pre-line">${q.text}</h1><div class="buttons"></div>`;
+    screen.innerHTML = `
+        <h1 style="white-space:pre-line">${q.text}</h1>
+        <div class="buttons"></div>
+    `;
     const box = screen.querySelector('.buttons');
     box.append(yesBtn, noBtn);
     bindButtons();
@@ -176,6 +184,7 @@ function startCountdown() {
     }, 1000);
 }
 
+/* 💥 PARTICLE BURST */
 function showAmazingBurst() {
     for (let wave = 0; wave < 3; wave++) {
         setTimeout(() => {
@@ -205,6 +214,7 @@ function showAmazingBurst() {
     }
 }
 
+/* 🌧️ FALLING EMOJIS */
 function startFallingEmojis() {
     clearInterval(fallingInterval);
 
@@ -231,7 +241,6 @@ function openSecret() {
     render();
 }
 
-/* 🔥 UPDATED SECRET PAGE */
 function renderSecret() {
     clearInterval(fallingInterval);
     const s = SITE.secretPage;
@@ -249,27 +258,28 @@ function renderSecret() {
 function bindButtons() {
     yesBtn.onclick = () => {
         const q = SITE.sections[section].questions[question];
+
+        // 🔥 instant popup, non-blocking
+        playEffect(q.yesImage, q.yesAudio);
+
         save();
+        question++;
 
-        playEffect(q.yesImage, q.yesAudio, () => {
-            question++;
+        if (question < SITE.sections[section].questions.length) {
+            render();
+            return;
+        }
 
-            if (question < SITE.sections[section].questions.length) {
-                render();
-                return;
-            }
+        section++;
+        question = 0;
 
-            section++;
-            question = 0;
+        if (section >= SITE.sections.length) {
+            mode = "final";
+            render();
+            return;
+        }
 
-            if (section >= SITE.sections.length) {
-                mode = "final";
-                render();
-                return;
-            }
-
-            SITE.sections[section].passcode ? renderPassword() : renderIntro();
-        });
+        SITE.sections[section].passcode ? renderPassword() : renderIntro();
     };
 
     noBtn.onclick = () => {
