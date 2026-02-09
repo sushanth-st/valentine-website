@@ -1,7 +1,5 @@
-// main_code.js
-
 let section = 0, question = 0, mode = "start",
-    autoScrollTimer = null,
+    autoScrollTimer = null, scrollDirection = 1,
     fallingInterval = null;
 
 const history = [],
@@ -28,7 +26,7 @@ function setBG() {
     }
 }
 
-/* ✅ POPUP IMAGE: instant show, 6s duration, non-blocking */
+/* ✅ FIXED: instant popup, 6s duration, NON-BLOCKING */
 function playEffect(img, audio) {
     if (audio) new Audio(audio).play().catch(() => {});
     if (!img) return;
@@ -36,17 +34,12 @@ function playEffect(img, audio) {
     const i = document.createElement('img');
     i.src = img;
     i.className = 'popup-img';
-
-    // ensure immediate visibility
     i.style.opacity = '1';
     i.style.zIndex = '9999';
 
     document.body.appendChild(i);
 
-    // remove after 6 seconds
-    setTimeout(() => {
-        i.remove();
-    }, 6000);
+    setTimeout(() => i.remove(), 6000);
 }
 
 function moveNoButton() {
@@ -165,7 +158,6 @@ function renderFinal() {
     }, 3000);
 }
 
-/* COUNTDOWN */
 function startCountdown() {
     let count = 5;
     screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
@@ -184,7 +176,6 @@ function startCountdown() {
     }, 1000);
 }
 
-/* 💥 PARTICLE BURST */
 function showAmazingBurst() {
     for (let wave = 0; wave < 3; wave++) {
         setTimeout(() => {
@@ -214,10 +205,8 @@ function showAmazingBurst() {
     }
 }
 
-/* 🌧️ FALLING EMOJIS */
 function startFallingEmojis() {
     clearInterval(fallingInterval);
-
     const emojis = ['💖','🔥','💋','🌹','✨','😍','😘'];
 
     fallingInterval = setInterval(() => {
@@ -259,7 +248,6 @@ function bindButtons() {
     yesBtn.onclick = () => {
         const q = SITE.sections[section].questions[question];
 
-        // 🔥 instant popup, non-blocking
         playEffect(q.yesImage, q.yesAudio);
 
         save();
@@ -316,7 +304,6 @@ function toast(m) {
     setTimeout(() => t.remove(), 2000);
 }
 
-/* ⚠️ CAUTION POPUP */
 function showCaution() {
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
