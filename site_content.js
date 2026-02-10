@@ -11,7 +11,7 @@ const SITE = {
   },
 
   secretPage: {
-    image: "Images/image1.jpg",
+    image: "Images/image1.gif",
     buttonText: "Open My Heart 💖",
     redirectUrl: "https://example.com"
   },
