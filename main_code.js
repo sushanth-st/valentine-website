@@ -1,20 +1,17 @@
-// main_code.js
-
-/* ================= CONFIG ================= */
-const POPUP_DURATION = 6000; // popup + YES disable duration (ms)
+const POPUP_DURATION = 6000;
 const POPUP_FADE_TIME = 800;
 
-/* ================= STATE ================= */
 let section = 0;
 let question = 0;
 let mode = "start";
 let yesLocked = false;
+let popupTimer = null;
+let fadeTimer = null;
 
 const history = [];
 const screen = document.getElementById("screen");
 const backBtn = document.getElementById("backBtn");
 
-/* ================= BUTTONS ================= */
 const yesBtn = document.createElement("button");
 yesBtn.id = "yesBtn";
 yesBtn.className = "primary";
@@ -25,24 +22,16 @@ noBtn.id = "noBtn";
 noBtn.className = "secondary";
 noBtn.textContent = "NO 😅";
 
-/* ================= BASIC HELPERS ================= */
-function toggleDark() {
-  document.body.classList.toggle("dark");
-}
-
 function setBG() {
-  if (!document.body.classList.contains("dark")) {
-    document.body.style.background =
-      SITE.sections[section]?.bg || "#fff";
-  }
+  document.body.style.background =
+    SITE.sections[section]?.bg || "#fff";
 }
 
-/* ================= CAUTION POPUP ================= */
 function showCaution() {
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
   overlay.style.inset = "0";
-  overlay.style.background = "rgba(0,0,0,0.8)";
+  overlay.style.background = "rgba(0,0,0,0.85)";
   overlay.style.zIndex = "200";
   overlay.style.display = "flex";
   overlay.style.alignItems = "center";
@@ -60,12 +49,15 @@ function showCaution() {
   document.body.appendChild(overlay);
 }
 
-/* ================= POPUP EFFECT ================= */
 function playEffect(img, audio, done) {
-  if (audio) new Audio(audio).play().catch(() => {});
+  if (yesLocked) return;
+
+  yesLocked = true;
+  yesBtn.disabled = true;
+
+  if (audio) new Audio(audio).play().catch(()=>{});
 
   let popup = null;
-
   if (img) {
     popup = document.createElement("img");
     popup.src = img;
@@ -73,25 +65,18 @@ function playEffect(img, audio, done) {
     document.body.appendChild(popup);
   }
 
-  // lock YES immediately
-  yesLocked = true;
-  yesBtn.disabled = true;
+  fadeTimer = setTimeout(() => {
+    popup && popup.classList.add("fade-out");
+  }, POPUP_DURATION - POPUP_FADE_TIME);
 
-  // fade near the end
-  setTimeout(() => {
-    if (popup) popup.classList.add("fade-out");
-  }, Math.max(POPUP_DURATION - POPUP_FADE_TIME, 0));
-
-  // remove popup + unlock YES
-  setTimeout(() => {
-    if (popup) popup.remove();
+  popupTimer = setTimeout(() => {
+    popup && popup.remove();
     yesLocked = false;
     yesBtn.disabled = false;
     done && done();
   }, POPUP_DURATION);
 }
 
-/* ================= NAV ================= */
 function save() {
   history.push({ section, question, mode });
   backBtn.classList.remove("hidden");
@@ -107,7 +92,6 @@ backBtn.onclick = () => {
   if (!history.length) backBtn.classList.add("hidden");
 };
 
-/* ================= RENDER ================= */
 function render() {
   setBG();
   if (mode === "start") renderStart();
@@ -171,87 +155,50 @@ function renderPassword() {
 function renderFinal() {
   screen.innerHTML = `
     <div class="final-scroll-container">
-      <h1>${SITE.finalMessage}</h1>
-      <div class="final-scroll">
-        ${SITE.finalImages.map(i => `<img src="${i}">`).join("")}
-      </div>
+      <h1 style="white-space:pre-line">${SITE.finalMessage}</h1>
+      ${SITE.finalImages.map(i=>`<img src="${i}" style="width:100%;margin-top:12px;border-radius:14px">`).join("")}
     </div>
   `;
 }
 
-/* ================= BUTTON LOGIC ================= */
 function bindButtons() {
   yesBtn.onclick = () => {
     if (yesLocked) return;
-
     const q = SITE.sections[section].questions[question];
-
     playEffect(q.yesImage, q.yesAudio, () => {
       save();
       question++;
-
-      if (question < SITE.sections[section].questions.length) {
-        render();
-        return;
-      }
-
+      if (question < SITE.sections[section].questions.length) return render();
       section++;
       question = 0;
-
       if (section >= SITE.sections.length) {
         mode = "final";
-        render();
-        return;
+        return render();
       }
-
-      SITE.sections[section].passcode
-        ? renderPassword()
-        : renderIntro();
+      SITE.sections[section].passcode ? renderPassword() : renderIntro();
     });
   };
 
   noBtn.onclick = () => {
-    const box = noBtn.parentElement;
-    if (box) {
-      noBtn.style.left =
-        Math.random() * (box.clientWidth - noBtn.offsetWidth) + "px";
-      noBtn.style.top =
-        Math.random() * (box.clientHeight - noBtn.offsetHeight) + "px";
-      noBtn.style.transform = "none";
-    }
-
     const s = SITE.sections[section];
-    if (s.noAudio) new Audio(s.noAudio).play().catch(() => {});
-    toast(
-      SITE.noClickMessages[
-        Math.floor(Math.random() * SITE.noClickMessages.length)
-      ]
-    );
+    s.noAudio && new Audio(s.noAudio).play().catch(()=>{});
   };
 }
 
 function checkPw() {
   const input = document.getElementById("pw").value.trim().toLowerCase();
-  const pass = SITE.sections[section].passcode?.toLowerCase();
+  const pass = SITE.sections[section].passcode.toLowerCase();
   if (input !== pass) {
     document.getElementById("err").textContent =
       SITE.sections[section].wrongMessage;
     return;
   }
   save();
-  question = 0;
   mode = "question";
+  question = 0;
   render();
 }
 
-function toast(m) {
-  const t = document.createElement("div");
-  t.className = "toast";
-  t.textContent = m;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2000);
-}
-
-/* ================= INIT ================= */
-showCaution();
+/* INIT */
 render();
+setTimeout(showCaution, 300);
