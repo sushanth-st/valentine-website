@@ -2,12 +2,12 @@
 
 const SITE = {
   intro: {
-    title: "Okay Listen to my my Appukutty💋🤗",
+    title: "Okay Listen to my my Appukutty💋💋🤗",
     message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜"
   },
 
   caution: {
-    message: "⚠️ WEAR EARPHONES 💋🎧 BEFORE YOU PROCEED FOR YOUR OWN GOOD😂😂"
+    message: "⚠️ WEAR EARPHONES 💋🔥🎧 BEFORE YOU PROCEED FOR YOUR OWN GOOD😂😂"
   },
 
   secretPage: {
