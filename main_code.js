@@ -1,9 +1,9 @@
 // main_code.js
 
-/* ================== CONFIG ================== */
-const POPUP_DURATION = 6000; // change this to increase/decrease popup time
+/* ================= CONFIG ================= */
+const POPUP_DURATION = 6000; // popup + YES disable duration (ms)
 
-/* ================== STATE ================== */
+/* ================= STATE ================= */
 let section = 0, question = 0, mode = "start",
     autoScrollTimer = null,
     fallingInterval = null;
@@ -22,56 +22,74 @@ noBtn.id = 'noBtn';
 noBtn.className = 'secondary';
 noBtn.textContent = 'NO 😅';
 
-/* ================== HELPERS ================== */
+/* ================= BASIC HELPERS ================= */
 function toggleDark() {
     document.body.classList.toggle('dark');
 }
 
 function setBG() {
     if (!document.body.classList.contains('dark')) {
-        document.body.style.background = SITE.sections[section]?.bg || "#fff";
+        document.body.style.background =
+            SITE.sections[section]?.bg || "#fff";
     }
 }
 
-/* ================== POPUP EFFECT ================== */
-function playEffect(img, audio, duration = POPUP_DURATION, done) {
+/* ================= CAUTION POPUP ================= */
+function showCaution() {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0,0,0,0.8)';
+    overlay.style.zIndex = '200';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+
+    overlay.innerHTML = `
+        <div class="card">
+            <h1>⚠️ Please Read</h1>
+            <p style="white-space:pre-line">${SITE.caution.message}</p>
+            <button class="primary">I Understand 💖</button>
+        </div>
+    `;
+
+    overlay.querySelector('button').onclick = () => overlay.remove();
+    document.body.appendChild(overlay);
+}
+
+/* ================= POPUP EFFECT ================= */
+function playEffect(img, audio, done) {
     if (audio) new Audio(audio).play().catch(() => {});
     if (!img) {
         done && done();
         return;
     }
 
+    // show popup IMMEDIATELY
     const popup = document.createElement('img');
     popup.src = img;
     popup.className = 'popup-img';
     document.body.appendChild(popup);
 
-    // disable YES while popup is visible
+    // disable YES for same duration
     yesBtn.disabled = true;
 
     const FADE_TIME = 800;
 
+    // start fade near end
     setTimeout(() => {
         popup.classList.add('fade-out');
-    }, duration - FADE_TIME);
+    }, POPUP_DURATION - FADE_TIME);
 
+    // remove + re-enable YES
     setTimeout(() => {
         popup.remove();
         yesBtn.disabled = false;
         done && done();
-    }, duration);
+    }, POPUP_DURATION);
 }
 
-function moveNoButton() {
-    const box = noBtn.parentElement;
-    if (!box) return;
-    const maxX = box.clientWidth - noBtn.offsetWidth;
-    const maxY = box.clientHeight - noBtn.offsetHeight;
-    noBtn.style.left = Math.random() * maxX + "px";
-    noBtn.style.top = Math.random() * maxY + "px";
-    noBtn.style.transform = "none";
-}
-
+/* ================= NAV ================= */
 function save() {
     history.push({ section, question, mode });
     backBtn.classList.remove('hidden');
@@ -87,7 +105,7 @@ backBtn.onclick = () => {
     if (!history.length) backBtn.classList.add('hidden');
 };
 
-/* ================== RENDER ================== */
+/* ================= RENDER ================= */
 function render() {
     setBG();
     if (mode === "start") renderStart();
@@ -160,105 +178,15 @@ function renderFinal() {
             <button class="primary" onclick="startCountdown()">View Secret Message 💌</button>
         </div>
     `;
-
-    const box = document.getElementById('scrollBox');
-    let pause = false;
-
-    box.addEventListener('touchstart', () => pause = true);
-    box.addEventListener('touchend', () => pause = false);
-
-    clearInterval(autoScrollTimer);
-
-    setTimeout(() => {
-        box.scrollTop = 1;
-        autoScrollTimer = setInterval(() => {
-            if (!pause && box.scrollTop + box.clientHeight < box.scrollHeight) {
-                box.scrollTop += 1;
-            }
-        }, 40);
-    }, 3000);
 }
 
-/* ================== COUNTDOWN & EFFECTS ================== */
-function startCountdown() {
-    let count = 5;
-    screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
-    const p = screen.querySelector('p');
-
-    const timer = setInterval(() => {
-        count--;
-        p.textContent = count;
-        if (count === 0) {
-            clearInterval(timer);
-            openSecret();
-            showAmazingBurst();
-            startFallingEmojis();
-        }
-    }, 1000);
-}
-
-function showAmazingBurst() {
-    for (let wave = 0; wave < 3; wave++) {
-        setTimeout(() => {
-            for (let i = 0; i < 150; i++) {
-                const e = document.createElement('div');
-                e.className = 'particle';
-                e.textContent = ['💖','🔥','✨','🌹','💋'][Math.floor(Math.random()*5)];
-                e.style.left = '50%';
-                e.style.top = '50%';
-                document.body.appendChild(e);
-
-                const angle = Math.random() * Math.PI * 2;
-                const dist = 150 + Math.random() * 400;
-                const x = Math.cos(angle) * dist;
-                const y = Math.sin(angle) * dist;
-
-                setTimeout(() => {
-                    e.style.transform = `translate(${x}px,${y}px) scale(1.8)`;
-                    e.style.opacity = 0;
-                }, 30);
-
-                setTimeout(() => e.remove(), 1800);
-            }
-        }, wave * 180);
-    }
-}
-
-function startFallingEmojis() {
-    clearInterval(fallingInterval);
-    const emojis = ['💖','🔥','💋','🌹','✨','😍','😘'];
-
-    fallingInterval = setInterval(() => {
-        const f = document.createElement('div');
-        f.className = 'confetti';
-        f.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        f.style.left = Math.random() * 100 + '%';
-        f.style.top = '-30px';
-        f.style.fontSize = (16 + Math.random() * 26) + 'px';
-        f.style.animationDuration = (3 + Math.random() * 3) + 's';
-        document.body.appendChild(f);
-        setTimeout(() => f.remove(), 6000);
-    }, 120);
-}
-
-function openSecret() {
-    save();
-    mode = "secret";
-    render();
-}
-
-function renderSecret() {
-    clearInterval(fallingInterval);
-    screen.innerHTML = `<h1>💖 Secret</h1><p>Just for you 😘</p>`;
-}
-
-/* ================== BUTTON BINDINGS ================== */
+/* ================= BUTTON LOGIC ================= */
 function bindButtons() {
     yesBtn.onclick = () => {
         const q = SITE.sections[section].questions[question];
         save();
 
-        playEffect(q.yesImage, q.yesAudio, POPUP_DURATION, () => {
+        playEffect(q.yesImage, q.yesAudio, () => {
             question++;
 
             if (question < SITE.sections[section].questions.length) {
@@ -275,12 +203,22 @@ function bindButtons() {
                 return;
             }
 
-            SITE.sections[section].passcode ? renderPassword() : renderIntro();
+            SITE.sections[section].passcode
+                ? renderPassword()
+                : renderIntro();
         });
     };
 
     noBtn.onclick = () => {
-        moveNoButton();
+        const box = noBtn.parentElement;
+        if (box) {
+            noBtn.style.left =
+                Math.random() * (box.clientWidth - noBtn.offsetWidth) + "px";
+            noBtn.style.top =
+                Math.random() * (box.clientHeight - noBtn.offsetHeight) + "px";
+            noBtn.style.transform = "none";
+        }
+
         const s = SITE.sections[section];
         if (s.noAudio) new Audio(s.noAudio).play().catch(() => {});
         toast(
@@ -313,4 +251,6 @@ function toast(m) {
     setTimeout(() => t.remove(), 2000);
 }
 
+/* ================= INIT ================= */
+showCaution();
 render();
