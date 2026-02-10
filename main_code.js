@@ -9,7 +9,9 @@ let mode = "start";
 let yesLocked = false;
 let autoScrollTimer = null;
 let countdownTimer = null;
+let fallingInterval = null;
 
+/* ================= DOM ================= */
 const history = [];
 const screen = document.getElementById("screen");
 const backBtn = document.getElementById("backBtn");
@@ -190,7 +192,9 @@ function renderSecret() {
       screen.innerHTML = `<h1>💖 ${count}</h1>`;
     } else {
       clearInterval(countdownTimer);
-      showSecretPage();
+      showBurst();
+      startFalling();
+      setTimeout(showSecretPage, 1200);
     }
   }, 1000);
 }
@@ -205,6 +209,60 @@ function showSecretPage() {
 
 function openSecret() {
   window.location.href = SITE.secretPage.redirectUrl;
+}
+
+/* ================= BURST EFFECT ================= */
+function showBurst() {
+  for (let w = 0; w < 3; w++) {
+    setTimeout(() => {
+      for (let i = 0; i < 120; i++) {
+        const e = document.createElement("div");
+        e.textContent = ["💖","🔥","✨","🌹","💋"][Math.floor(Math.random()*5)];
+        e.style.position = "fixed";
+        e.style.left = "50%";
+        e.style.top = "50%";
+        e.style.fontSize = "24px";
+        e.style.zIndex = 9999;
+        document.body.appendChild(e);
+
+        const a = Math.random() * Math.PI * 2;
+        const d = 200 + Math.random() * 300;
+        const x = Math.cos(a) * d;
+        const y = Math.sin(a) * d;
+
+        setTimeout(() => {
+          e.style.transform = `translate(${x}px,${y}px) scale(1.5)`;
+          e.style.opacity = 0;
+        }, 20);
+
+        setTimeout(() => e.remove(), 1500);
+      }
+    }, w * 200);
+  }
+}
+
+function startFalling() {
+  clearInterval(fallingInterval);
+  const emojis = ["💖","🔥","✨","🌹","💋"];
+
+  fallingInterval = setInterval(() => {
+    const f = document.createElement("div");
+    f.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    f.style.position = "fixed";
+    f.style.left = Math.random() * 100 + "%";
+    f.style.top = "-30px";
+    f.style.fontSize = "22px";
+    f.style.zIndex = 9999;
+    document.body.appendChild(f);
+
+    const dur = 3 + Math.random() * 3;
+    f.animate([{ transform: "translateY(0)" }, { transform: "translateY(110vh)" }], {
+      duration: dur * 1000,
+      easing: "linear"
+    });
+
+    setTimeout(() => f.remove(), dur * 1000);
+  }, 120);
 }
 
 /* ================= AUTO SCROLL ================= */
