@@ -20,7 +20,7 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  transition:background 0.6s ease;
+  transition:background .6s ease;
 }
 body.dark{background:linear-gradient(135deg,#16001a,#2b0036)!important}
 
@@ -34,6 +34,22 @@ body.dark{background:linear-gradient(135deg,#16001a,#2b0036)!important}
   align-items:center;
   position:relative;
 }
+
+/* TOP CONTROLS */
+.back,.toggle{
+  position:absolute;
+  top:12px;
+  padding:8px 14px;
+  font-size:.85rem;
+  border-radius:20px;
+  background:#eee;
+  border:none;
+  cursor:pointer;
+  z-index:10;
+}
+.back{left:12px}
+.toggle{right:12px}
+.hidden{display:none}
 
 .card{
   width:100%;
@@ -49,7 +65,7 @@ body.dark p{color:#ddd}
 h1{
   font-family:'Playfair Display',serif;
   font-size:1.9rem;
-  margin:0 0 14px
+  margin:0 0 14px;
 }
 p{margin:0 0 14px;color:#555}
 
@@ -60,33 +76,28 @@ button{
   font-size:1.05rem;
   cursor:pointer;
 }
-
 .primary{background:#ff5fa2;color:#fff}
 .secondary{background:#ddd}
 
 .buttons{
   margin-top:18px;
   height:140px;
-  position:relative
+  position:relative;
 }
-
 #yesBtn{
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(-120%,-50%)
+  transform:translate(-120%,-50%);
 }
-
 #noBtn{
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(20%,-50%)
+  transform:translate(20%,-50%);
 }
 
-.hidden{display:none}
-
-/* Popup */
+/* POPUP IMAGE */
 .popup-img{
   position:fixed;
   top:50%;
@@ -97,28 +108,51 @@ button{
   border-radius:18px;
   box-shadow:0 18px 40px rgba(0,0,0,.35);
   z-index:999;
-  opacity:1;
-  pointer-events:none;
 }
-
 .popup-img.fade-out{
-  animation:popupFadeOut .8s ease forwards;
+  animation:fadeOut .8s ease forwards;
 }
-
-@keyframes popupFadeOut{
+@keyframes fadeOut{
   from{opacity:1;transform:translate(-50%,-50%) scale(1)}
   to{opacity:0;transform:translate(-50%,-50%) scale(.95)}
+}
+
+/* FINAL PAGE */
+.final-scroll-container{
+  max-height:80vh;
+  overflow-y:auto;
+  padding-right:8px;
+}
+.final-scroll img{
+  width:100%;
+  border-radius:16px;
+  margin-top:14px;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#ff5fa2;
+  color:#fff;
+  padding:10px 18px;
+  border-radius:20px;
+  font-size:.9rem;
+  z-index:50;
 }
 </style>
 </head>
 
 <body>
 <div class="app">
-  <button id="backBtn" class="hidden">⬅ Back</button>
+  <button class="back hidden" id="backBtn">⬅ Back</button>
+  <button class="toggle" onclick="toggleDark()">🌙</button>
   <div class="card" id="screen"></div>
 </div>
 
-<script src="site_content.js?v=28"></script>
-<script src="main_code.js?v=28"></script>
+<script src="site_content.js?v=29"></script>
+<script src="main_code.js?v=29"></script>
 </body>
 </html>
