@@ -149,7 +149,7 @@ You’re my favorite everything,
 my heart, my smile, my forever 😘💖
 Happy Valentine’s Day, my love! 🌹💌`,
 
-  finalImages: ["Images/image1.jpg","Images/image2.jpg","Images/image3.jpg","Images/image4.jpg","Images/image5.jpg"],
+  finalImages: ["Images/image1.gif","Images/image2.gif","Images/image3.gif","Images/image4.gif","Images/image5.gif"],
 
   finalYesImage: "Images/image1.jpg",
   finalYesAudio: "Audio/ydaudio.mp3",
