@@ -1,7 +1,7 @@
 // main_code.js
 
 let section = 0, question = 0, mode = "start",
-    autoScrollTimer = null,
+    autoScrollTimer = null, scrollDirection = 1,
     fallingInterval = null;
 
 const history = [],
@@ -28,7 +28,7 @@ function setBG() {
     }
 }
 
-/* ✅ POPUP EFFECT — instant, non-blocking, 6s visible */
+/* ✅ FIXED: instant popup, 6s duration, NON-BLOCKING */
 function playEffect(img, audio) {
     if (audio) new Audio(audio).play().catch(() => {});
     if (!img) return;
@@ -36,10 +36,8 @@ function playEffect(img, audio) {
     const i = document.createElement('img');
     i.src = img;
     i.className = 'popup-img';
-
     i.style.opacity = '1';
     i.style.zIndex = '9999';
-    i.style.pointerEvents = 'none'; // 🔑 IMPORTANT FIX
 
     document.body.appendChild(i);
 
@@ -162,7 +160,6 @@ function renderFinal() {
     }, 3000);
 }
 
-/* COUNTDOWN */
 function startCountdown() {
     let count = 5;
     screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
@@ -212,7 +209,6 @@ function showAmazingBurst() {
 
 function startFallingEmojis() {
     clearInterval(fallingInterval);
-
     const emojis = ['💖','🔥','💋','🌹','✨','😍','😘'];
 
     fallingInterval = setInterval(() => {
@@ -238,7 +234,16 @@ function openSecret() {
 
 function renderSecret() {
     clearInterval(fallingInterval);
-    screen.innerHTML = `<h1>💖 Secret</h1><p>Just for you 😘</p>`;
+    const s = SITE.secretPage;
+
+    screen.innerHTML = `
+        <h1>💖 Secret</h1>
+        <img src="${s.image}" style="width:100%;border-radius:16px;margin:16px 0">
+        <p>Just for you 😘</p>
+        <button class="primary" onclick="window.location.href='${s.redirectUrl}'">
+            ${s.buttonText}
+        </button>
+    `;
 }
 
 function bindButtons() {
@@ -301,4 +306,27 @@ function toast(m) {
     setTimeout(() => t.remove(), 2000);
 }
 
+function showCaution() {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0,0,0,0.8)';
+    overlay.style.zIndex = '200';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+
+    overlay.innerHTML = `
+        <div class="card">
+            <h1>⚠️ Please Read</h1>
+            <p style="white-space:pre-line">${SITE.caution.message}</p>
+            <button class="primary">I Understand 💖</button>
+        </div>
+    `;
+
+    overlay.querySelector('button').onclick = () => overlay.remove();
+    document.body.appendChild(overlay);
+}
+
+showCaution();
 render();
