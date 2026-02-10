@@ -183,18 +183,36 @@ function startSecret() {
 }
 
 function renderSecret() {
-  let count = 3;
-  screen.innerHTML = `<h1>💖 ${count}</h1>`;
+  let count = 5;
+
+  screen.innerHTML = `
+    <div style="
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      height:60vh;
+      gap:12px;
+    ">
+      <div style="font-size:64px;animation:pulse 1s infinite">💖</div>
+      <div id="countNum" style="font-size:48px;font-weight:800">${count}</div>
+      <p style="opacity:.7">Something special is coming…</p>
+    </div>
+  `;
 
   countdownTimer = setInterval(() => {
     count--;
+    const el = document.getElementById("countNum");
+
     if (count > 0) {
-      screen.innerHTML = `<h1>💖 ${count}</h1>`;
+      el.textContent = count;
+      el.style.transform = "scale(1.3)";
+      setTimeout(() => (el.style.transform = "scale(1)"), 200);
     } else {
       clearInterval(countdownTimer);
       showBurst();
       startFalling();
-      setTimeout(showSecretPage, 1200);
+      setTimeout(showSecretPage, 1400);
     }
   }, 1000);
 }
@@ -213,34 +231,45 @@ function openSecret() {
 
 /* ================= BURST EFFECT ================= */
 function showBurst() {
-  for (let w = 0; w < 3; w++) {
+  const emojis = ["💖","🔥","✨","🌹","💋"];
+  const points = [
+    { x: 20, y: 20 },
+    { x: 80, y: 20 },
+    { x: 50, y: 50 },
+    { x: 20, y: 80 },
+    { x: 80, y: 80 }
+  ];
+
+  points.forEach((p, idx) => {
     setTimeout(() => {
-      for (let i = 0; i < 120; i++) {
+      for (let i = 0; i < 80; i++) {
         const e = document.createElement("div");
-        e.textContent = ["💖","🔥","✨","🌹","💋"][Math.floor(Math.random()*5)];
+        e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
         e.style.position = "fixed";
-        e.style.left = "50%";
-        e.style.top = "50%";
-        e.style.fontSize = "24px";
+        e.style.left = p.x + "%";
+        e.style.top = p.y + "%";
+        e.style.fontSize = 20 + Math.random() * 18 + "px";
         e.style.zIndex = 9999;
+        e.style.transition = "transform 1.2s ease-out, opacity 1.2s";
         document.body.appendChild(e);
 
-        const a = Math.random() * Math.PI * 2;
-        const d = 200 + Math.random() * 300;
-        const x = Math.cos(a) * d;
-        const y = Math.sin(a) * d;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 200 + Math.random() * 400;
+        const x = Math.cos(angle) * dist;
+        const y = Math.sin(angle) * dist;
 
-        setTimeout(() => {
-          e.style.transform = `translate(${x}px,${y}px) scale(1.5)`;
-          e.style.opacity = 0;
-        }, 20);
+        requestAnimationFrame(() => {
+          e.style.transform = `translate(${x}px, ${y}px) scale(1.6)`;
+          e.style.opacity = "0";
+        });
 
-        setTimeout(() => e.remove(), 1500);
+        setTimeout(() => e.remove(), 1400);
       }
-    }, w * 200);
-  }
+    }, idx * 150);
+  });
 }
 
+/* ================= FALLING ================= */
 function startFalling() {
   clearInterval(fallingInterval);
   const emojis = ["💖","🔥","✨","🌹","💋"];
