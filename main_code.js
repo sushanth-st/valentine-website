@@ -1,5 +1,9 @@
 // main_code.js
 
+/* ===================== CONFIG ===================== */
+const POPUP_DURATION = 10000; // 👈 change popup + YES disable time here
+
+/* ===================== STATE ===================== */
 let section = 0, question = 0, mode = "start",
     autoScrollTimer = null, scrollDirection = 1,
     fallingInterval = null;
@@ -18,42 +22,45 @@ noBtn.id = 'noBtn';
 noBtn.className = 'secondary';
 noBtn.textContent = 'NO 😅';
 
+/* ===================== UTIL ===================== */
 function toggleDark() {
     document.body.classList.toggle('dark');
 }
 
 function setBG() {
     if (!document.body.classList.contains('dark')) {
-        document.body.style.background = SITE.sections[section]?.bg || "#fff";
+        document.body.style.background =
+            SITE.sections[section]?.bg || "#fff";
     }
 }
 
-/* ✅ FIXED: instant popup, 6s duration, NON-BLOCKING */
-function playEffect(img, audio) {
+/* ===================== POPUP EFFECT ===================== */
+function showPopup(img, audio, duration = POPUP_DURATION) {
     if (audio) new Audio(audio).play().catch(() => {});
     if (!img) return;
 
     const i = document.createElement('img');
     i.src = img;
     i.className = 'popup-img';
-    i.style.opacity = '1';
-    i.style.zIndex = '9999';
-
     document.body.appendChild(i);
 
-    setTimeout(() => i.remove(), 10000);
+    setTimeout(() => i.remove(), duration);
 }
 
+/* ===================== NO BUTTON ===================== */
 function moveNoButton() {
     const box = noBtn.parentElement;
     if (!box) return;
+
     const maxX = box.clientWidth - noBtn.offsetWidth;
     const maxY = box.clientHeight - noBtn.offsetHeight;
+
     noBtn.style.left = Math.random() * maxX + "px";
     noBtn.style.top = Math.random() * maxY + "px";
     noBtn.style.transform = "none";
 }
 
+/* ===================== HISTORY ===================== */
 function save() {
     history.push({ section, question, mode });
     backBtn.classList.remove('hidden');
@@ -69,6 +76,7 @@ backBtn.onclick = () => {
     if (!history.length) backBtn.classList.add('hidden');
 };
 
+/* ===================== RENDER ===================== */
 function render() {
     setBG();
     if (mode === "start") renderStart();
@@ -130,6 +138,7 @@ function renderPassword() {
     `;
 }
 
+/* ===================== FINAL ===================== */
 function renderFinal() {
     screen.innerHTML = `
         <div class="final-scroll-container" id="scrollBox">
@@ -160,72 +169,7 @@ function renderFinal() {
     }, 3000);
 }
 
-function startCountdown() {
-    let count = 5;
-    screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
-    const p = screen.querySelector('p');
-
-    const countdownInterval = setInterval(() => {
-        count--;
-        p.textContent = count;
-
-        if (count === 0) {
-            clearInterval(countdownInterval);
-            openSecret();
-            showAmazingBurst();
-            startFallingEmojis();
-        }
-    }, 1000);
-}
-
-function showAmazingBurst() {
-    for (let wave = 0; wave < 3; wave++) {
-        setTimeout(() => {
-            for (let i = 0; i < 150; i++) {
-                const e = document.createElement('div');
-                e.className = 'particle';
-                e.textContent = ['💖','🔥','✨','🌹','💋'][Math.floor(Math.random()*5)];
-                e.style.left = '50%';
-                e.style.top = '50%';
-                document.body.appendChild(e);
-
-                const angle = Math.random() * Math.PI * 2;
-                const dist = 150 + Math.random() * 400;
-                const x = Math.cos(angle) * dist;
-                const y = Math.sin(angle) * dist;
-                const rot = Math.random() * 720;
-
-                setTimeout(() => {
-                    e.style.transform =
-                        `translate(${x}px,${y}px) rotate(${rot}deg) scale(1.8)`;
-                    e.style.opacity = 0;
-                }, 30);
-
-                setTimeout(() => e.remove(), 1800);
-            }
-        }, wave * 180);
-    }
-}
-
-function startFallingEmojis() {
-    clearInterval(fallingInterval);
-    const emojis = ['💖','🔥','💋','🌹','✨','😍','😘'];
-
-    fallingInterval = setInterval(() => {
-        const f = document.createElement('div');
-        f.className = 'confetti';
-        f.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        f.style.left = Math.random() * 100 + '%';
-        f.style.top = '-30px';
-        f.style.fontSize = (16 + Math.random() * 26) + 'px';
-        const dur = 3 + Math.random() * 3;
-        f.style.animationDuration = dur + 's';
-        document.body.appendChild(f);
-
-        setTimeout(() => f.remove(), dur * 1000);
-    }, 120);
-}
-
+/* ===================== SECRET ===================== */
 function openSecret() {
     save();
     mode = "secret";
@@ -246,13 +190,30 @@ function renderSecret() {
     `;
 }
 
+/* ===================== BUTTON LOGIC ===================== */
 function bindButtons() {
     yesBtn.onclick = () => {
+        if (yesBtn.disabled) return;
+
         const q = SITE.sections[section].questions[question];
-
-        playEffect(q.yesImage, q.yesAudio);
-
         save();
+
+        // 🔒 Disable YES for popup duration
+        yesBtn.disabled = true;
+        yesBtn.style.opacity = "0.6";
+        yesBtn.style.pointerEvents = "none";
+
+        // 🎉 Show popup immediately
+        showPopup(q.yesImage, q.yesAudio);
+
+        // 🔓 Re-enable after popup duration
+        setTimeout(() => {
+            yesBtn.disabled = false;
+            yesBtn.style.opacity = "";
+            yesBtn.style.pointerEvents = "";
+        }, POPUP_DURATION);
+
+        // ➡️ Move forward instantly
         question++;
 
         if (question < SITE.sections[section].questions.length) {
@@ -284,6 +245,7 @@ function bindButtons() {
     };
 }
 
+/* ===================== PASSWORD ===================== */
 function checkPw() {
     const input = document.getElementById('pw').value.trim().toLowerCase();
     const pass = SITE.sections[section].passcode?.toLowerCase();
@@ -298,6 +260,7 @@ function checkPw() {
     render();
 }
 
+/* ===================== TOAST ===================== */
 function toast(m) {
     const t = document.createElement('div');
     t.className = 'toast';
@@ -306,6 +269,7 @@ function toast(m) {
     setTimeout(() => t.remove(), 2000);
 }
 
+/* ===================== CAUTION ===================== */
 function showCaution() {
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
@@ -328,5 +292,6 @@ function showCaution() {
     document.body.appendChild(overlay);
 }
 
+/* ===================== INIT ===================== */
 showCaution();
 render();
