@@ -1,110 +1,263 @@
 // main_code.js
 
-/* ================================
-   GLOBAL CONFIG
-================================ */
-const POPUP_DURATION = 6000; // ⏱️ change this to control popup + YES lock (ms)
-const POPUP_FADE_TIME = 800;
+/* ================= CONFIG ================= */
+const POPUP_DURATION = 6000; // popup + YES disable duration (ms)
 
-/* ================================
-   STATE
-================================ */
-let yesLocked = false;
-let currentIndex = 0;
+/* ================= STATE ================= */
+let section = 0,
+    question = 0,
+    mode = "start",
+    autoScrollTimer = null,
+    fallingInterval = null,
+    yesLocked = false;
 
-/* ================================
-   POPUP HANDLER
-================================ */
-function showPopup(img, audio) {
-    if (audio) {
-        new Audio(audio).play().catch(() => {});
+const history = [],
+    screen = document.getElementById('screen'),
+    backBtn = document.getElementById('backBtn');
+
+const yesBtn = document.createElement('button');
+yesBtn.id = 'yesBtn';
+yesBtn.className = 'primary';
+yesBtn.textContent = 'YES 💖';
+
+const noBtn = document.createElement('button');
+noBtn.id = 'noBtn';
+noBtn.className = 'secondary';
+noBtn.textContent = 'NO 😅';
+
+/* ================= BASIC HELPERS ================= */
+function toggleDark() {
+    document.body.classList.toggle('dark');
+}
+
+function setBG() {
+    if (!document.body.classList.contains('dark')) {
+        document.body.style.background =
+            SITE.sections[section]?.bg || "#fff";
+    }
+}
+
+/* ================= CAUTION POPUP ================= */
+function showCaution() {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0,0,0,0.8)';
+    overlay.style.zIndex = '200';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+
+    overlay.innerHTML = `
+        <div class="card">
+            <h1>⚠️ Please Read</h1>
+            <p style="white-space:pre-line">${SITE.caution.message}</p>
+            <button class="primary">I Understand 💖</button>
+        </div>
+    `;
+
+    overlay.querySelector('button').onclick = () => overlay.remove();
+    document.body.appendChild(overlay);
+}
+
+/* ================= POPUP EFFECT ================= */
+function playEffect(img, audio, done) {
+    if (audio) new Audio(audio).play().catch(() => {});
+
+    let popup = null;
+
+    if (img) {
+        popup = document.createElement('img');
+        popup.src = img;
+        popup.className = 'popup-img';
+        document.body.appendChild(popup);
     }
 
-    if (!img) return;
+    // lock YES immediately
+    yesBtn.disabled = true;
 
-    const popup = document.createElement('img');
-    popup.src = img;
-    popup.className = 'popup-img';
+    const FADE_TIME = 800;
+    const fadeStart = Math.max(POPUP_DURATION - FADE_TIME, 0);
 
-    document.body.appendChild(popup);
-
-    // Fade out near the end
+    // fade near the end
     setTimeout(() => {
-        popup.classList.add('fade-out');
-    }, POPUP_DURATION - POPUP_FADE_TIME);
+        if (popup) popup.classList.add('fade-out');
+    }, fadeStart);
 
-    // Remove popup after duration
+    // remove popup + unlock YES
     setTimeout(() => {
-        popup.remove();
-    }, POPUP_DURATION);
-}
-
-/* ================================
-   YES BUTTON HANDLER
-================================ */
-function onYes(question) {
-    if (yesLocked) return;
-
-    yesLocked = true;
-
-    // Disable YES button immediately
-    const yesBtn = document.querySelector('.yes-btn');
-    if (yesBtn) yesBtn.disabled = true;
-
-    // Show popup immediately
-    showPopup(question.yesImage, question.yesAudio);
-
-    // Move to next question AFTER popup duration
-    setTimeout(() => {
+        if (popup) popup.remove();
+        yesBtn.disabled = false;
         yesLocked = false;
-        if (yesBtn) yesBtn.disabled = false;
-
-        goToNextQuestion();
+        done && done();
     }, POPUP_DURATION);
 }
 
-/* ================================
-   QUESTION FLOW
-================================ */
-function goToNextQuestion() {
-    currentIndex++;
+/* ================= NAV ================= */
+function save() {
+    history.push({ section, question, mode });
+    backBtn.classList.remove('hidden');
+}
 
-    if (currentIndex >= SITE.questions.length) {
-        showFinalScreen();
+backBtn.onclick = () => {
+    if (!history.length) return;
+    const h = history.pop();
+    section = h.section;
+    question = h.question;
+    mode = h.mode;
+    render();
+    if (!history.length) backBtn.classList.add('hidden');
+};
+
+/* ================= RENDER ================= */
+function render() {
+    setBG();
+    if (mode === "start") renderStart();
+    else if (mode === "intro") renderIntro();
+    else if (mode === "question") renderQuestion();
+    else if (mode === "password") renderPassword();
+    else if (mode === "final") renderFinal();
+    else if (mode === "secret") renderSecret();
+}
+
+function renderStart() {
+    screen.innerHTML = `
+        <h1>${SITE.intro.title}</h1>
+        <p style="white-space:pre-line">${SITE.intro.message}</p>
+        <button class="primary" onclick="begin()">Start 💖</button>
+    `;
+}
+
+function begin() {
+    save();
+    mode = "intro";
+    render();
+}
+
+function renderIntro() {
+    screen.innerHTML = `
+        <h1>${SITE.sections[section].title}</h1>
+        <p>${SITE.sections[section].intro}</p>
+        <button class="primary" onclick="startQuestions()">Continue</button>
+    `;
+}
+
+function startQuestions() {
+    save();
+    question = 0;
+    mode = "question";
+    render();
+}
+
+function renderQuestion() {
+    const q = SITE.sections[section].questions[question];
+    screen.innerHTML = `
+        <h1 style="white-space:pre-line">${q.text}</h1>
+        <div class="buttons"></div>
+    `;
+    const box = screen.querySelector('.buttons');
+    box.append(yesBtn, noBtn);
+    bindButtons();
+}
+
+function renderPassword() {
+    const s = SITE.sections[section];
+    screen.innerHTML = `
+        <h1>🔐 Enter Password</h1>
+        <p>${s.hint}</p>
+        <input id="pw" style="width:100%;padding:12px;border-radius:10px">
+        <p id="err" style="color:#ff4d6d"></p>
+        <button class="primary" onclick="checkPw()">Unlock</button>
+    `;
+}
+
+function renderFinal() {
+    screen.innerHTML = `
+        <div class="final-scroll-container" id="scrollBox">
+            <h1>${SITE.finalMessage}</h1>
+            <div class="final-scroll">
+                ${SITE.finalImages.map(i => `<img src="${i}">`).join("")}
+            </div>
+            <p style="margin-top:16px">Liked the surprise so far? 💖</p>
+            <button class="primary" onclick="startCountdown()">View Secret Message 💌</button>
+        </div>
+    `;
+}
+
+/* ================= BUTTON LOGIC ================= */
+function bindButtons() {
+    yesBtn.onclick = () => {
+        if (yesLocked) return;
+        yesLocked = true;
+
+        const q = SITE.sections[section].questions[question];
+
+        playEffect(q.yesImage, q.yesAudio, () => {
+            save();
+            question++;
+
+            if (question < SITE.sections[section].questions.length) {
+                render();
+                return;
+            }
+
+            section++;
+            question = 0;
+
+            if (section >= SITE.sections.length) {
+                mode = "final";
+                render();
+                return;
+            }
+
+            SITE.sections[section].passcode
+                ? renderPassword()
+                : renderIntro();
+        });
+    };
+
+    noBtn.onclick = () => {
+        const box = noBtn.parentElement;
+        if (box) {
+            noBtn.style.left =
+                Math.random() * (box.clientWidth - noBtn.offsetWidth) + "px";
+            noBtn.style.top =
+                Math.random() * (box.clientHeight - noBtn.offsetHeight) + "px";
+            noBtn.style.transform = "none";
+        }
+
+        const s = SITE.sections[section];
+        if (s.noAudio) new Audio(s.noAudio).play().catch(() => {});
+        toast(
+            SITE.noClickMessages[
+                Math.floor(Math.random() * SITE.noClickMessages.length)
+            ]
+        );
+    };
+}
+
+function checkPw() {
+    const input = document.getElementById('pw').value.trim().toLowerCase();
+    const pass = SITE.sections[section].passcode?.toLowerCase();
+    if (input !== pass) {
+        document.getElementById('err').textContent =
+            SITE.sections[section].wrongMessage;
         return;
     }
-
-    renderQuestion(SITE.questions[currentIndex]);
+    save();
+    question = 0;
+    mode = "question";
+    render();
 }
 
-/* ================================
-   RENDER QUESTION
-================================ */
-function renderQuestion(q) {
-    document.getElementById('question-text').innerText = q.text;
-
-    const yesBtn = document.querySelector('.yes-btn');
-    const noBtn  = document.querySelector('.no-btn');
-
-    yesBtn.onclick = () => onYes(q);
-    noBtn.onclick  = () => onNo(q);
+function toast(m) {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = m;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
 }
 
-/* ================================
-   NO HANDLER (UNCHANGED)
-================================ */
-function onNo(question) {
-    if (question.noAudio) {
-        new Audio(question.noAudio).play().catch(() => {});
-    }
-    if (question.noImage) {
-        showPopup(question.noImage, null);
-    }
-}
-
-/* ================================
-   INITIAL LOAD (CAUTION SCREEN SAFE)
-================================ */
-window.onload = () => {
-    renderQuestion(SITE.questions[0]);
-};
+/* ================= INIT ================= */
+showCaution();
+render();
