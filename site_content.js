@@ -2,13 +2,18 @@
 
 const SITE = {
   intro: {
-    title: "Okay Listen to my my Appukutty 🔥 😌",
-    message: `I had one job…
-And that was to make you smile today which I don't do normally 😄
-If I succeed, you’ll know exactly what to do at the end 😏💖
-If I fail… I’ll still pretend I tried 😜
+    title: "Okay Listen to my my Appukutty 😌",
+    message: "I had one job…\nAnd that was to make you smile today which I don't do normally 😄\nIf I succeed, you’ll know exactly what to do at the end 😏💖\nIf I fail… I’ll still pretend I tried 😜\nIf\nIf\nIfWEAR EARPHONES BEFORE YOU PROCEED FOR YOUR OWN GOOD😂😂"
+  },
 
-⚠️ WEAR EARPHONES BEFORE YOU PROCEED FOR YOUR OWN GOOD 😂😂`
+  caution: {
+    message: "⚠️ Caution message goes here.\nI will update this later."
+  },
+
+  secretPage: {
+    image: "Images/image1.jpg",
+    buttonText: "Open My Heart 💖",
+    redirectUrl: "https://example.com"
   },
 
   sections: [
@@ -132,7 +137,7 @@ If I fail… I’ll still pretend I tried 😜
     }
   ],
 
-  finalMessage: `Hope you liked this small journey Baby, but really all I wanted to say was
+  finalMessage: `Hope you liked this small journey Baby,  but really all I wanted to say was
 
 Every beat of my heart
 Keeps saying… I choose you 😌❤️
@@ -144,13 +149,10 @@ You’re my favorite everything,
 my heart, my smile, my forever 😘💖
 Happy Valentine’s Day, my love! 🌹💌`,
 
-  finalImages: [
-    "Images/image1.jpg",
-    "Images/image2.jpg",
-    "Images/image3.jpg",
-    "Images/image4.jpg",
-    "Images/image5.jpg"
-  ],
+  finalImages: ["Images/image1.jpg","Images/image2.jpg","Images/image3.jpg","Images/image4.jpg","Images/image5.jpg"],
+
+  finalYesImage: "Images/image1.jpg",
+  finalYesAudio: "Audio/ydaudio.mp3",
 
   noClickMessages: [
     "Nice try 😌 but NO isn’t an option today",
