@@ -41,7 +41,7 @@ function playEffect(img, audio) {
 
     document.body.appendChild(i);
 
-    setTimeout(() => i.remove(), 6000);
+    setTimeout(() => i.remove(), 10000);
 }
 
 function moveNoButton() {
