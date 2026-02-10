@@ -1,11 +1,11 @@
 // main_code.js
 
-/* ===================== CONFIG ===================== */
-const POPUP_DURATION = 10000; // 👈 change popup + YES disable time here
+/* ================== CONFIG ================== */
+const POPUP_DURATION = 6000; // change this to increase/decrease popup time
 
-/* ===================== STATE ===================== */
+/* ================== STATE ================== */
 let section = 0, question = 0, mode = "start",
-    autoScrollTimer = null, scrollDirection = 1,
+    autoScrollTimer = null,
     fallingInterval = null;
 
 const history = [],
@@ -22,45 +22,56 @@ noBtn.id = 'noBtn';
 noBtn.className = 'secondary';
 noBtn.textContent = 'NO 😅';
 
-/* ===================== UTIL ===================== */
+/* ================== HELPERS ================== */
 function toggleDark() {
     document.body.classList.toggle('dark');
 }
 
 function setBG() {
     if (!document.body.classList.contains('dark')) {
-        document.body.style.background =
-            SITE.sections[section]?.bg || "#fff";
+        document.body.style.background = SITE.sections[section]?.bg || "#fff";
     }
 }
 
-/* ===================== POPUP EFFECT ===================== */
-function showPopup(img, audio, duration = POPUP_DURATION) {
+/* ================== POPUP EFFECT ================== */
+function playEffect(img, audio, duration = POPUP_DURATION, done) {
     if (audio) new Audio(audio).play().catch(() => {});
-    if (!img) return;
+    if (!img) {
+        done && done();
+        return;
+    }
 
-    const i = document.createElement('img');
-    i.src = img;
-    i.className = 'popup-img';
-    document.body.appendChild(i);
+    const popup = document.createElement('img');
+    popup.src = img;
+    popup.className = 'popup-img';
+    document.body.appendChild(popup);
 
-    setTimeout(() => i.remove(), duration);
+    // disable YES while popup is visible
+    yesBtn.disabled = true;
+
+    const FADE_TIME = 800;
+
+    setTimeout(() => {
+        popup.classList.add('fade-out');
+    }, duration - FADE_TIME);
+
+    setTimeout(() => {
+        popup.remove();
+        yesBtn.disabled = false;
+        done && done();
+    }, duration);
 }
 
-/* ===================== NO BUTTON ===================== */
 function moveNoButton() {
     const box = noBtn.parentElement;
     if (!box) return;
-
     const maxX = box.clientWidth - noBtn.offsetWidth;
     const maxY = box.clientHeight - noBtn.offsetHeight;
-
     noBtn.style.left = Math.random() * maxX + "px";
     noBtn.style.top = Math.random() * maxY + "px";
     noBtn.style.transform = "none";
 }
 
-/* ===================== HISTORY ===================== */
 function save() {
     history.push({ section, question, mode });
     backBtn.classList.remove('hidden');
@@ -76,7 +87,7 @@ backBtn.onclick = () => {
     if (!history.length) backBtn.classList.add('hidden');
 };
 
-/* ===================== RENDER ===================== */
+/* ================== RENDER ================== */
 function render() {
     setBG();
     if (mode === "start") renderStart();
@@ -138,7 +149,6 @@ function renderPassword() {
     `;
 }
 
-/* ===================== FINAL ===================== */
 function renderFinal() {
     screen.innerHTML = `
         <div class="final-scroll-container" id="scrollBox">
@@ -169,7 +179,68 @@ function renderFinal() {
     }, 3000);
 }
 
-/* ===================== SECRET ===================== */
+/* ================== COUNTDOWN & EFFECTS ================== */
+function startCountdown() {
+    let count = 5;
+    screen.innerHTML = `<h1>Get ready! 💥</h1><p style="font-size:2rem">${count}</p>`;
+    const p = screen.querySelector('p');
+
+    const timer = setInterval(() => {
+        count--;
+        p.textContent = count;
+        if (count === 0) {
+            clearInterval(timer);
+            openSecret();
+            showAmazingBurst();
+            startFallingEmojis();
+        }
+    }, 1000);
+}
+
+function showAmazingBurst() {
+    for (let wave = 0; wave < 3; wave++) {
+        setTimeout(() => {
+            for (let i = 0; i < 150; i++) {
+                const e = document.createElement('div');
+                e.className = 'particle';
+                e.textContent = ['💖','🔥','✨','🌹','💋'][Math.floor(Math.random()*5)];
+                e.style.left = '50%';
+                e.style.top = '50%';
+                document.body.appendChild(e);
+
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 150 + Math.random() * 400;
+                const x = Math.cos(angle) * dist;
+                const y = Math.sin(angle) * dist;
+
+                setTimeout(() => {
+                    e.style.transform = `translate(${x}px,${y}px) scale(1.8)`;
+                    e.style.opacity = 0;
+                }, 30);
+
+                setTimeout(() => e.remove(), 1800);
+            }
+        }, wave * 180);
+    }
+}
+
+function startFallingEmojis() {
+    clearInterval(fallingInterval);
+    const emojis = ['💖','🔥','💋','🌹','✨','😍','😘'];
+
+    fallingInterval = setInterval(() => {
+        const f = document.createElement('div');
+        f.className = 'confetti';
+        f.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        f.style.left = Math.random() * 100 + '%';
+        f.style.top = '-30px';
+        f.style.fontSize = (16 + Math.random() * 26) + 'px';
+        f.style.animationDuration = (3 + Math.random() * 3) + 's';
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), 6000);
+    }, 120);
+}
+
 function openSecret() {
     save();
     mode = "secret";
@@ -178,59 +249,34 @@ function openSecret() {
 
 function renderSecret() {
     clearInterval(fallingInterval);
-    const s = SITE.secretPage;
-
-    screen.innerHTML = `
-        <h1>💖 Secret</h1>
-        <img src="${s.image}" style="width:100%;border-radius:16px;margin:16px 0">
-        <p>Just for you 😘</p>
-        <button class="primary" onclick="window.location.href='${s.redirectUrl}'">
-            ${s.buttonText}
-        </button>
-    `;
+    screen.innerHTML = `<h1>💖 Secret</h1><p>Just for you 😘</p>`;
 }
 
-/* ===================== BUTTON LOGIC ===================== */
+/* ================== BUTTON BINDINGS ================== */
 function bindButtons() {
     yesBtn.onclick = () => {
-        if (yesBtn.disabled) return;
-
         const q = SITE.sections[section].questions[question];
         save();
 
-        // 🔒 Disable YES for popup duration
-        yesBtn.disabled = true;
-        yesBtn.style.opacity = "0.6";
-        yesBtn.style.pointerEvents = "none";
+        playEffect(q.yesImage, q.yesAudio, POPUP_DURATION, () => {
+            question++;
 
-        // 🎉 Show popup immediately
-        showPopup(q.yesImage, q.yesAudio);
+            if (question < SITE.sections[section].questions.length) {
+                render();
+                return;
+            }
 
-        // 🔓 Re-enable after popup duration
-        setTimeout(() => {
-            yesBtn.disabled = false;
-            yesBtn.style.opacity = "";
-            yesBtn.style.pointerEvents = "";
-        }, POPUP_DURATION);
+            section++;
+            question = 0;
 
-        // ➡️ Move forward instantly
-        question++;
+            if (section >= SITE.sections.length) {
+                mode = "final";
+                render();
+                return;
+            }
 
-        if (question < SITE.sections[section].questions.length) {
-            render();
-            return;
-        }
-
-        section++;
-        question = 0;
-
-        if (section >= SITE.sections.length) {
-            mode = "final";
-            render();
-            return;
-        }
-
-        SITE.sections[section].passcode ? renderPassword() : renderIntro();
+            SITE.sections[section].passcode ? renderPassword() : renderIntro();
+        });
     };
 
     noBtn.onclick = () => {
@@ -245,7 +291,6 @@ function bindButtons() {
     };
 }
 
-/* ===================== PASSWORD ===================== */
 function checkPw() {
     const input = document.getElementById('pw').value.trim().toLowerCase();
     const pass = SITE.sections[section].passcode?.toLowerCase();
@@ -260,7 +305,6 @@ function checkPw() {
     render();
 }
 
-/* ===================== TOAST ===================== */
 function toast(m) {
     const t = document.createElement('div');
     t.className = 'toast';
@@ -269,29 +313,4 @@ function toast(m) {
     setTimeout(() => t.remove(), 2000);
 }
 
-/* ===================== CAUTION ===================== */
-function showCaution() {
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.inset = '0';
-    overlay.style.background = 'rgba(0,0,0,0.8)';
-    overlay.style.zIndex = '200';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-
-    overlay.innerHTML = `
-        <div class="card">
-            <h1>⚠️ Please Read</h1>
-            <p style="white-space:pre-line">${SITE.caution.message}</p>
-            <button class="primary">I Understand 💖</button>
-        </div>
-    `;
-
-    overlay.querySelector('button').onclick = () => overlay.remove();
-    document.body.appendChild(overlay);
-}
-
-/* ===================== INIT ===================== */
-showCaution();
 render();
