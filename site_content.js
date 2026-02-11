@@ -109,8 +109,8 @@ const SITE = {
       bg: "linear-gradient(135deg,#ffb3c6,#ff4d6d)",
       intro: "Secret zone 😈",
       passcode: "daddy",
-      hint: "Who am I to you in your wild thoughts?",
-      wrongMessage: "Whatt..You don't know 😭 i love to hear you call me that name",
+      hint: "Hint: Who am I to you in your wild thoughts and what do you call me when you are in mood?",
+      wrongMessage: "Whatt.. Seriously You don't know 😭 i love to hear you call me that name",
       questions: [
         {
           text: "You don’t like eating chilli, and that’s why you end up crying when you eat it, right? 🌶️😌",
