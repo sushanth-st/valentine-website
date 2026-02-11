@@ -137,7 +137,10 @@ const SITE = {
     }
   ],
 
-  finalMessage: `Hope you liked this small journey Baby,  but really all I wanted to say was
+  finalMessage: `
+Hey my love🫰
+
+Hope you liked this small journey Baby,  but really all I wanted to say was
 
 Every beat of my heart
 Keeps saying… I choose you 😌❤️
@@ -147,9 +150,12 @@ and every day worth loving 💕
 Today, on Valentine’s Day, I just want to remind you…
 You’re my favorite everything,
 my heart, my smile, my forever 😘💖
-Happy Valentine’s Day, my love! 🌹💌`,
 
-  finalImages: ["Images/image1.gif","Images/image2.gif","Images/image3.gif","Images/image4.gif","Images/image5.gif"],
+Happy Valentine’s Day, my love! 🌹💌I wish I could hug, kiss and eat you all day😍🥵❣️❣️
+
+If you really loved it, here are the gifts I want with you in it🔥😁🫣🫣Only if you loved this journey`,
+
+  finalImages: ["Images/image1.png","Images/image2.png","Images/image3.png","Images/image4.png","Images/image5.png","Images/image6.png","Images/image7.png","Images/image8.png","Images/image9.png","Images/image10.png","Images/image11.png","Images/image12.png","Images/image13.png"],
 
   finalYesImage: "Images/image17.gif",
   finalYesAudio: "Audio/ydaudio.mp3",
