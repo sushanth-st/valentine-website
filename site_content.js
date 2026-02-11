@@ -129,7 +129,7 @@ const SITE = {
         },
         {
           text: "You don’t like sending me nude snaps every day — that’s why you even uninstalled Snapchat, right? 😌📵",
-          yesImage: "Images/image16.jpg",
+          yesImage: "Images/image16.gif",
           yesAudio: "Audio/ydaudio16.mp3"
         }
       ],
@@ -151,7 +151,7 @@ Happy Valentine’s Day, my love! 🌹💌`,
 
   finalImages: ["Images/image1.gif","Images/image2.gif","Images/image3.gif","Images/image4.gif","Images/image5.gif"],
 
-  finalYesImage: "Images/image1.jpg",
+  finalYesImage: "Images/image17.gif",
   finalYesAudio: "Audio/ydaudio.mp3",
 
   noClickMessages: [
