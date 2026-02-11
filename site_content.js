@@ -7,7 +7,7 @@ const SITE = {
   },
 
   caution: {
-    message: "⚠️ WEAR EARPHONES 🎧 AND MAKE SURE YOU ARE ALONE 🏝️ BEFORE YOU PROCEED FOR YOUR OWN GOOD😂"
+    message: "⚠️ WEAR EARPHONES 🎧 AND MAKE SURE YOU ARE ALONE 🏝️ BEFORE YOU PROCEED FOR YOUR OWN GOOD😂🫰"
   },
 
   secretPage: {
@@ -155,7 +155,7 @@ Happy Valentine’s Day, my love! 🌹💌<br>I wish I could hug, kiss and eat y
 <br><br>
 If you really loved it, here are the gifts I want with you in it🔥😁🫣🫣Only if you loved this journey`,
 
-  finalImages: ["Images/image1.gif","Images/image2.gif","Images/image3.gif","Images/image4.gif","Images/image5.gif","Images/image6.gif","Images/image7.gif","Images/image8.gif","Images/image9.gif","Images/image10.gif","Images/image11.gif","Images/image12.gif","Images/image13.gif"],
+  finalImages: ["Images/image1.jpg","Images/image2.jpg","Images/image3.jpg","Images/image4.jpg","Images/image5.jpg","Images/image6.jpg","Images/image7.jpg","Images/image8.jpg","Images/image9.jpg","Images/image10.jpg","Images/image11.jpg","Images/image12.jpg","Images/image13.jpg"],
 
   finalYesImage: "Images/image17.gif",
   finalYesAudio: "Audio/ydaudio.mp3",
