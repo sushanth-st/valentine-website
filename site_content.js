@@ -13,7 +13,7 @@ const SITE = {
   secretPage: {
     image: "Images/image17.gif",
     buttonText: "Click here to Open My Heart 💖",
-    redirectUrl: "https://example.com"
+    redirectUrl: "https://sushanth-st.github.io/valentine-website/index_photo.html"
   },
 
   sections: [
