@@ -7,7 +7,7 @@ const SITE = {
   },
 
   caution: {
-    message: "⚠️ WEAR EARPHONES 🎧 AND MAKE SURE YOU ARE ALONE 🏝️ BEFORE YOU PROCEED FOR YOUR OWN GOOD😂😂"
+    message: "⚠️ WEAR EARPHONES 🎧 AND MAKE SURE YOU ARE ALONE 🏝️ BEFORE YOU PROCEED FOR YOUR OWN GOOD😂"
   },
 
   secretPage: {
