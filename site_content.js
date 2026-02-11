@@ -155,7 +155,7 @@ Happy Valentine’s Day, my love! 🌹💌I wish I could hug, kiss and eat you a
 
 If you really loved it, here are the gifts I want with you in it🔥😁🫣🫣Only if you loved this journey`,
 
-  finalImages: ["Images/image1.png","Images/image2.png","Images/image3.png","Images/image4.png","Images/image5.png","Images/image6.png","Images/image7.png","Images/image8.png","Images/image9.png","Images/image10.png","Images/image11.png","Images/image12.png","Images/image13.png"],
+  finalImages: ["Images/image1.gif","Images/image2.gif","Images/image3.gif","Images/image4.gif","Images/image5.gif","Images/image6.gif","Images/image7.gif","Images/image8.gif","Images/image9.gif","Images/image10.gif","Images/image11.gif","Images/image12.gif","Images/image13.gif"],
 
   finalYesImage: "Images/image17.gif",
   finalYesAudio: "Audio/ydaudio.mp3",
