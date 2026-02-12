@@ -275,7 +275,7 @@ header{ padding:40px 20px; }
 <script>
 const CONFIG={
     password:"forever",
-    lockTitle:"💌💋💋 🫰 Private Memories",
+    lockTitle:"💌💋Private Memories",
     lockSubtitle:"Only for you & me",
     title:"Our Lovely Moments ❤️",
     subtitle:"Every picture here holds a memory I never want to forget",
@@ -310,13 +310,8 @@ title.innerText=CONFIG.title;
 subtitle.innerText=CONFIG.subtitle;
 bgMusic.src=CONFIG.music;
 
-/* Shuffle stickers once */
-let shuffled=[...CONFIG.stickers];
-for(let i=shuffled.length-1;i>0;i--){
-    let j=Math.floor(Math.random()*(i+1));
-    [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
-}
-let index=0;
+/* 🔥 ORDERED + STABLE + SUBTLE ROTATION */
+let stickerIndex = 0;
 
 CONFIG.polaroids.forEach(p=>{
     const wrap=document.createElement('div');
@@ -328,18 +323,35 @@ CONFIG.polaroids.forEach(p=>{
         </div>`;
     wall.appendChild(wrap);
 
-    [-40,130].forEach(top=>{
-        if(index>=shuffled.length) return;
-        const s=document.createElement('div');
-        s.className='sticker';
-        s.style.width=(Math.random()*30+80)+'px';
-        s.style.top=top+'px';
-        Math.random()>0.5?s.style.left='-60px':s.style.right='-60px';
-        const img=document.createElement('img');
-        img.src=shuffled[index++];
-        s.appendChild(img);
-        wrap.appendChild(s);
-    });
+    /* TOP RIGHT STICKER */
+    if(stickerIndex < CONFIG.stickers.length){
+        const topSticker=document.createElement('div');
+        topSticker.className='sticker';
+        topSticker.style.width=(Math.random()*30+80)+'px';
+        topSticker.style.top='-40px';
+        topSticker.style.right='-60px';
+        topSticker.style.transform=`rotate(${Math.random()*12-6}deg)`; // ±6°
+
+        const img1=document.createElement('img');
+        img1.src=CONFIG.stickers[stickerIndex++];
+        topSticker.appendChild(img1);
+        wrap.appendChild(topSticker);
+    }
+
+    /* BOTTOM LEFT STICKER */
+    if(stickerIndex < CONFIG.stickers.length){
+        const bottomSticker=document.createElement('div');
+        bottomSticker.className='sticker';
+        bottomSticker.style.width=(Math.random()*30+80)+'px';
+        bottomSticker.style.top='130px';
+        bottomSticker.style.left='-60px';
+        bottomSticker.style.transform=`rotate(${Math.random()*12-6}deg)`; // ±6°
+
+        const img2=document.createElement('img');
+        img2.src=CONFIG.stickers[stickerIndex++];
+        bottomSticker.appendChild(img2);
+        wrap.appendChild(bottomSticker);
+    }
 });
 
 for(let i=0;i<30;i++){
