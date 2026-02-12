@@ -210,11 +210,12 @@ header{ padding:40px 20px; }
     display:none;
     justify-content:center;
     align-items:center;
+    flex-direction:column;
     z-index:200;
 }
 .viewer img{
     max-width:90%;
-    max-height:90%;
+    max-height:80%;
 }
 .viewer p{
     margin-top:15px;
@@ -276,27 +277,12 @@ header{ padding:40px 20px; }
     <p>Some love stories hurt quietly.</p>
 </div>
 
-<!-- UPDATED VIEWER WITH CLOSE BUTTON -->
 <div class="viewer" id="viewer" onclick="closeViewer()">
     <div style="position:relative; text-align:center;">
-        
         <button onclick="closeViewer(); event.stopPropagation();" 
-                style="
-                    position:absolute;
-                    top:-40px;
-                    right:-10px;
-                    background:#ff5fa2;
-                    border:none;
-                    color:white;
-                    font-size:18px;
-                    width:35px;
-                    height:35px;
-                    border-radius:50%;
-                    cursor:pointer;
-                ">
+                style="position:absolute; top:-40px; right:-10px; background:#ff5fa2; border:none; color:white; font-size:18px; width:35px; height:35px; border-radius:50%; cursor:pointer;">
             ✕
         </button>
-
         <img id="viewerImg">
         <p id="viewerCaption"></p>
     </div>
@@ -306,11 +292,10 @@ header{ padding:40px 20px; }
 const CONFIG={
     password:"fuck me daddy",
     lockTitle:"💌💋Private Memories",
-lockSubtitle:"Only for you & me<br><br><span style='opacity:0.7;'>Hint: What do you say to your DADDY? 🫣</span>",
+    lockSubtitle:"Only for you & me<br><br><span style='opacity:0.7;'>Hint: What do you say to your DADDY? 🫣</span>",
     title:"Our Lovely Moments ❤️",
     subtitle:"Every picture here holds a memory I never want to forget",
     music:"music/romantic.mp3",
-
     polaroids:[
         {img:"Images/1.jpg", text:"Our first picture… our beginning 🤍"},
         {img:"Images/2.jpg", text:"You, me, and that saree 😍"},
@@ -333,14 +318,17 @@ lockSubtitle:"Only for you & me<br><br><span style='opacity:0.7;'>Hint: What do 
         {img:"Images/19.jpg", text:"Just us and our secret selfies 😊"},
         {img:"Images/20.jpg", text:"Hand in hand, always 🫶"},
     ],
-
     stickers:[
         "stickers/1.png","stickers/2.png","stickers/3.png","stickers/4.png",
         "stickers/5.png","stickers/6.png","stickers/7.png","stickers/8.png",
         "stickers/9.png","stickers/10.png","stickers/11.png","stickers/12.png",
         "stickers/13.png","stickers/14.png","stickers/15.png","stickers/16.png",
         "stickers/17.png","stickers/18.png","stickers/19.png","stickers/20.png",
-        "stickers/21.png","stickers/22.png","stickers/23.png","stickers/24.png","stickers/25.png","stickers/26.png","stickers/27.png","stickers/28.png","stickers/29.png","stickers/30.png","stickers/31.png","stickers/32.png","stickers/33.png","stickers/34.png","stickers/35.png","stickers/36.png","stickers/37.png","stickers/38.png","stickers/39.png","stickers/40.png",
+        "stickers/21.png","stickers/22.png","stickers/23.png","stickers/24.png",
+        "stickers/25.png","stickers/26.png","stickers/27.png","stickers/28.png",
+        "stickers/29.png","stickers/30.png","stickers/31.png","stickers/32.png",
+        "stickers/33.png","stickers/34.png","stickers/35.png","stickers/36.png",
+        "stickers/37.png","stickers/38.png","stickers/39.png","stickers/40.png",
     ]
 };
 
@@ -369,7 +357,6 @@ CONFIG.polaroids.forEach(p=>{
         topSticker.style.top='-40px';
         topSticker.style.right='-60px';
         topSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;
-
         const img1=document.createElement('img');
         img1.src=CONFIG.stickers[stickerIndex++];
         topSticker.appendChild(img1);
@@ -383,7 +370,6 @@ CONFIG.polaroids.forEach(p=>{
         bottomSticker.style.top='130px';
         bottomSticker.style.left='-60px';
         bottomSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;
-
         const img2=document.createElement('img');
         img2.src=CONFIG.stickers[stickerIndex++];
         bottomSticker.appendChild(img2);
@@ -412,7 +398,8 @@ function unlock(){
 function openViewer(src){
     viewer.style.display="flex";
     viewerImg.src=src;
-    const item = CONFIG.polaroids.find(p => p.img === src);
+    const filePath = src.substring(src.indexOf("Images/"));
+    const item = CONFIG.polaroids.find(p => p.img === filePath);
     viewerCaption.innerText = item ? item.text : "";
 }
 
