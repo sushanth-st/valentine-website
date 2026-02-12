@@ -276,8 +276,27 @@ header{ padding:40px 20px; }
     <p>Some love stories hurt quietly.</p>
 </div>
 
+<!-- UPDATED VIEWER WITH CLOSE BUTTON -->
 <div class="viewer" id="viewer" onclick="closeViewer()">
-    <div style="text-align:center;">
+    <div style="position:relative; text-align:center;">
+        
+        <button onclick="closeViewer(); event.stopPropagation();" 
+                style="
+                    position:absolute;
+                    top:-40px;
+                    right:-10px;
+                    background:#ff5fa2;
+                    border:none;
+                    color:white;
+                    font-size:18px;
+                    width:35px;
+                    height:35px;
+                    border-radius:50%;
+                    cursor:pointer;
+                ">
+            ✕
+        </button>
+
         <img id="viewerImg">
         <p id="viewerCaption"></p>
     </div>
