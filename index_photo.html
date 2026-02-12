@@ -216,6 +216,11 @@ header{ padding:40px 20px; }
     max-width:90%;
     max-height:90%;
 }
+.viewer p{
+    margin-top:15px;
+    font-size:18px;
+    opacity:0.9;
+}
 
 @media(max-width:600px){
     .polaroid{ width:190px }
@@ -242,6 +247,9 @@ header{ padding:40px 20px; }
 <header>
     <h1 id="title"></h1>
     <p id="subtitle"></p>
+    <p style="opacity:0.6; font-size:14px; margin-top:10px;">
+        💞 Tap a memory and step back into our little forever.
+    </p>
 </header>
 
 <section class="wall" id="wall"></section>
@@ -269,7 +277,10 @@ header{ padding:40px 20px; }
 </div>
 
 <div class="viewer" id="viewer" onclick="closeViewer()">
-    <img id="viewerImg">
+    <div style="text-align:center;">
+        <img id="viewerImg">
+        <p id="viewerCaption"></p>
+    </div>
 </div>
 
 <script>
@@ -320,7 +331,6 @@ title.innerText=CONFIG.title;
 subtitle.innerText=CONFIG.subtitle;
 bgMusic.src=CONFIG.music;
 
-/* 🔥 ORDERED + STABLE + SUBTLE ROTATION */
 let stickerIndex = 0;
 
 CONFIG.polaroids.forEach(p=>{
@@ -333,14 +343,13 @@ CONFIG.polaroids.forEach(p=>{
         </div>`;
     wall.appendChild(wrap);
 
-    /* TOP RIGHT STICKER */
     if(stickerIndex < CONFIG.stickers.length){
         const topSticker=document.createElement('div');
         topSticker.className='sticker';
         topSticker.style.width=(Math.random()*30+80)+'px';
         topSticker.style.top='-40px';
         topSticker.style.right='-60px';
-        topSticker.style.transform=`rotate(${Math.random()*12-6}deg)`; // ±6°
+        topSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;
 
         const img1=document.createElement('img');
         img1.src=CONFIG.stickers[stickerIndex++];
@@ -348,14 +357,13 @@ CONFIG.polaroids.forEach(p=>{
         wrap.appendChild(topSticker);
     }
 
-    /* BOTTOM LEFT STICKER */
     if(stickerIndex < CONFIG.stickers.length){
         const bottomSticker=document.createElement('div');
         bottomSticker.className='sticker';
         bottomSticker.style.width=(Math.random()*30+80)+'px';
         bottomSticker.style.top='130px';
         bottomSticker.style.left='-60px';
-        bottomSticker.style.transform=`rotate(${Math.random()*12-6}deg)`; // ±6°
+        bottomSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;
 
         const img2=document.createElement('img');
         img2.src=CONFIG.stickers[stickerIndex++];
@@ -382,7 +390,13 @@ function unlock(){
     }
 }
 
-function openViewer(src){ viewer.style.display="flex"; viewerImg.src=src; }
+function openViewer(src){
+    viewer.style.display="flex";
+    viewerImg.src=src;
+    const item = CONFIG.polaroids.find(p => p.img === src);
+    viewerCaption.innerText = item ? item.text : "";
+}
+
 function closeViewer(){ viewer.style.display="none"; }
 
 let playing=false;
