@@ -1,328 +1,411 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Memories ❤️</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&family=Playfair+Display&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
-
-<style>
-body{
-    margin:0;
-    background:#111;
-    font-family:Poppins;
-    color:white;
-    text-align:center;
-    overflow-x:hidden;
-}
-
-/* ---------- LOCK ---------- */
+<!DOCTYPE html>  <html lang="en">    <head>    
+<meta charset="UTF-8">    
+<meta name="viewport" content="width=device-width, initial-scale=1.0">    
+<title>Our Memories ❤️</title>  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&family=Playfair+Display&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">  <style>    
+body{    
+    margin:0;    
+    background:#111;    
+    font-family:Poppins;    
+    color:white;    
+    text-align:center;    
+    overflow-x:hidden;    
+}    /* ---------- LOCK ---------- */
 .lock{
-    position:fixed;
-    inset:0;
-    background:#111;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:1000;
+position:fixed;
+inset:0;
+background:#111;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:1000;
 }
 .lock input,.lock button{
-    padding:12px 18px;
-    border-radius:25px;
-    border:none;
-    font-size:16px;
-    margin-top:15px;
+padding:12px 18px;
+border-radius:25px;
+border:none;
+font-size:16px;
+margin-top:15px;
 }
 .lock button{
-    background:#ff5fa2;
-    color:white;
-    cursor:pointer;
+background:#ff5fa2;
+color:white;
+cursor:pointer;
 }
 
 /* ---------- HEARTS ---------- */
 .hearts{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:0;
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:0;
 }
 .heart{
-    position:absolute;
-    color:rgba(255,105,180,0.25);
-    animation:float 8s linear infinite;
+position:absolute;
+color:rgba(255,105,180,0.25);
+animation:float 8s linear infinite;
 }
 @keyframes float{
-    to{ transform:translateY(-120vh); opacity:1 }
+to{ transform:translateY(-120vh); opacity:1 }
 }
 
 /* ---------- MUSIC ---------- */
 .music-btn{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    background:#ff5fa2;
-    border:none;
-    color:white;
-    padding:12px 16px;
-    border-radius:30px;
-    cursor:pointer;
-    z-index:20;
+position:fixed;
+bottom:20px;
+right:20px;
+background:#ff5fa2;
+border:none;
+color:white;
+padding:12px 16px;
+border-radius:30px;
+cursor:pointer;
+z-index:20;
 }
 
 /* ---------- CONTENT ---------- */
 header{ padding:40px 20px; }
 
 .wall{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:70px;
-    padding:40px 15px;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:70px;
+padding:40px 15px;
 }
 
 .polaroid-wrap{ position:relative; }
 
 .polaroid{
-    background:white;
-    padding:15px;
-    width:220px;
-    box-shadow:0 18px 30px rgba(0,0,0,0.6);
-    transform:rotate(calc(-6deg + 12deg * var(--r)));
-    transition:0.3s;
+background:white;
+padding:15px;
+width:220px;
+box-shadow:0 18px 30px rgba(0,0,0,0.6);
+transform:rotate(calc(-6deg + 12deg * var(--r)));
+transition:0.3s;
 }
 .polaroid img{
-    width:100%;
-    height:220px;
-    object-fit:cover;
+width:100%;
+height:220px;
+object-fit:cover;
 }
 .caption{
-    color:black;
-    margin-top:10px;
-    font-size:14px;
+color:black;
+margin-top:10px;
+font-size:14px;
 }
 .polaroid:hover{
-    transform:scale(1.08) rotate(0deg);
+transform:scale(1.08) rotate(0deg);
 }
 
 /* ---------- STICKERS ---------- */
 .sticker{
-    position:absolute;
-    pointer-events:none;
-    animation:floatSticker 4s ease-in-out infinite;
-    filter:drop-shadow(0 8px 12px rgba(0,0,0,0.5));
+position:absolute;
+pointer-events:none;
+animation:floatSticker 4s ease-in-out infinite;
+filter:drop-shadow(0 8px 12px rgba(0,0,0,0.5));
 }
 .sticker img{ width:100%; }
 
 @keyframes floatSticker{
-    0%,100%{ transform:translateY(0); }
-    50%{ transform:translateY(-8px); }
+0%,100%{ transform:translateY(0); }
+50%{ transform:translateY(-8px); }
 }
 
 /* ---------- END NOTE ---------- */
 .end-note{
-    margin:80px auto 40px;
-    max-width:650px;
-    font-family:'Dancing Script', cursive;
+margin:80px auto 40px;
+max-width:650px;
+font-family:'Dancing Script', cursive;
 }
 .end-note h2{ font-size:36px; }
 .end-note p{ font-size:20px; opacity:0.9; }
 
 /* ---------- VALENTINE ---------- */
 .valentine-section{
-    margin:60px auto 120px;
+margin:60px auto 120px;
 }
 .valentine-section h1{
-    font-family:'Playfair Display', serif;
-    font-size:34px;
+font-family:'Playfair Display', serif;
+font-size:34px;
 }
 .valentine-section button{
-    padding:14px 28px;
-    margin:10px;
-    font-size:18px;
-    border-radius:40px;
-    border:none;
-    cursor:pointer;
+padding:14px 28px;
+margin:10px;
+font-size:18px;
+border-radius:40px;
+border:none;
+cursor:pointer;
 }
 .yes{ background:#ff5fa2; color:white; }
 .no{ background:#333; color:#aaa; }
 
 /* ---------- YES SCREEN ---------- */
 .yes-screen{
-    position:fixed;
-    inset:0;
-    background:#111;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    z-index:500;
+position:fixed;
+inset:0;
+background:#111;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:500;
 }
 .yes-screen img{
-    width:220px;
-    margin-bottom:20px;
+width:220px;
+margin-bottom:20px;
 }
 .yes-screen h1{
-    font-size:42px;
+font-size:42px;
 }
 
 .emoji-layer{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    z-index:510;
+position:absolute;
+inset:0;
+pointer-events:none;
+z-index:510;
 }
 .emoji{
-    position:absolute;
-    top:-40px;
-    font-size:28px;
-    animation:rain 3s linear forwards;
+position:absolute;
+top:-40px;
+font-size:28px;
+animation:rain 3s linear forwards;
 }
 @keyframes rain{
-    to{ transform:translateY(110vh); opacity:0 }
+to{ transform:translateY(110vh); opacity:0 }
 }
 
 /* ---------- NO SCREEN ---------- */
 .no-screen{
-    position:fixed;
-    inset:0;
-    background:black;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    z-index:600;
+position:fixed;
+inset:0;
+background:black;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:600;
 }
 .no-screen img{
-    width:180px;
-    margin-bottom:20px;
+width:180px;
+margin-bottom:20px;
 }
 .no-screen p{
-    opacity:0.7;
+opacity:0.7;
 }
 
 /* ---------- VIEWER ---------- */
 .viewer{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.9);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:200;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:200;
 }
 .viewer img{
-    max-width:90%;
-    max-height:90%;
+max-width:90%;
+max-height:90%;
 }
 .viewer p{
-    margin-top:15px;
-    font-size:18px;
-    opacity:0.9;
+margin-top:15px;
+font-size:18px;
+opacity:0.9;
 }
 
 @media(max-width:600px){
-    .polaroid{ width:190px }
-    .polaroid img{ height:190px }
+.polaroid{ width:190px }
+.polaroid img{ height:190px }
 }
-</style>
-</head>
-<body>
+</style>  </head>  <body>  <div class="lock" id="lock">
+<h1 id="lockTitle"></h1>
+<p id="lockSub"></p>
+<input type="password" id="pass" placeholder="Enter password">
+<button onclick="unlock()">Unlock ❤️</button>
+<p id="error"></p>
 
-<script>
-const CONFIG={
-    password:"forever",
-    lockTitle:"💌💋Private Memories",
-    lockSubtitle:"Only for you & me",
-    title:"Our Lovely Moments ❤️",
-    subtitle:"Every picture here holds a memory I never want to forget",
-    music:"music/romantic.mp3",
+</div>  <div class="hearts" id="hearts"></div>  <audio id="bgMusic" loop></audio>  
+<button class="music-btn" onclick="toggleMusic()">🎵 Love Mode</button>  <header>    
+    <h1 id="title"></h1>    
+    <p id="subtitle"></p>    
+    <p style="opacity:0.6; font-size:14px; margin-top:10px;">    
+        💞 Tap a memory and step back into our little forever.    
+    </p>    
+</header>  <section class="wall" id="wall"></section>  <div class="end-note">    
+    <h2>Made with mad love ❤️</h2>    
+    <p>Every memory here is a piece of my heart,<br>and every smile of yours is my favorite place.</p>    
+</div>  <div class="valentine-section">    
+    <h1>Will you be my Valentine? ❤️</h1>    
+    <button class="yes" onclick="sayYes()">Yes 💖</button>    
+    <button class="no" onclick="sayNo()">No 😔</button>    
+</div>  <div class="yes-screen" id="yesScreen">    
+    <div class="emoji-layer" id="emojiLayer"></div>    
+    <img src="Images/yes.jpg">    
+    <h1>She said YES ❤️</h1>    
+</div>  <div class="no-screen" id="noScreen">    
+    <img src="Images/no.gif">    
+    <p>Some love stories hurt quietly.</p>    
+</div>  <!-- UPDATED VIEWER WITH CLOSE BUTTON -->  <div class="viewer" id="viewer" onclick="closeViewer()">    
+    <div style="position:relative; text-align:center;">  <button onclick="closeViewer(); event.stopPropagation();"     
+            style="    
+                position:absolute;    
+                top:-40px;    
+                right:-10px;    
+                background:#ff5fa2;    
+                border:none;    
+                color:white;    
+                font-size:18px;    
+                width:35px;    
+                height:35px;    
+                border-radius:50%;    
+                cursor:pointer;    
+            ">    
+        ✕    
+    </button>    <img id="viewerImg">    
+<p id="viewerCaption"></p>
 
-    polaroids:[
-        {img:"Images/1.jpg", text:"The day we couldn’t stop laughing 😂❤️"},
-        {img:"Images/2.jpg", text:"Our first proper selfie together 📸🥰"},
-        {img:"Images/3.jpg", text:"That random moment that became special 💕"},
-        {img:"Images/4.jpg", text:"You looking too cute here 😌💖"},
-        {img:"Images/5.jpg", text:"One of my favorite memories ever ❤️"},
-        {img:"Images/6.png", text:"Forever my person 💍"},
-        {img:"Images/7.jpg", text:"The smile I fell for 🥹"},
-        {img:"Images/8.jpg", text:"This moment = pure happiness ✨"},
-        {img:"Images/9.jpg", text:"You + Me = Always ❤️"},
-        {img:"Images/10.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/11.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/12.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/13.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/14.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/15.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/16.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/17.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/18.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/19.jpg", text:"Still my favorite place 🫶"},
-        {img:"Images/20.jpg", text:"Still my favorite place 🫶"}
-    ],
+</div>  </div>  <script>    
+const CONFIG={    
+    password:"forever",    
+    lockTitle:"💌💋Private Memories",    
+    lockSubtitle:"Only for you & me",    
+    title:"Our Lovely Moments ❤️",    
+    subtitle:"Every picture here holds a memory I never want to forget",    
+    music:"music/romantic.mp3",    polaroids:[    
+    {img:"Images/1.jpg", text:"The day we couldn’t stop laughing 😂❤️"},    
+    {img:"Images/2.jpg", text:"Our first proper selfie together 📸🥰"},    
+    {img:"Images/3.jpg", text:"That random moment that became special 💕"},    
+    {img:"Images/4.jpg", text:"You looking too cute here 😌💖"},    
+    {img:"Images/5.jpg", text:"One of my favorite memories ever ❤️"},    
+    {img:"Images/6.png", text:"Forever my person 💍"},    
+    {img:"Images/7.jpg", text:"The smile I fell for 🥹"},    
+    {img:"Images/8.jpg", text:"This moment = pure happiness ✨"},    
+    {img:"Images/9.jpg", text:"You + Me = Always ❤️"},    
+    {img:"Images/10.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/11.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/12.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/13.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/14.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/15.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/16.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/17.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/18.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/19.jpg", text:"Still my favorite place 🫶"},    
+    {img:"Images/20.jpg", text:"Still my favorite place 🫶"},    
+],    
 
-    stickers:[
-        "stickers/1.png","stickers/2.png","stickers/3.png","stickers/4.png",
-        "stickers/5.png","stickers/6.png","stickers/7.png","stickers/8.png",
-        "stickers/9.png","stickers/10.png","stickers/11.png","stickers/12.png",
-        "stickers/13.png","stickers/14.png","stickers/15.png","stickers/16.png",
-        "stickers/17.png","stickers/18.png","stickers/19.png","stickers/20.png",
-        "stickers/21.png"
-    ]
+stickers:[    
+    "stickers/1.png","stickers/2.png","stickers/3.png","stickers/4.png",    
+    "stickers/5.png","stickers/6.png","stickers/7.png","stickers/8.png",    
+    "stickers/9.png","stickers/10.png","stickers/11.png","stickers/12.png",    
+    "stickers/13.png","stickers/14.png","stickers/15.png","stickers/16.png",    
+    "stickers/17.png","stickers/18.png","stickers/19.png","stickers/20.png",    
+    "stickers/21.png"    
+]
+
 };
+
+lockTitle.innerText=CONFIG.lockTitle;
+lockSub.innerText=CONFIG.lockSubtitle;
+title.innerText=CONFIG.title;
+subtitle.innerText=CONFIG.subtitle;
+bgMusic.src=CONFIG.music;
 
 let stickerIndex = 0;
 
 CONFIG.polaroids.forEach(p=>{
-    const wrap=document.createElement('div');
-    wrap.className='polaroid-wrap';
-    wrap.innerHTML=`
-        <div class="polaroid" style="--r:${Math.random()}">
-            <img src="${p.img}" onclick="openViewer(this.src, '${p.text.replace(/'/g,"\\'")}')">
-            <div class="caption">${p.text}</div>
-        </div>`;
-    wall.appendChild(wrap);
+const wrap=document.createElement('div');
+wrap.className='polaroid-wrap';
+wrap.innerHTML=     <div class="polaroid" style="--r:${Math.random()}">     <img src="${p.img}" onclick="openViewer(this.src)">     <div class="caption">${p.text}</div>     </div>;
+wall.appendChild(wrap);
 
-    if(stickerIndex < CONFIG.stickers.length){
-        const topSticker=document.createElement('div');
-        topSticker.className='sticker';
-        topSticker.style.width=(Math.random()*30+80)+'px';
-        topSticker.style.top='-40px';
-        topSticker.style.right='-60px';
-        topSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;
+if(stickerIndex < CONFIG.stickers.length){    
+    const topSticker=document.createElement('div');    
+    topSticker.className='sticker';    
+    topSticker.style.width=(Math.random()*30+80)+'px';    
+    topSticker.style.top='-40px';    
+    topSticker.style.right='-60px';    
+    topSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;    
 
-        const img1=document.createElement('img');
-        img1.src=CONFIG.stickers[stickerIndex++];
-        topSticker.appendChild(img1);
-        wrap.appendChild(topSticker);
-    }
+    const img1=document.createElement('img');    
+    img1.src=CONFIG.stickers[stickerIndex++];    
+    topSticker.appendChild(img1);    
+    wrap.appendChild(topSticker);    
+}    
 
-    if(stickerIndex < CONFIG.stickers.length){
-        const bottomSticker=document.createElement('div');
-        bottomSticker.className='sticker';
-        bottomSticker.style.width=(Math.random()*30+80)+'px';
-        bottomSticker.style.top='130px';
-        bottomSticker.style.left='-60px';
-        bottomSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;
+if(stickerIndex < CONFIG.stickers.length){    
+    const bottomSticker=document.createElement('div');    
+    bottomSticker.className='sticker';    
+    bottomSticker.style.width=(Math.random()*30+80)+'px';    
+    bottomSticker.style.top='130px';    
+    bottomSticker.style.left='-60px';    
+    bottomSticker.style.transform=`rotate(${Math.random()*12-6}deg)`;    
 
-        const img2=document.createElement('img');
-        img2.src=CONFIG.stickers[stickerIndex++];
-        bottomSticker.appendChild(img2);
-        wrap.appendChild(bottomSticker);
-    }
+    const img2=document.createElement('img');    
+    img2.src=CONFIG.stickers[stickerIndex++];    
+    bottomSticker.appendChild(img2);    
+    wrap.appendChild(bottomSticker);    
+}
+
 });
 
-function openViewer(src, caption){
-    viewer.style.display="flex";
-    viewerImg.src=src;
-    viewerCaption.innerText=caption;
+for(let i=0;i<30;i++){
+const h=document.createElement('div');
+h.className='heart';
+h.innerHTML=Math.random()>0.5?'💖':'💕';
+h.style.left=Math.random()*100+'%';
+h.style.bottom='-20px';
+h.style.animationDelay=Math.random()*8+'s';
+hearts.appendChild(h);
 }
 
-function closeViewer(){
-    viewer.style.display="none";
+function unlock(){
+if(pass.value.toLowerCase()===CONFIG.password.toLowerCase()){
+lock.style.display='none';
+}else{
+error.innerText="Wrong password 😌";
 }
-</script>
+}
 
-</body>
+function openViewer(src){
+viewer.style.display="flex";
+viewerImg.src=src;
+const item = CONFIG.polaroids.find(p => p.img === src);
+viewerCaption.innerText = item ? item.text : "";
+}
+
+function closeViewer(){ viewer.style.display="none"; }
+
+let playing=false;
+function toggleMusic(){
+playing?bgMusic.pause():bgMusic.play();
+playing=!playing;
+}
+
+function sayYes(){
+yesScreen.style.display='flex';
+const emojis=["💖","😍","🥰","💍","💞","❤️"];
+const rain=setInterval(()=>{
+const e=document.createElement('div');
+e.className='emoji';
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+e.style.left=Math.random()*100+'%';
+emojiLayer.appendChild(e);
+setTimeout(()=>e.remove(),3000);
+},120);
+
+setTimeout(()=>{    
+    clearInterval(rain);    
+    yesScreen.style.display='none';    
+},4500);
+
+}
+
+function sayNo(){
+noScreen.style.display='flex';
+}
+</script>  </body>
+
 </html>
