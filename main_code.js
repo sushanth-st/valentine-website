@@ -153,7 +153,7 @@ function renderQuestion() {
 function renderPassword() {
   const s = SITE.sections[section];
   screen.innerHTML = `
-    <h1>🔐 Enter Password</h1>
+    <h1>🔐 Enter Password to enter next section my sexy Angry Bird 🦋🍑🍓🌶️</h1>
     <p>${s.hint}</p>
     <input id="pw" style="width:100%;padding:12px;border-radius:10px">
     <p id="err" style="color:#ff4d6d"></p>
