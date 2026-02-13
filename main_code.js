@@ -1,5 +1,5 @@
 /* ================= CONFIG ================= */
-const POPUP_DURATION = 6000;
+const POPUP_DURATION = 8000;
 const POPUP_FADE_TIME = 800;
 
 /* ================= STATE ================= */
