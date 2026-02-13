@@ -76,7 +76,7 @@ const SITE = {
     },
 
     {
-      title: "You’re Blushing Now 🔥😚 ans i Love it my DARLING🤗",
+      title: "You are Blushing Now aren't you🔥😚 and I Love it my DARLING🤗",
       bg: "linear-gradient(135deg,#ffd6e0,#ff9ecf)",
       intro: "Careful… it’s getting harder to hide the truth.",
       questions: [
