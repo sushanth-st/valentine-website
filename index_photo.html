@@ -221,6 +221,7 @@ header{ padding:40px 20px; }
     margin-top:15px;
     font-size:18px;
     opacity:0.9;
+    white-space: pre-line;
 }
 
 @media(max-width:600px){
@@ -294,9 +295,7 @@ const CONFIG={
     lockTitle:"💌💋Private Memories",
     lockSubtitle:"Only for you & me Baby<br><br><span style='opacity:0.7;'>Hint: What do you say to your DADDY? 🫣</span>",
     title:"Our Lovely Moments ❤️",
-    subtitle:"Every picture here holds a memory I never want to forget.
-<br><br>
-👉Don’t just watch it — feel it. Tap the Love Mode button below and let the magic begin 🫣🎵",
+    subtitle:"Every picture here holds a memory I never want to forget.\n\n👉Don’t just watch it — feel it. Tap the Love Mode button below and let the magic begin 🫣🎵",
     music:"music/romantic.mp3",
     polaroids:[
         {img:"Images/1.jpg", text:"Our first picture… our beginning 🤍"},
@@ -402,7 +401,7 @@ function openViewer(src){
     viewerImg.src=src;
     const filePath = src.substring(src.indexOf("Images/"));
     const item = CONFIG.polaroids.find(p => p.img === filePath);
-    viewerCaption.innerHTML = item ? item.text : "";
+    viewerCaption.innerText = item ? item.text : "";
 }
 
 function closeViewer(){ viewer.style.display="none"; }
