@@ -7,7 +7,7 @@ const SITE = {
   },
 
   caution: {
-    message: "⚠️ WEAR EARPHONES 🎧 AND MAKE SURE YOU ARE ALONE 🏝️ BEFORE YOU PROCEED FOR YOUR OWN GOOD😂🫰"
+    message: "⚠️ INCREASE VOLUME 🔊 WEAR EARPHONES 🎧 AND MAKE SURE YOU ARE ALONE 🏝️ BEFORE YOU PROCEED FOR YOUR OWN GOOD 😂🫰"
   },
 
   secretPage: {
@@ -18,7 +18,7 @@ const SITE = {
 
   sections: [
     {
-      title: "😁Just Warming Up",
+      title: "😁 let's begin our small journey sweetheart 🫣❣️",
       bg: "linear-gradient(135deg,#ffe4f2,#fff)",
       intro: "You thought this would be easy, didn’t you?",
       questions: [
@@ -47,9 +47,9 @@ const SITE = {
     },
 
     {
-      title: "😏Getting Nervous?",
+      title: "😁Getting Nervous Baby?😅",
       bg: "linear-gradient(135deg,#fff0f6,#ffe6f0)",
-      intro: "Why is the right answer running away?😂",
+      intro: "Why is the wrong answer running away?😂",
       questions: [
         {
           text: "Do you ever feel like I don’t love you enough? 🥺❤️",
@@ -76,7 +76,7 @@ const SITE = {
     },
 
     {
-      title: "You’re Blushing Now 🔥😚",
+      title: "You’re Blushing Now 🔥😚 ans i Love it my DARLING🤗",
       bg: "linear-gradient(135deg,#ffd6e0,#ff9ecf)",
       intro: "Careful… it’s getting harder to hide the truth.",
       questions: [
@@ -96,7 +96,7 @@ const SITE = {
           yesAudio: "Audio/ydaudio11.mp3"
         },
         {
-          text: "One last honest answer…\nYou don’t like it when I look at you naked, right? 😏🔥",
+          text: "One more honest answer…\nYou don’t like it when I look at you naked, right? 😏🔥",
           yesImage: "Images/image12.gif",
           yesAudio: "Audio/ydaudio12.mp3"
         }
@@ -105,7 +105,7 @@ const SITE = {
     },
 
     {
-      title: "No Escape my sexy🌶️",
+      title: "No Escape my sexy Angry Bird 🦋🍑🍓🌶️",
       bg: "linear-gradient(135deg,#ffb3c6,#ff4d6d)",
       intro: "Secret zone 😈",
       passcode: "daddy",
