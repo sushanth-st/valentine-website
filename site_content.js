@@ -18,9 +18,9 @@ const SITE = {
 
   sections: [
     {
-      title: "Funny 😄",
+      title: "😁Just Warming Up",
       bg: "linear-gradient(135deg,#ffe4f2,#fff)",
-      intro: "Let’s start easy 😜",
+      intro: "You thought this would be easy, didn’t you?",
       questions: [
         {
           text: "Be honest…\nYou’re hating this already, right? 😏",
@@ -47,9 +47,9 @@ const SITE = {
     },
 
     {
-      title: "Romantic 🌹",
+      title: "😏Getting Nervous?",
       bg: "linear-gradient(135deg,#fff0f6,#ffe6f0)",
-      intro: "Feel the romance 💕",
+      intro: "Why is the right answer running away?😂",
       questions: [
         {
           text: "Do you ever feel like I don’t love you enough? 🥺❤️",
@@ -76,9 +76,9 @@ const SITE = {
     },
 
     {
-      title: "Hot 🔥",
+      title: "You’re Blushing Now 🔥😚",
       bg: "linear-gradient(135deg,#ffd6e0,#ff9ecf)",
-      intro: "Things heat up 😏",
+      intro: "Careful… it’s getting harder to hide the truth.",
       questions: [
         {
           text: "Be very honest…\nYou don’t like it when I grab you and pull you close to me, right? 😏",
@@ -105,7 +105,7 @@ const SITE = {
     },
 
     {
-      title: "Spicy 🌶️",
+      title: "No Escape my sexy🌶️",
       bg: "linear-gradient(135deg,#ffb3c6,#ff4d6d)",
       intro: "Secret zone 😈",
       passcode: "daddy",
