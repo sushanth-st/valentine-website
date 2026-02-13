@@ -20,7 +20,7 @@ const SITE = {
     {
       title: "😁 let's begin our small journey sweetheart 🫣❣️",
       bg: "linear-gradient(135deg,#ffe4f2,#fff)",
-      intro: "You thought this would be easy, didn’t you?",
+      intro: "Nothing special, but something I built for you my sweet Manga🐒",
       questions: [
         {
           text: "Be honest…\nYou’re hating this already, right? 😏",
