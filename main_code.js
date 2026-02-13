@@ -46,7 +46,7 @@ function showCaution() {
     "position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center";
   o.innerHTML = `
     <div class="card">
-      <h1>⚠️ Please Read</h1>
+      <h1>⚠️ Please Read Baby Girl🤗</h1>
       <p style="white-space:pre-line">${SITE.caution.message}</p>
       <button class="primary">I Understand 💖</button>
     </div>
